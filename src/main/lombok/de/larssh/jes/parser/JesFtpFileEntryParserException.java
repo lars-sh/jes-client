@@ -7,8 +7,9 @@ import lombok.ToString;
  * Thrown to indicate that parsing the JES job list failed.
  */
 @ToString
-// @EqualsAndHashCode(callSuper = true, onParam_ = { @Nullable })
 public class JesFtpFileEntryParserException extends RuntimeException {
+	// @EqualsAndHashCode(callSuper = true, onParam_ = { @Nullable })
+
 	private static final long serialVersionUID = 5139270814035992446L;
 
 	/**

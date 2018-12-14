@@ -9,8 +9,9 @@ import lombok.ToString;
  * Thrown to indicate that a logical JES exception occurred.
  */
 @ToString
-// @EqualsAndHashCode(callSuper = true, onParam_ = { @Nullable })
 public class JesException extends Exception {
+	// @EqualsAndHashCode(callSuper = true, onParam_ = { @Nullable })
+
 	private static final long serialVersionUID = 4049707552379185213L;
 
 	/**

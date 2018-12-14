@@ -754,6 +754,21 @@ public class JesClient implements Closeable {
 		return new Job(id, name, JobStatus.INPUT, getJesOwner());
 	}
 
+	/**
+	 * In case the last FTP responses string contains the spool entries limit
+	 * warning, a {@link JesLimitReachedException} is thrown, else {@code jobs} are
+	 * returned.
+	 *
+	 * <p>
+	 * The thrown exception contains the current spool entries limit and all
+	 * entries, which were read already.
+	 *
+	 * @param limit current spool entries limit
+	 * @param jobs  list of jobs
+	 * @return {@code jobs} in case the spool entries limit is not reached
+	 * @throws JesLimitReachedException if the last FTP responses string contains
+	 *                                  the spool entries limit warning
+	 */
 	private List<Job> throwIfLimitReached(final int limit, final List<Job> jobs) throws JesLimitReachedException {
 		if (!Patterns.find(PATTERN_LIST_LIMIT, getFtpClient().getReplyString()).isPresent()) {
 			throw new JesLimitReachedException(limit, jobs, getFtpClient());
