@@ -770,7 +770,7 @@ public class JesClient implements Closeable {
 	 *                                  the spool entries limit warning
 	 */
 	private List<Job> throwIfLimitReached(final int limit, final List<Job> jobs) throws JesLimitReachedException {
-		if (!Patterns.find(PATTERN_LIST_LIMIT, getFtpClient().getReplyString()).isPresent()) {
+		if (Patterns.find(PATTERN_LIST_LIMIT, getFtpClient().getReplyString()).isPresent()) {
 			throw new JesLimitReachedException(limit, jobs, getFtpClient());
 		}
 		return jobs;
