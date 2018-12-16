@@ -31,7 +31,6 @@ import de.larssh.utils.function.ThrowingRunnable;
 import de.larssh.utils.text.Patterns;
 import de.larssh.utils.text.Strings;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.experimental.NonFinal;
 
 /**
@@ -155,10 +154,8 @@ public class JesClient implements Closeable {
 	/**
 	 * Current JES spool user
 	 *
-	 * @param jesOwner JES spool owner
 	 * @return JES spool owner
 	 */
-	@Setter
 	@NonFinal
 	String jesOwner = FILTER_WILDCARD;
 
@@ -721,6 +718,15 @@ public class JesClient implements Closeable {
 					LIST_LIMIT_MIN,
 					LIST_LIMIT_MAX);
 		}
+	}
+
+	/**
+	 * Current JES spool user
+	 *
+	 * @param jesOwner JES spool owner
+	 */
+	public void setJesOwner(final String jesOwner) {
+		this.jesOwner = Strings.toNeutralUpperCase(jesOwner).trim();
 	}
 
 	/**
