@@ -26,6 +26,7 @@ import org.apache.commons.net.ftp.FTPReply;
 
 import de.larssh.jes.parser.JesFtpFile;
 import de.larssh.jes.parser.JesFtpFileEntryParserFactory;
+import de.larssh.utils.Optionals;
 import de.larssh.utils.function.ThrowingFunction;
 import de.larssh.utils.function.ThrowingRunnable;
 import de.larssh.utils.text.Patterns;
@@ -322,10 +323,7 @@ public class JesClient implements Closeable {
 				.orElseThrow(() -> new JesException(getFtpClient(),
 						"Retrieving job [%s] failed. Probably no FTP data connection socket could be opened.",
 						job.getId()));
-		if (ids.length > 1) {
-			throw new JesException("Retrieved multiple jobs for job ID [%s].", job.getId());
-		}
-		return ids.length == 1;
+		return Optionals.ofSingle(ids).isPresent();
 	}
 
 	/**
@@ -342,11 +340,10 @@ public class JesClient implements Closeable {
 	public Optional<Job> getJobDetails(final Job job) throws IOException, JesException {
 		setJesFilters(job.getName(), JobStatus.ALL, job.getOwner(), LIST_LIMIT_MAX);
 
-		return Arrays.stream(getFtpClient().listFiles(job.getId()))
+		return Optionals.ofSingle(Arrays.stream(getFtpClient().listFiles(job.getId()))
 				.filter(file -> file instanceof JesFtpFile)
 				.map(file -> (JesFtpFile) file)
-				.map(JesFtpFile::getJob)
-				.findAny();
+				.map(JesFtpFile::getJob));
 	}
 
 	/**
