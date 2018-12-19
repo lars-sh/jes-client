@@ -39,6 +39,6 @@ public class JesException extends Exception {
 	 *         {@code format} contains unexpected syntax
 	 */
 	public JesException(final FTPClient ftpClient, final String message, final Object... arguments) {
-		super(Strings.format(message, arguments) + " Reason: " + ftpClient.getReplyString());
+		this("%s Reason: %s", Strings.format(message, arguments), ftpClient.getReplyString());
 	}
 }
