@@ -24,5 +24,6 @@ public class JesFtpFileEntryParserException extends RuntimeException {
 	 */
 	public JesFtpFileEntryParserException(final String message, final Object... arguments) {
 		super(Strings.format(message, arguments));
+		initCause(null);
 	}
 }

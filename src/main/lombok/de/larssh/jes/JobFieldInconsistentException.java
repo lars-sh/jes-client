@@ -24,6 +24,6 @@ public class JobFieldInconsistentException extends RuntimeException {
 	 *         {@code format} contains unexpected syntax
 	 */
 	public JobFieldInconsistentException(final String message, final Object... arguments) {
-		super(Strings.format(message, arguments));
+		super(Strings.format(message, arguments), null);
 	}
 }

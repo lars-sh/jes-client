@@ -24,7 +24,7 @@ public class JesException extends Exception {
 	 *         {@code format} contains unexpected syntax
 	 */
 	public JesException(final String message, final Object... arguments) {
-		super(Strings.format(message, arguments));
+		super(Strings.format(message, arguments), null);
 	}
 
 	/**
