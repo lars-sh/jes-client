@@ -695,7 +695,7 @@ public class JesClient implements Closeable {
 	 * @throws IOException  Technical FTP failure
 	 * @throws JesException Logical JES failure
 	 */
-	private void setJesFilters(final String nameFilter,
+	protected void setJesFilters(final String nameFilter,
 			final JobStatus status,
 			final String ownerFilter,
 			final int limit) throws IOException, JesException {
@@ -772,7 +772,7 @@ public class JesClient implements Closeable {
 	 * @throws JesLimitReachedException if the last FTP responses string contains
 	 *                                  the spool entries limit warning
 	 */
-	private List<Job> throwIfLimitReached(final int limit, final List<Job> jobs) throws JesLimitReachedException {
+	protected List<Job> throwIfLimitReached(final int limit, final List<Job> jobs) throws JesLimitReachedException {
 		if (Patterns.find(PATTERN_LIST_LIMIT, getFtpClient().getReplyString()).isPresent()) {
 			throw new JesLimitReachedException(limit, jobs, getFtpClient());
 		}
