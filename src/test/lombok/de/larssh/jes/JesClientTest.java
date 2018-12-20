@@ -49,9 +49,16 @@ import lombok.experimental.NonFinal;
 /**
  * {@link JesClient}
  */
+@NoArgsConstructor
 public class JesClientTest {
 	private static final Job TEST_DATA_JOB = new Job("id", "name", JobStatus.OUTPUT, "owner");
 
+	/**
+	 * Verify and clears a mocked JES client and its inner mocks for no more
+	 * interactions.
+	 *
+	 * @param jesClient mocked JES Client to be verified
+	 */
 	private static void verifyEnd(final MockedJesClient jesClient) {
 		for (final Invocation invocation : Mockito.mockingDetails(jesClient).getInvocations()) {
 			if (invocation.getMethod().getDeclaringClass() == MockedJesClient.class) {
@@ -64,6 +71,13 @@ public class JesClientTest {
 		Mockito.clearInvocations(jesClient, jesClient.getFtpClient());
 	}
 
+	/**
+	 * Verify and clears a mocked JES client and its inner mocks for no more
+	 * interactions. The last performed mocked action is expected to be the creation
+	 * of a {@link JesException}.
+	 *
+	 * @param jesClient mocked JES Client to be verified
+	 */
 	private static void verifyEndWithJesException(final MockedJesClient jesClient) {
 		verify(jesClient.getFtpClient()).getReplyString();
 		verifyEnd(jesClient);
@@ -1048,7 +1062,7 @@ public class JesClientTest {
 	}
 
 	/**
-	 * {@link JesClient#throwIfLimitReached()}
+	 * {@link JesClient#throwIfLimitReached(int, List)}
 	 */
 	@Test
 	public void testThrowIfLimitReached() {
