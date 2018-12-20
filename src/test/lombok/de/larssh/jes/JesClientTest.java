@@ -215,15 +215,15 @@ public class JesClientTest {
 
 		// given
 		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
-			when(jesClient.getFtpClient().sendSiteCommand(any())).thenReturn(true);
+			doNothing().when(jesClient).setJesFilters(any(), any(), any(), anyInt());
 			when(jesClient.getFtpClient().listNames(any())).thenReturn(new String[0]);
 
 			// when
-			assertEquals(false, jesClient.exists(TEST_DATA_JOB, JobStatus.OUTPUT));
+			assertEquals(false, jesClient.exists(TEST_DATA_JOB, JobStatus.INPUT));
 
 			// then
 			verify(jesClient).exists(any(), any());
-			verify(jesClient.getFtpClient(), times(4)).sendSiteCommand(any());
+			verify(jesClient).setJesFilters("NAME", JobStatus.INPUT, "OWNER", 2);
 			verify(jesClient.getFtpClient()).listNames("ID");
 			verifyEnd(jesClient);
 		} catch (final IOException | JesException e) {
@@ -232,15 +232,15 @@ public class JesClientTest {
 
 		// given
 		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
-			when(jesClient.getFtpClient().sendSiteCommand(any())).thenReturn(true);
+			doNothing().when(jesClient).setJesFilters(any(), any(), any(), anyInt());
 			when(jesClient.getFtpClient().listNames(any())).thenReturn(new String[] { "ID" });
 
 			// when
-			assertEquals(true, jesClient.exists(TEST_DATA_JOB, JobStatus.OUTPUT));
+			assertEquals(true, jesClient.exists(TEST_DATA_JOB, JobStatus.INPUT));
 
 			// then
 			verify(jesClient).exists(any(), any());
-			verify(jesClient.getFtpClient(), times(4)).sendSiteCommand(any());
+			verify(jesClient).setJesFilters("NAME", JobStatus.INPUT, "OWNER", 2);
 			verify(jesClient.getFtpClient()).listNames("ID");
 			verifyEnd(jesClient);
 		} catch (final IOException | JesException e) {
@@ -294,7 +294,7 @@ public class JesClientTest {
 	public void testGetJobDetails() {
 		// given
 		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
-			when(jesClient.getFtpClient().sendSiteCommand(any())).thenReturn(true);
+			doNothing().when(jesClient).setJesFilters(any(), any(), any(), anyInt());
 			when(jesClient.getFtpClient().listFiles(any()))
 					.thenReturn(new JesFtpFile[] { new JesFtpFile(TEST_DATA_JOB, "") });
 
@@ -303,7 +303,7 @@ public class JesClientTest {
 
 			// then
 			verify(jesClient).getJobDetails(any());
-			verify(jesClient.getFtpClient(), times(4)).sendSiteCommand(any());
+			verify(jesClient).setJesFilters("NAME", JobStatus.ALL, "OWNER", 1024);
 			verify(jesClient.getFtpClient()).listFiles("ID");
 			verifyEnd(jesClient);
 		} catch (final IOException | JesException e) {
@@ -312,7 +312,7 @@ public class JesClientTest {
 
 		// given
 		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
-			when(jesClient.getFtpClient().sendSiteCommand(any())).thenReturn(true);
+			doNothing().when(jesClient).setJesFilters(any(), any(), any(), anyInt());
 			when(jesClient.getFtpClient().listFiles(any())).thenReturn(new JesFtpFile[0]);
 
 			// when
@@ -320,7 +320,7 @@ public class JesClientTest {
 
 			// then
 			verify(jesClient).getJobDetails(any());
-			verify(jesClient.getFtpClient(), times(4)).sendSiteCommand(any());
+			verify(jesClient).setJesFilters("NAME", JobStatus.ALL, "OWNER", 1024);
 			verify(jesClient.getFtpClient()).listFiles("ID");
 			verifyEnd(jesClient);
 		} catch (final IOException | JesException e) {
@@ -482,9 +482,9 @@ public class JesClientTest {
 
 		// given
 		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
-			when(jesClient.getFtpClient().sendSiteCommand(any())).thenReturn(true);
+			doNothing().when(jesClient).setJesFilters(any(), any(), any(), anyInt());
 			when(jesClient.getFtpClient().listNames()).thenReturn(new String[] { "id", "id" });
-			when(jesClient.getFtpClient().getReplyString()).thenReturn("");
+			doAnswer(invocation -> invocation.getArgument(1)).when(jesClient).throwIfLimitReached(anyInt(), any());
 
 			// when
 			assertEquals(Arrays.asList(TEST_DATA_JOB, TEST_DATA_JOB),
@@ -492,9 +492,9 @@ public class JesClientTest {
 
 			// then
 			verify(jesClient).list(any(), any(), any(), anyInt());
-			verify(jesClient.getFtpClient(), times(4)).sendSiteCommand(any());
+			verify(jesClient).setJesFilters(nameFilter, status, ownerFilter, limit);
 			verify(jesClient.getFtpClient()).listNames();
-			verify(jesClient.getFtpClient()).getReplyString();
+			verify(jesClient).throwIfLimitReached(limit, Arrays.asList(TEST_DATA_JOB, TEST_DATA_JOB));
 			verifyEnd(jesClient);
 		} catch (final IOException | JesException e) {
 			throw new SneakyException(e);
@@ -502,18 +502,18 @@ public class JesClientTest {
 
 		// given
 		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
-			when(jesClient.getFtpClient().sendSiteCommand(any())).thenReturn(true);
+			doNothing().when(jesClient).setJesFilters(any(), any(), any(), anyInt());
 			when(jesClient.getFtpClient().listNames()).thenReturn(new String[] { "id" });
-			when(jesClient.getFtpClient().getReplyString()).thenReturn("");
+			doAnswer(invocation -> invocation.getArgument(1)).when(jesClient).throwIfLimitReached(anyInt(), any());
 
 			// when
 			assertEquals(jobs, jesClient.list(nameFilter, status, ownerFilter, limit));
 
 			// then
 			verify(jesClient).list(any(), any(), any(), anyInt());
-			verify(jesClient.getFtpClient(), times(4)).sendSiteCommand(any());
+			verify(jesClient).setJesFilters(nameFilter, status, ownerFilter, limit);
 			verify(jesClient.getFtpClient()).listNames();
-			verify(jesClient.getFtpClient()).getReplyString();
+			verify(jesClient).throwIfLimitReached(limit, jobs);
 			verifyEnd(jesClient);
 		} catch (final IOException | JesException e) {
 			throw new SneakyException(e);
@@ -521,18 +521,18 @@ public class JesClientTest {
 
 		// given
 		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
-			when(jesClient.getFtpClient().sendSiteCommand(any())).thenReturn(true);
+			doNothing().when(jesClient).setJesFilters(any(), any(), any(), anyInt());
 			when(jesClient.getFtpClient().listNames()).thenReturn(new String[0]);
-			when(jesClient.getFtpClient().getReplyString()).thenReturn("");
+			doAnswer(invocation -> invocation.getArgument(1)).when(jesClient).throwIfLimitReached(anyInt(), any());
 
 			// when
 			assertEquals(emptyList(), jesClient.list(nameFilter, status, ownerFilter, limit));
 
 			// then
 			verify(jesClient).list(any(), any(), any(), anyInt());
-			verify(jesClient.getFtpClient(), times(4)).sendSiteCommand(any());
+			verify(jesClient).setJesFilters(nameFilter, status, ownerFilter, limit);
 			verify(jesClient.getFtpClient()).listNames();
-			verify(jesClient.getFtpClient()).getReplyString();
+			verify(jesClient).throwIfLimitReached(limit, emptyList());
 			verifyEnd(jesClient);
 		} catch (final IOException | JesException e) {
 			throw new SneakyException(e);
@@ -540,7 +540,7 @@ public class JesClientTest {
 
 		// given
 		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
-			when(jesClient.getFtpClient().sendSiteCommand(any())).thenReturn(true);
+			doNothing().when(jesClient).setJesFilters(any(), any(), any(), anyInt());
 			when(jesClient.getFtpClient().listNames()).thenReturn(null);
 			when(jesClient.getFtpClient().getReplyString()).thenReturn("");
 
@@ -549,10 +549,9 @@ public class JesClientTest {
 
 			// then
 			verify(jesClient).list(any(), any(), any(), anyInt());
-			verify(jesClient.getFtpClient(), times(4)).sendSiteCommand(any());
+			verify(jesClient).setJesFilters(nameFilter, status, ownerFilter, limit);
 			verify(jesClient.getFtpClient()).listNames();
-			verify(jesClient.getFtpClient()).getReplyString();
-			verifyEnd(jesClient);
+			verifyEndWithJesException(jesClient);
 		} catch (final IOException | JesException e) {
 			throw new SneakyException(e);
 		}
@@ -619,19 +618,19 @@ public class JesClientTest {
 
 		// given
 		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
-			when(jesClient.getFtpClient().sendSiteCommand(any())).thenReturn(true);
+			doNothing().when(jesClient).setJesFilters(any(), any(), any(), anyInt());
 			when(jesClient.getFtpClient().listFiles())
 					.thenReturn(new JesFtpFile[] { new JesFtpFile(TEST_DATA_JOB, "") });
-			when(jesClient.getFtpClient().getReplyString()).thenReturn("");
+			doAnswer(invocation -> invocation.getArgument(1)).when(jesClient).throwIfLimitReached(anyInt(), any());
 
 			// when
 			assertEquals(jobs, jesClient.listFilled(nameFilter, status, ownerFilter, limit));
 
 			// then
 			verify(jesClient).listFilled(any(), any(), any(), anyInt());
-			verify(jesClient.getFtpClient(), times(4)).sendSiteCommand(any());
+			verify(jesClient).setJesFilters(nameFilter, status, ownerFilter, limit);
 			verify(jesClient.getFtpClient()).listFiles();
-			verify(jesClient.getFtpClient()).getReplyString();
+			verify(jesClient).throwIfLimitReached(limit, jobs);
 			verifyEnd(jesClient);
 		} catch (final IOException | JesException e) {
 			throw new SneakyException(e);
@@ -639,10 +638,10 @@ public class JesClientTest {
 
 		// given
 		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
-			when(jesClient.getFtpClient().sendSiteCommand(any())).thenReturn(true);
+			doNothing().when(jesClient).setJesFilters(any(), any(), any(), anyInt());
 			when(jesClient.getFtpClient().listFiles()).thenReturn(
 					new JesFtpFile[] { new JesFtpFile(TEST_DATA_JOB, ""), new JesFtpFile(TEST_DATA_JOB, "") });
-			when(jesClient.getFtpClient().getReplyString()).thenReturn("");
+			doAnswer(invocation -> invocation.getArgument(1)).when(jesClient).throwIfLimitReached(anyInt(), any());
 
 			// when
 			assertEquals(Arrays.asList(TEST_DATA_JOB, TEST_DATA_JOB),
@@ -650,9 +649,9 @@ public class JesClientTest {
 
 			// then
 			verify(jesClient).listFilled(any(), any(), any(), anyInt());
-			verify(jesClient.getFtpClient(), times(4)).sendSiteCommand(any());
+			verify(jesClient).setJesFilters(nameFilter, status, ownerFilter, limit);
 			verify(jesClient.getFtpClient()).listFiles();
-			verify(jesClient.getFtpClient()).getReplyString();
+			verify(jesClient).throwIfLimitReached(limit, Arrays.asList(TEST_DATA_JOB, TEST_DATA_JOB));
 			verifyEnd(jesClient);
 		} catch (final IOException | JesException e) {
 			throw new SneakyException(e);
@@ -660,18 +659,18 @@ public class JesClientTest {
 
 		// given
 		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
-			when(jesClient.getFtpClient().sendSiteCommand(any())).thenReturn(true);
+			doNothing().when(jesClient).setJesFilters(any(), any(), any(), anyInt());
 			when(jesClient.getFtpClient().listFiles()).thenReturn(new JesFtpFile[0]);
-			when(jesClient.getFtpClient().getReplyString()).thenReturn("");
+			doAnswer(invocation -> invocation.getArgument(1)).when(jesClient).throwIfLimitReached(anyInt(), any());
 
 			// when
 			assertEquals(emptyList(), jesClient.listFilled(nameFilter, status, ownerFilter, limit));
 
 			// then
 			verify(jesClient).listFilled(any(), any(), any(), anyInt());
-			verify(jesClient.getFtpClient(), times(4)).sendSiteCommand(any());
+			verify(jesClient).setJesFilters(nameFilter, status, ownerFilter, limit);
 			verify(jesClient.getFtpClient()).listFiles();
-			verify(jesClient.getFtpClient()).getReplyString();
+			verify(jesClient).throwIfLimitReached(limit, emptyList());
 			verifyEnd(jesClient);
 		} catch (final IOException | JesException e) {
 			throw new SneakyException(e);
@@ -876,12 +875,13 @@ public class JesClientTest {
 			Reflect.on(jesClient).call("setJesFilters", nameFilter, status, ownerFilter, limit);
 
 			// then
+			verify(jesClient).setJesFilters(nameFilter, status, ownerFilter, limit);
 			verify(jesClient.getFtpClient()).sendSiteCommand(siteCommandNameFilter);
 			verify(jesClient.getFtpClient()).sendSiteCommand(siteCommandOwnerFilter);
 			verify(jesClient.getFtpClient()).sendSiteCommand(siteCommandStatusFilter);
 			verify(jesClient.getFtpClient()).sendSiteCommand(siteCommandLimitFilter);
 			verifyEnd(jesClient);
-		} catch (final IOException e) {
+		} catch (final IOException | JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -898,12 +898,13 @@ public class JesClientTest {
 							.call(Reflect.on(jesClient), "setJesFilters", nameFilter, status, ownerFilter, limit));
 
 			// then
+			verify(jesClient).setJesFilters(nameFilter, status, ownerFilter, limit);
 			verify(jesClient.getFtpClient()).sendSiteCommand(siteCommandNameFilter);
 			verify(jesClient.getFtpClient()).sendSiteCommand(siteCommandOwnerFilter);
 			verify(jesClient.getFtpClient()).sendSiteCommand(siteCommandStatusFilter);
 			verify(jesClient.getFtpClient()).sendSiteCommand(siteCommandLimitFilter);
 			verifyEndWithJesException(jesClient);
-		} catch (final IOException e) {
+		} catch (final IOException | JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -919,11 +920,12 @@ public class JesClientTest {
 							.call(Reflect.on(jesClient), "setJesFilters", nameFilter, status, ownerFilter, limit));
 
 			// then
+			verify(jesClient).setJesFilters(nameFilter, status, ownerFilter, limit);
 			verify(jesClient.getFtpClient()).sendSiteCommand(siteCommandNameFilter);
 			verify(jesClient.getFtpClient()).sendSiteCommand(siteCommandOwnerFilter);
 			verify(jesClient.getFtpClient()).sendSiteCommand(siteCommandStatusFilter);
 			verifyEndWithJesException(jesClient);
-		} catch (final IOException e) {
+		} catch (final IOException | JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -938,10 +940,11 @@ public class JesClientTest {
 							.call(Reflect.on(jesClient), "setJesFilters", nameFilter, status, ownerFilter, limit));
 
 			// then
+			verify(jesClient).setJesFilters(nameFilter, status, ownerFilter, limit);
 			verify(jesClient.getFtpClient()).sendSiteCommand(siteCommandNameFilter);
 			verify(jesClient.getFtpClient()).sendSiteCommand(siteCommandOwnerFilter);
 			verifyEndWithJesException(jesClient);
-		} catch (final IOException e) {
+		} catch (final IOException | JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -955,9 +958,10 @@ public class JesClientTest {
 							.call(Reflect.on(jesClient), "setJesFilters", nameFilter, status, ownerFilter, limit));
 
 			// then
+			verify(jesClient).setJesFilters(nameFilter, status, ownerFilter, limit);
 			verify(jesClient.getFtpClient()).sendSiteCommand(siteCommandNameFilter);
 			verifyEndWithJesException(jesClient);
-		} catch (final IOException e) {
+		} catch (final IOException | JesException e) {
 			throw new SneakyException(e);
 		}
 	}
@@ -1059,9 +1063,10 @@ public class JesClientTest {
 			assertEquals(jobs, Reflect.on(jesClient).call("throwIfLimitReached", limit, jobs).get());
 
 			// then
+			verify(jesClient).throwIfLimitReached(limit, jobs);
 			verify(jesClient.getFtpClient()).getReplyString();
 			verifyEnd(jesClient);
-		} catch (final IOException e) {
+		} catch (final IOException | JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -1075,11 +1080,12 @@ public class JesClientTest {
 					() -> Reflects.call(Reflect.on(jesClient), "throwIfLimitReached", limit, jobs));
 
 			// then
+			verify(jesClient).throwIfLimitReached(limit, jobs);
 			verify(jesClient.getFtpClient(), times(2)).getReplyString();
 			verifyEnd(jesClient);
 			assertEquals(limit, exception.getLimit());
 			assertEquals(jobs, exception.getJobs());
-		} catch (final IOException e) {
+		} catch (final IOException | JesException e) {
 			throw new SneakyException(e);
 		}
 	}
