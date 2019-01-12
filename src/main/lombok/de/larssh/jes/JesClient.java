@@ -370,7 +370,7 @@ public class JesClient implements Closeable {
 				// Key
 				final String key = matcher.get().group("key");
 				if (properties.containsKey(key)) {
-					throw new JesException(key);
+					throw new JesException("Found duplicate status key \"%s\".", key);
 				}
 
 				// Value
