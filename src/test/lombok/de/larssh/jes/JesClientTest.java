@@ -1,5 +1,6 @@
 package de.larssh.jes;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -9,18 +10,22 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockingDetails;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +39,6 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 import org.joor.Reflect;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.mockito.invocation.Invocation;
 
 import de.larssh.jes.parser.JesFtpFile;
@@ -60,15 +64,15 @@ public class JesClientTest {
 	 * @param jesClient mocked JES Client to be verified
 	 */
 	private static void verifyEnd(final MockedJesClient jesClient) {
-		for (final Invocation invocation : Mockito.mockingDetails(jesClient).getInvocations()) {
+		for (final Invocation invocation : mockingDetails(jesClient).getInvocations()) {
 			if (invocation.getMethod().getDeclaringClass() == MockedJesClient.class) {
 				invocation.ignoreForVerification();
 			}
 		}
 
-		Mockito.verifyNoMoreInteractions(jesClient);
-		Mockito.verifyNoMoreInteractions(jesClient.getFtpClient());
-		Mockito.clearInvocations(jesClient, jesClient.getFtpClient());
+		verifyNoMoreInteractions(jesClient);
+		verifyNoMoreInteractions(jesClient.getFtpClient());
+		clearInvocations(jesClient, jesClient.getFtpClient());
 	}
 
 	/**
@@ -447,7 +451,7 @@ public class JesClientTest {
 		final JobStatus status = JobStatus.OUTPUT;
 		final String ownerFilter = "ownerFilter";
 		final int limit = 123;
-		final List<Job> jobs = Arrays.asList(TEST_DATA_JOB);
+		final List<Job> jobs = asList(TEST_DATA_JOB);
 
 		// given
 		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
@@ -501,14 +505,13 @@ public class JesClientTest {
 			doAnswer(invocation -> invocation.getArgument(1)).when(jesClient).throwIfLimitReached(anyInt(), any());
 
 			// when
-			assertEquals(Arrays.asList(TEST_DATA_JOB, TEST_DATA_JOB),
-					jesClient.list(nameFilter, status, ownerFilter, limit));
+			assertEquals(asList(TEST_DATA_JOB, TEST_DATA_JOB), jesClient.list(nameFilter, status, ownerFilter, limit));
 
 			// then
 			verify(jesClient).list(any(), any(), any(), anyInt());
 			verify(jesClient).setJesFilters(nameFilter, status, ownerFilter, limit);
 			verify(jesClient.getFtpClient()).listNames();
-			verify(jesClient).throwIfLimitReached(limit, Arrays.asList(TEST_DATA_JOB, TEST_DATA_JOB));
+			verify(jesClient).throwIfLimitReached(limit, asList(TEST_DATA_JOB, TEST_DATA_JOB));
 			verifyEnd(jesClient);
 		} catch (final IOException | JesException e) {
 			throw new SneakyException(e);
@@ -583,7 +586,7 @@ public class JesClientTest {
 		final JobStatus status = JobStatus.OUTPUT;
 		final String ownerFilter = "ownerFilter";
 		final int limit = 123;
-		final List<Job> jobs = Arrays.asList(TEST_DATA_JOB);
+		final List<Job> jobs = asList(TEST_DATA_JOB);
 
 		// given
 		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
@@ -658,14 +661,14 @@ public class JesClientTest {
 			doAnswer(invocation -> invocation.getArgument(1)).when(jesClient).throwIfLimitReached(anyInt(), any());
 
 			// when
-			assertEquals(Arrays.asList(TEST_DATA_JOB, TEST_DATA_JOB),
+			assertEquals(asList(TEST_DATA_JOB, TEST_DATA_JOB),
 					jesClient.listFilled(nameFilter, status, ownerFilter, limit));
 
 			// then
 			verify(jesClient).listFilled(any(), any(), any(), anyInt());
 			verify(jesClient).setJesFilters(nameFilter, status, ownerFilter, limit);
 			verify(jesClient.getFtpClient()).listFiles();
-			verify(jesClient).throwIfLimitReached(limit, Arrays.asList(TEST_DATA_JOB, TEST_DATA_JOB));
+			verify(jesClient).throwIfLimitReached(limit, asList(TEST_DATA_JOB, TEST_DATA_JOB));
 			verifyEnd(jesClient);
 		} catch (final IOException | JesException e) {
 			throw new SneakyException(e);
@@ -1067,7 +1070,7 @@ public class JesClientTest {
 	@Test
 	public void testThrowIfLimitReached() {
 		final int limit = 123;
-		final List<Job> jobs = Arrays.asList(TEST_DATA_JOB);
+		final List<Job> jobs = asList(TEST_DATA_JOB);
 
 		// given
 		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
@@ -1369,14 +1372,14 @@ public class JesClientTest {
 		/**
 		 * Constructs a new {@link MockedJesClient} instance.
 		 *
+		 * <p>
+		 * This factory method handles the closable warnings.
+		 *
 		 * @return constructed {@link MockedJesClient} instance
 		 */
 		@SuppressWarnings("resource")
 		public static MockedJesClient newInstance() {
-			final MockedJesClient jesClient = Mockito.spy(new MockedJesClient());
-			verify(jesClient.getFtpClient()).setParserFactory(any());
-			verifyEnd(jesClient);
-			return jesClient;
+			return spy(new MockedJesClient());
 		}
 
 		/**
@@ -1390,7 +1393,7 @@ public class JesClientTest {
 		@Override
 		public FTPClient getFtpClient() {
 			if (ftpClient == null) {
-				ftpClient = Mockito.mock(FTPClient.class);
+				ftpClient = mock(FTPClient.class);
 			}
 			return Objects.requireNonNull(ftpClient);
 		}

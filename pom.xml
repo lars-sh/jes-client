@@ -48,11 +48,11 @@
 		<url>https://travis-ci.org/lars-sh/jes-client</url>
 	</ciManagement>
 
+	<properties>
+		<spotbugs.excludeFilterFile>${project.basedir}/spotbugs-excludes.xml</spotbugs.excludeFilterFile>
+	</properties>
+
 	<dependencies>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>

@@ -24,6 +24,7 @@ import de.larssh.utils.text.Patterns;
 import de.larssh.utils.text.Strings;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.NoArgsConstructor;
 
 /**
@@ -246,6 +247,7 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 	/** {@inheritDoc} */
 	@NonNull
 	@Override
+	@SuppressFBWarnings(value = "CFS_CONFUSING_FUNCTION_SEMANTICS", justification = "based on interface contract")
 	public List<String> preParse(@Nullable final List<String> original) {
 		// Empty list
 		if (original == null || original.isEmpty()) {
@@ -258,17 +260,18 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 					original.get(0));
 		}
 
-		// Iterate over original from 1 to size to
+		// Iterate over original from 1 to size
 		// 1. ignore title line (starting at 1)
 		// 2. handle last line (stopping at size)
 		final List<String> lines = new ArrayList<>();
 		final List<String> linesOfCurrentJob = new ArrayList<>();
 		final int size = original.size();
 		for (int index = 1; index <= size; index += 1) {
-			final Optional<String> line = index < size ? Optional.of(original.get(index)) : Optional.empty();
+			final boolean isLast = index < size;
+			final Optional<String> line = isLast ? Optional.empty() : Optional.of(original.get(index));
 
-			if (!linesOfCurrentJob.isEmpty()
-					&& line.map(l -> Patterns.matches(PATTERN_JOB, l).isPresent()).orElse(true)) {
+			if ((line.flatMap(l -> Patterns.matches(PATTERN_JOB, l)).isPresent() || isLast)
+					&& !linesOfCurrentJob.isEmpty()) {
 				lines.add(linesOfCurrentJob.stream().collect(joining(NEW_LINE)));
 				linesOfCurrentJob.clear();
 			}

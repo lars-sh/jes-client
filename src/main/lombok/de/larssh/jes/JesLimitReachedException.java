@@ -1,6 +1,7 @@
 package de.larssh.jes;
 
-import java.util.Collections;
+import static java.util.Collections.unmodifiableList;
+
 import java.util.List;
 
 import org.apache.commons.net.ftp.FTPClient;
@@ -55,6 +56,6 @@ public class JesLimitReachedException extends JesException {
 	 * @return list of jobs
 	 */
 	public List<Job> getJobs() {
-		return Collections.unmodifiableList(jobs);
+		return unmodifiableList(jobs);
 	}
 }

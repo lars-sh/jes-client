@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import de.larssh.utils.text.Strings;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -81,6 +82,8 @@ public class JobOutput {
 	 * @param outputClass   the output class
 	 * @throws JobFieldInconsistentException on inconsistent field value
 	 */
+	@SuppressFBWarnings(value = "PCOA_PARTIALLY_CONSTRUCTED_OBJECT_ACCESS",
+			justification = "fb-contrib issue, see https://github.com/mebigfatguy/fb-contrib/issues/325")
 	protected JobOutput(final Job job,
 			final int index,
 			final String name,
@@ -127,10 +130,10 @@ public class JobOutput {
 		if (getStep().isEmpty()) {
 			throw new JobFieldInconsistentException("Step must not be empty.");
 		}
-		if (getProcedureStep().map(String::isEmpty).orElse(false)) {
+		if (getProcedureStep().filter(String::isEmpty).isPresent()) {
 			throw new JobFieldInconsistentException("Procedure Step must not be empty if present.");
 		}
-		if (getOutputClass().map(String::isEmpty).orElse(false)) {
+		if (getOutputClass().filter(String::isEmpty).isPresent()) {
 			throw new JobFieldInconsistentException("Output class must not be empty if present.");
 		}
 	}

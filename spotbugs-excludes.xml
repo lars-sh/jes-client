@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter
+	xmlns="https://github.com/spotbugs/filter/3.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="https://github.com/spotbugs/filter/3.0.0 https://raw.githubusercontent.com/spotbugs/spotbugs/3.1.0/spotbugs/etc/findbugsfilter.xsd">
+	<Match>
+		<Bug pattern="OPM_OVERLY_PERMISSIVE_METHOD" />
+	</Match>
+	<Match>
+		<Bug pattern="WEM_WEAK_EXCEPTION_MESSAGING" />
+	</Match>
+
+	<!-- Method "wait" is really intended to wait for a specified amount of millis. -->
+	<Match>
+		<Bug pattern="MDM_THREAD_YIELD" />
+		<Class name="de.larssh.jes.JesClient" />
+	</Match>
+</FindBugsFilter>

@@ -1,7 +1,8 @@
 package de.larssh.jes;
 
+import static java.util.Collections.unmodifiableList;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
@@ -9,6 +10,7 @@ import java.util.OptionalInt;
 import de.larssh.utils.OptionalInts;
 import de.larssh.utils.text.Strings;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -134,6 +136,8 @@ public class Job {
 	 * @param abendCode  the jobs abend code, when held (finished)
 	 * @throws JobFieldInconsistentException on inconsistent field value
 	 */
+	@SuppressFBWarnings(value = "PCOA_PARTIALLY_CONSTRUCTED_OBJECT_ACCESS",
+			justification = "fb-contrib issue, see https://github.com/mebigfatguy/fb-contrib/issues/325")
 	public Job(final String id,
 			final String name,
 			final JobStatus status,
@@ -197,7 +201,7 @@ public class Job {
 	 * @return list of job output details
 	 */
 	public List<JobOutput> getOutputs() {
-		return Collections.unmodifiableList(outputs);
+		return unmodifiableList(outputs);
 	}
 
 	/**
@@ -209,16 +213,16 @@ public class Job {
 		if (getId().isEmpty()) {
 			throw new JobFieldInconsistentException("Job ID must be filled, but is empty.");
 		}
-		if (getJesClass().map(String::isEmpty).orElse(false)) {
+		if (getJesClass().filter(String::isEmpty).isPresent()) {
 			throw new JobFieldInconsistentException("JES class must not be empty if present.");
 		}
 		if (getResultCode().isPresent() && getAbendCode().isPresent()) {
 			throw new JobFieldInconsistentException("Result Code and Abend Code must not be present at the same time.");
 		}
-		if (OptionalInts.mapToObj(getResultCode(), r -> r < 0).orElse(false)) {
+		if (OptionalInts.filter(getResultCode(), r -> r < 0).isPresent()) {
 			throw new JobFieldInconsistentException("Result Code must not be less than zero.");
 		}
-		if (getAbendCode().map(String::isEmpty).orElse(false)) {
+		if (getAbendCode().filter(String::isEmpty).isPresent()) {
 			throw new JobFieldInconsistentException("Abend Code must not be empty if present.");
 		}
 		if (getStatus() != JobStatus.OUTPUT && getStatus() != JobStatus.ALL) {

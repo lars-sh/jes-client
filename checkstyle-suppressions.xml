@@ -2,5 +2,5 @@
 <!DOCTYPE suppressions PUBLIC "-//Checkstyle//DTD SuppressionXpathFilter Experimental Configuration 1.2//EN" "https://checkstyle.org/dtds/suppressions_1_2_xpath_experimental.dtd">
 <suppressions>
 	<!-- Unit Tests -->
-	<suppress files="^.*[/\\]de[/\\]larssh[/\\]jes[/\\]JesClientTest\.java$" checks="SuppressWarningsCheck" message="^The warning 'resource' cannot be suppressed at this location\.$" />
+	<suppress files="^.*[/\\]de[/\\]larssh[/\\]jes[/\\]JesClientTest\.java$" checks="SuppressWarningsCheck" message="^The warning &apos;resource&apos; cannot be suppressed at this location\.$" />
 </suppressions>

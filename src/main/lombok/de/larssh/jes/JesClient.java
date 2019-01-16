@@ -2,6 +2,10 @@ package de.larssh.jes;
 
 import static de.larssh.utils.Collectors.toLinkedHashMap;
 import static de.larssh.utils.Finals.constant;
+import static de.larssh.utils.function.ThrowingFunction.throwing;
+import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
 import java.io.ByteArrayOutputStream;
@@ -10,7 +14,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,10 +30,10 @@ import org.apache.commons.net.ftp.FTPReply;
 import de.larssh.jes.parser.JesFtpFile;
 import de.larssh.jes.parser.JesFtpFileEntryParserFactory;
 import de.larssh.utils.Optionals;
-import de.larssh.utils.function.ThrowingFunction;
 import de.larssh.utils.function.ThrowingRunnable;
 import de.larssh.utils.text.Patterns;
 import de.larssh.utils.text.Strings;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
 import lombok.experimental.NonFinal;
 
@@ -211,7 +214,7 @@ public class JesClient implements Closeable {
 	 */
 	public JesClient() {
 		ftpClient = new FTPClient();
-		getFtpClient().setParserFactory(new JesFtpFileEntryParserFactory());
+		ftpClient.setParserFactory(new JesFtpFileEntryParserFactory());
 	}
 
 	/**
@@ -222,24 +225,13 @@ public class JesClient implements Closeable {
 	 * The JesClient can store a JES spool owner. This constructor initializes the
 	 * JES spool owner using the given username.
 	 *
-	 * @param hostname FTP hostname
-	 * @param username FTP username and JES spool owner
-	 * @param password FTP password
-	 * @throws IOException  Technical FTP failure
-	 * @throws JesException Logical JES failure
-	 */
-	public JesClient(final String hostname, final String username, final String password)
-			throws IOException, JesException {
-		this(hostname, FTPClient.DEFAULT_PORT, username, password);
-	}
-
-	/**
-	 * Simplified constructor. This constructor initiates a new FTP connection and
-	 * logs in using the given credentials.
+	 * <p>
+	 * The default port is {@link org.apache.commons.net.ftp.FTP#DEFAULT_PORT}.
 	 *
 	 * <p>
-	 * The JesClient can store a JES spool owner. This constructor initializes the
-	 * JES spool owner using the given username.
+	 * <b>Warning:</b> This constructor calls the non-final methods
+	 * {@link #getFtpClient()} and {@link #login(String, String)}. Therefore better
+	 * not call this from an extending class, that overrides one of them.
 	 *
 	 * @param hostname FTP hostname
 	 * @param port     FTP port
@@ -248,6 +240,7 @@ public class JesClient implements Closeable {
 	 * @throws IOException  Technical FTP failure
 	 * @throws JesException Logical JES failure
 	 */
+	@SuppressFBWarnings(value = "PCOA_PARTIALLY_CONSTRUCTED_OBJECT_ACCESS", justification = "see JavaDoc")
 	public JesClient(final String hostname, final int port, final String username, final String password)
 			throws IOException, JesException {
 		this();
@@ -340,10 +333,10 @@ public class JesClient implements Closeable {
 	public Optional<Job> getJobDetails(final Job job) throws IOException, JesException {
 		setJesFilters(job.getName(), JobStatus.ALL, job.getOwner(), LIST_LIMIT_MAX);
 
-		return Optionals.ofSingle(Arrays.stream(getFtpClient().listFiles(job.getId()))
-				.filter(file -> file instanceof JesFtpFile)
-				.map(file -> (JesFtpFile) file)
-				.map(JesFtpFile::getJob));
+		return Optionals
+				.ofSingle(stream(getFtpClient().listFiles(job.getId())).filter(file -> file instanceof JesFtpFile)
+						.map(file -> (JesFtpFile) file)
+						.map(JesFtpFile::getJob));
 	}
 
 	/**
@@ -487,7 +480,7 @@ public class JesClient implements Closeable {
 						"Retrieving the list of job IDs failed. Probably no FTP data connection socket could be opened."));
 
 		return throwIfLimitReached(limit,
-				Arrays.stream(ids).map(id -> new Job(id, nameFilter, status, ownerFilter)).collect(toList()));
+				stream(ids).map(id -> new Job(id, nameFilter, status, ownerFilter)).collect(toList()));
 	}
 
 	/**
@@ -595,8 +588,7 @@ public class JesClient implements Closeable {
 		final FTPFile[] files = getFtpClient().listFiles();
 
 		return throwIfLimitReached(limit,
-				Arrays.stream(files)
-						.filter(file -> file instanceof JesFtpFile)
+				stream(files).filter(file -> file instanceof JesFtpFile)
 						.map(file -> (JesFtpFile) file)
 						.map(JesFtpFile::getJob)
 						.collect(toList()));
@@ -669,9 +661,7 @@ public class JesClient implements Closeable {
 			return retrieveOutputs(
 					getJobDetails(job).orElseThrow(() -> new JesException("Job [%s] is not available.", job.getId())));
 		}
-		return job.getOutputs()
-				.stream()
-				.collect(toLinkedHashMap(Function.identity(), ThrowingFunction.throwing(this::retrieve)));
+		return job.getOutputs().stream().collect(toLinkedHashMap(Function.identity(), throwing(this::retrieve)));
 	}
 
 	/**
@@ -938,9 +928,9 @@ public class JesClient implements Closeable {
 		// Status INPUT and ACTIVE might need to be waited for.
 		final List<JobStatus> stati;
 		if (job.getStatus() == JobStatus.ACTIVE) {
-			stati = Arrays.asList(JobStatus.ACTIVE);
+			stati = singletonList(JobStatus.ACTIVE);
 		} else {
-			stati = Arrays.asList(JobStatus.INPUT, JobStatus.ACTIVE);
+			stati = asList(JobStatus.INPUT, JobStatus.ACTIVE);
 		}
 
 		// Sleep and check for timeout
