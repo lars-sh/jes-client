@@ -7,8 +7,6 @@ import java.io.ObjectOutputStream;
 import org.apache.commons.net.ftp.FTPFile;
 
 import de.larssh.jes.Job;
-import edu.umd.cs.findbugs.annotations.Nullable;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -17,8 +15,9 @@ import lombok.ToString;
  */
 @Getter
 @ToString
-@EqualsAndHashCode(callSuper = true, onParam_ = { @Nullable })
 public class JesFtpFile extends FTPFile {
+	// @EqualsAndHashCode(callSuper = true, onParam_ = { @Nullable })
+
 	private static final long serialVersionUID = 6881059052088614926L;
 
 	/**
@@ -35,6 +34,7 @@ public class JesFtpFile extends FTPFile {
 	 * @param job        job details
 	 * @param rawListing raw FTP server listing
 	 */
+	@SuppressWarnings("PMD.CallSuperInConstructor")
 	public JesFtpFile(final Job job, final String rawListing) {
 		super();
 

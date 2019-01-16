@@ -96,6 +96,7 @@ import lombok.experimental.NonFinal;
  *      Knowledge Center - Interfacing with JES</a>
  */
 @Getter
+@SuppressWarnings({ "PMD.ExcessiveImports", "PMD.GodClass" })
 public class JesClient implements Closeable {
 	/**
 	 * Wildcard value to be used for name and owner filters, meaning "any" value.

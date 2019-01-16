@@ -4,7 +4,9 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -54,6 +56,12 @@ import lombok.experimental.NonFinal;
  * {@link JesClient}
  */
 @NoArgsConstructor
+@SuppressWarnings({
+		"PMD.AvoidDuplicateLiterals",
+		"PMD.ExcessiveClassLength",
+		"PMD.ExcessiveImports",
+		"PMD.ExcessiveMethodLength",
+		"PMD.NcssCount" })
 public class JesClientTest {
 	private static final Job TEST_DATA_JOB = new Job("id", "name", JobStatus.OUTPUT, "owner");
 
@@ -237,7 +245,7 @@ public class JesClientTest {
 			when(jesClient.getFtpClient().listNames(any())).thenReturn(new String[0]);
 
 			// when
-			assertEquals(false, jesClient.exists(TEST_DATA_JOB, JobStatus.INPUT));
+			assertFalse(jesClient.exists(TEST_DATA_JOB, JobStatus.INPUT));
 
 			// then
 			verify(jesClient).exists(any(), any());
@@ -254,7 +262,7 @@ public class JesClientTest {
 			when(jesClient.getFtpClient().listNames(any())).thenReturn(new String[] { "ID" });
 
 			// when
-			assertEquals(true, jesClient.exists(TEST_DATA_JOB, JobStatus.INPUT));
+			assertTrue(jesClient.exists(TEST_DATA_JOB, JobStatus.INPUT));
 
 			// then
 			verify(jesClient).exists(any(), any());
@@ -1165,7 +1173,7 @@ public class JesClientTest {
 			doReturn(true).when(jesClient).waitFor(any(), any(), anyLong());
 
 			// when
-			assertEquals(true, jesClient.waitFor(TEST_DATA_JOB, 123, 456));
+			assertTrue(jesClient.waitFor(TEST_DATA_JOB, 123, 456));
 
 			// then
 			verify(jesClient).waitFor(any(), anyLong(), anyLong());
@@ -1180,7 +1188,7 @@ public class JesClientTest {
 			doReturn(false).when(jesClient).waitFor(any(), any(), anyLong());
 
 			// when
-			assertEquals(false, jesClient.waitFor(TEST_DATA_JOB, 123, 456));
+			assertFalse(jesClient.waitFor(TEST_DATA_JOB, 123, 456));
 
 			// then
 			verify(jesClient).waitFor(any(), anyLong(), anyLong());
@@ -1231,7 +1239,7 @@ public class JesClientTest {
 
 			// when
 			final AtomicInteger sleepCalls = new AtomicInteger(0);
-			assertEquals(true, jesClient.waitFor(TEST_DATA_JOB, sleepCalls::incrementAndGet, 123));
+			assertTrue(jesClient.waitFor(TEST_DATA_JOB, sleepCalls::incrementAndGet, 123));
 			assertEquals(0, sleepCalls.get());
 
 			// then
@@ -1246,10 +1254,8 @@ public class JesClientTest {
 
 			// when
 			final AtomicInteger sleepCalls = new AtomicInteger(0);
-			assertEquals(false,
-					jesClient.waitFor(new Job("id", "name", JobStatus.INPUT, "owner"),
-							sleepCalls::incrementAndGet,
-							-123));
+			assertFalse(jesClient
+					.waitFor(new Job("id", "name", JobStatus.INPUT, "owner"), sleepCalls::incrementAndGet, -123));
 			assertEquals(0, sleepCalls.get());
 
 			// then
@@ -1266,7 +1272,7 @@ public class JesClientTest {
 			// when
 			final Job job = new Job("id", "name", JobStatus.ACTIVE, "owner");
 			final AtomicInteger sleepCalls = new AtomicInteger(0);
-			assertEquals(true, jesClient.waitFor(job, sleepCalls::incrementAndGet, 123));
+			assertTrue(jesClient.waitFor(job, sleepCalls::incrementAndGet, 123));
 			assertEquals(0, sleepCalls.get());
 
 			// then
@@ -1285,7 +1291,7 @@ public class JesClientTest {
 			// when
 			final Job job = new Job("id", "name", JobStatus.ACTIVE, "owner");
 			final AtomicInteger sleepCalls = new AtomicInteger(0);
-			assertEquals(true, jesClient.waitFor(job, sleepCalls::incrementAndGet, 123));
+			assertTrue(jesClient.waitFor(job, sleepCalls::incrementAndGet, 123));
 			assertEquals(1, sleepCalls.get());
 
 			// then
@@ -1308,7 +1314,7 @@ public class JesClientTest {
 			final Runnable noop = () -> {
 				// empty by design
 			};
-			assertEquals(false, jesClient.waitFor(job, noop, 123));
+			assertFalse(jesClient.waitFor(job, noop, 123));
 
 			// then
 			verify(jesClient).waitFor(any(), any(), anyLong());
@@ -1330,7 +1336,7 @@ public class JesClientTest {
 				sleepCalls.incrementAndGet();
 				Thread.sleep(123);
 			});
-			assertEquals(false, jesClient.waitFor(job, sleep, 123));
+			assertFalse(jesClient.waitFor(job, sleep, 123));
 			assertEquals(1, sleepCalls.get());
 
 			// then
@@ -1351,7 +1357,7 @@ public class JesClientTest {
 
 			// when
 			final AtomicInteger sleepCalls = new AtomicInteger(0);
-			assertEquals(true, jesClient.waitFor(job, sleepCalls::incrementAndGet, 123));
+			assertTrue(jesClient.waitFor(job, sleepCalls::incrementAndGet, 123));
 			assertEquals(2, sleepCalls.get());
 
 			// then
