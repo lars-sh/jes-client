@@ -68,6 +68,24 @@ public class JobTest {
 						.add("C", "D", true)
 						.add(JobStatus.ACTIVE, JobStatus.ALL, true)
 						.add("G", "H", true));
+
+		assertEqualsAndHashCode(Job.class,
+				new AssertEqualsAndHashCodeArguments().add("A", "B", false)
+						.add("C", "D", true)
+						.add(JobStatus.ALL, JobStatus.OUTPUT, true)
+						.add("G", "H", true)
+						.add(Optional.empty(), Optional.of("J"), true)
+						.add(OptionalInt.empty(), OptionalInt.of(12), true)
+						.add(Optional.empty(), Optional.empty(), true));
+
+		assertEqualsAndHashCode(Job.class,
+				new AssertEqualsAndHashCodeArguments().add("A", "B", false)
+						.add("C", "D", true)
+						.add(JobStatus.ALL, JobStatus.OUTPUT, true)
+						.add("G", "H", true)
+						.add(Optional.empty(), Optional.empty(), true)
+						.add(OptionalInt.empty(), OptionalInt.of(12), true)
+						.add(Optional.empty(), Optional.of("N"), true));
 	}
 
 	/**
