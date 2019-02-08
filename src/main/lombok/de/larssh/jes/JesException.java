@@ -3,7 +3,6 @@ package de.larssh.jes;
 import org.apache.commons.net.ftp.FTPClient;
 
 import de.larssh.utils.text.Strings;
-import lombok.ToString;
 
 /**
  * Thrown to indicate that a logical JES exception occurred.
