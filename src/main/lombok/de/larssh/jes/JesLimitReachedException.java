@@ -40,8 +40,6 @@ public class JesLimitReachedException extends JesException {
 	 * @param limit     limit of spool entries
 	 * @param jobs      list of jobs up to the limit
 	 * @param ftpClient FTP client with reply string
-	 * @throws java.util.IllegalFormatException {@code arguments} is not empty and
-	 *         {@code format} contains unexpected syntax
 	 */
 	public JesLimitReachedException(final int limit, final List<Job> jobs, final FTPClient ftpClient) {
 		super(ftpClient, "Listing limit of %d reached.", limit);
@@ -57,5 +55,12 @@ public class JesLimitReachedException extends JesException {
 	 */
 	public List<Job> getJobs() {
 		return unmodifiableList(jobs);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	@ToString.Include(name = "message", rank = 1)
+	public String getMessage() {
+		return super.getMessage();
 	}
 }

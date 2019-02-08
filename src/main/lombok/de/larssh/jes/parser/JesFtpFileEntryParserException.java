@@ -6,7 +6,6 @@ import lombok.ToString;
 /**
  * Thrown to indicate that parsing the JES job list failed.
  */
-@ToString
 public class JesFtpFileEntryParserException extends RuntimeException {
 	// @EqualsAndHashCode(callSuper = true, onParam_ = { @Nullable })
 
@@ -19,8 +18,6 @@ public class JesFtpFileEntryParserException extends RuntimeException {
 	 *
 	 * @param message   the detail message
 	 * @param arguments arguments referenced by format specifiers in {@code message}
-	 * @throws java.util.IllegalFormatException {@code arguments} is not empty and
-	 *         {@code format} contains unexpected syntax
 	 */
 	public JesFtpFileEntryParserException(final String message, final Object... arguments) {
 		super(Strings.format(message, arguments));

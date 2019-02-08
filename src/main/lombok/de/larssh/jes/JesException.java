@@ -8,7 +8,6 @@ import lombok.ToString;
 /**
  * Thrown to indicate that a logical JES exception occurred.
  */
-@ToString
 public class JesException extends Exception {
 	// @EqualsAndHashCode(callSuper = true, onParam_ = { @Nullable })
 
@@ -20,8 +19,6 @@ public class JesException extends Exception {
 	 *
 	 * @param message   the detail message
 	 * @param arguments arguments referenced by format specifiers in {@code message}
-	 * @throws java.util.IllegalFormatException {@code arguments} is not empty and
-	 *         {@code format} contains unexpected syntax
 	 */
 	public JesException(final String message, final Object... arguments) {
 		super(Strings.format(message, arguments), null);
@@ -35,8 +32,6 @@ public class JesException extends Exception {
 	 * @param ftpClient FTP client with reply string
 	 * @param message   the detail message
 	 * @param arguments arguments referenced by format specifiers in {@code message}
-	 * @throws java.util.IllegalFormatException {@code arguments} is not empty and
-	 *         {@code format} contains unexpected syntax
 	 */
 	public JesException(final FTPClient ftpClient, final String message, final Object... arguments) {
 		this("%s Reason: %s", Strings.format(message, arguments), ftpClient.getReplyString());
