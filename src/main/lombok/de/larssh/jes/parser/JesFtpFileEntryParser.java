@@ -269,12 +269,13 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 
 		// Iterate over original from 1 to size
 		// 1. ignore title line (starting at 1)
-		// 2. handle last line (stopping at size)
+		// 2. concatenate lines of the same job to one list entry
+		// 3. handle last line (stopping at size)
 		final List<String> lines = new ArrayList<>();
 		final List<String> linesOfCurrentJob = new ArrayList<>();
 		final int size = original.size();
 		for (int index = 1; index <= size; index += 1) {
-			final boolean isLast = index < size;
+			final boolean isLast = index >= size;
 			final Optional<String> line = isLast ? Optional.empty() : Optional.of(original.get(index));
 
 			if ((line.flatMap(l -> Patterns.matches(PATTERN_JOB, l)).isPresent() || isLast)
