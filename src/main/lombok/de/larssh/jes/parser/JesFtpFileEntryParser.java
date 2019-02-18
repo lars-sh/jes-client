@@ -234,14 +234,16 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 	@Nullable
 	@Override
 	public FTPFile parseFTPEntry(@Nullable final String listEntry) {
-		return listEntry == null ? null : new JesFtpFile(createJobAndOutputs(listEntry), listEntry);
+		Objects.requireNonNull(listEntry);
+		return new JesFtpFile(createJobAndOutputs(listEntry), listEntry);
 	}
 
 	/** {@inheritDoc} */
 	@Nullable
 	@Override
 	public String readNextEntry(@Nullable final BufferedReader reader) throws IOException {
-		return reader == null ? null : reader.readLine();
+		Objects.requireNonNull(reader);
+		return reader.readLine();
 	}
 
 	/** {@inheritDoc} */
@@ -249,8 +251,10 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 	@Override
 	@SuppressFBWarnings(value = "CFS_CONFUSING_FUNCTION_SEMANTICS", justification = "based on interface contract")
 	public List<String> preParse(@Nullable final List<String> original) {
+		Objects.requireNonNull(original);
+
 		// Empty list
-		if (original == null || original.isEmpty()) {
+		if (original.isEmpty()) {
 			throw new JesFtpFileEntryParserException("Parsing JES job details failed. No line found.");
 		}
 
