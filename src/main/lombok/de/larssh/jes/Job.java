@@ -101,7 +101,7 @@ public class Job {
 	 *
 	 * <p>
 	 * Can be filled by
-	 * {@link Job#createOutput(int, String, int, String, Optional, Optional)} and
+	 * {@link #createOutput(int, String, int, Optional, Optional, Optional)} and
 	 * must be empty for status other than {@link JobStatus#OUTPUT} (and
 	 * {@link JobStatus#ALL}).
 	 *
@@ -194,7 +194,7 @@ public class Job {
 	 *
 	 * <p>
 	 * Can be filled by
-	 * {@link Job#createOutput(int, String, int, String, Optional, Optional)} and
+	 * {@link #createOutput(int, String, int, Optional, Optional, Optional)} and
 	 * must be empty for status other than {@link JobStatus#OUTPUT} (and
 	 * {@link JobStatus#ALL}).
 	 *
