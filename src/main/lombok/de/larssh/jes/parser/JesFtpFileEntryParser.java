@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.regex.Matcher;
@@ -41,7 +42,7 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 	/**
 	 * Pattern to match the job details header response line
 	 */
-	private static final String PATTERN_TITLE = constant("JOBNAME  JOBID    OWNER    STATUS CLASS");
+	private static final Pattern PATTERN_TITLE = Pattern.compile("^JOBNAME +JOBID +OWNER +STATUS +CLASS *$");
 
 	/**
 	 * Pattern to match job details lines inside response
@@ -262,7 +263,7 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 		}
 
 		// First line
-		if (!original.get(0).equals(PATTERN_TITLE)) {
+		if (!Patterns.matches(PATTERN_TITLE, original.get(0)).isPresent()) {
 			throw new JesFtpFileEntryParserException("Parsing JES job details failed. Unexpected first line: [%s].",
 					original.get(0));
 		}
