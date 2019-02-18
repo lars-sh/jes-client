@@ -158,6 +158,9 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 	 */
 	private Job createJobAndOutputs(final String listEntry) {
 		final List<String> lines = new ArrayList<>(Strings.getLines(listEntry));
+		if (lines.isEmpty()) {
+			lines.add("");
+		}
 
 		// First line (job)
 		final Job job = createJob(lines.remove(0));
