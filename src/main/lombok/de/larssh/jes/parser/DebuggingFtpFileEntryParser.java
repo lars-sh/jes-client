@@ -16,8 +16,8 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import lombok.NoArgsConstructor;
 
 /**
- * Implementation of {@link FTPFileEntryParser} throwing at each method to
- * simplify debugging wrapped FTP connections
+ * Implementation of {@link org.apache.commons.net.ftp.FTPFileEntryParser}
+ * throwing at each method to simplify debugging wrapped FTP connections
  */
 @NoArgsConstructor
 public class DebuggingFtpFileEntryParser implements FTPFileEntryParser {
@@ -25,7 +25,7 @@ public class DebuggingFtpFileEntryParser implements FTPFileEntryParser {
 	@Nullable
 	@Override
 	public FTPFile parseFTPEntry(@Nullable final String listEntry) {
-		throw new DebuggingFtpFileEntryParserException("parseFTPEntry", listEntry == null ? "null" : listEntry);
+		throw new DebuggingFtpFileEntryParserException("parseFTPEntry", String.valueOf(listEntry));
 	}
 
 	/** {@inheritDoc} */
@@ -41,6 +41,6 @@ public class DebuggingFtpFileEntryParser implements FTPFileEntryParser {
 	@Override
 	public List<String> preParse(@Nullable final List<String> original) {
 		throw new DebuggingFtpFileEntryParserException("preParse",
-				original == null ? "null" : original.stream().collect(joining(Strings.NEW_LINE)));
+				original == null ? String.valueOf(original) : original.stream().collect(joining(Strings.NEW_LINE)));
 	}
 }

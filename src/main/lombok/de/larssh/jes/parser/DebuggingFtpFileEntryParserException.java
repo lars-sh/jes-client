@@ -1,12 +1,11 @@
 package de.larssh.jes.parser;
 
-import org.apache.commons.net.ftp.FTPFileEntryParser;
-
 import de.larssh.utils.text.Strings;
 import lombok.Getter;
 
 /**
- * Thrown to indicate that a {@link FTPFileEntryParser} function is called.
+ * Thrown to indicate that a
+ * {@link org.apache.commons.net.ftp.FTPFileEntryParser} function is called.
  */
 @Getter
 public class DebuggingFtpFileEntryParserException extends RuntimeException {
@@ -14,6 +13,18 @@ public class DebuggingFtpFileEntryParserException extends RuntimeException {
 
 	private static final long serialVersionUID = -3777777047932012565L;
 
+	/**
+	 * The called methods name
+	 *
+	 * @return the called methods name
+	 */
+	String methodName;
+
+	/**
+	 * The stringified value supplied to the called method
+	 *
+	 * @return value the stringified value supplied to the called method
+	 */
 	String value;
 
 	/**
@@ -27,6 +38,7 @@ public class DebuggingFtpFileEntryParserException extends RuntimeException {
 		super(Strings.format("Method %s called using:%s%s", methodName, Strings.NEW_LINE, value));
 		initCause(null);
 
+		this.methodName = methodName;
 		this.value = value;
 	}
 }
