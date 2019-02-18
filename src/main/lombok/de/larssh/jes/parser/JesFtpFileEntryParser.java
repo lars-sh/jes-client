@@ -113,7 +113,7 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 	/**
 	 * Pattern to match the response line containing the number of spool files
 	 */
-	private static final Pattern PATTERN_SPOOL_FILES = Pattern.compile("^\\d+ spool files $");
+	private static final Pattern PATTERN_SPOOL_FILES = Pattern.compile("^\\d+ spool files *$");
 
 	/**
 	 * Builds a {@link Job} object based on a job details response {@code line}.
