@@ -86,7 +86,7 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 	/**
 	 * Pattern to match the separator response line
 	 */
-	private static final String PATTERN_SEPARATOR = constant("--------");
+	private static final Pattern PATTERN_SEPARATOR = Pattern.compile("^-+ *$");
 
 	/**
 	 * Pattern to match the job output header response line
