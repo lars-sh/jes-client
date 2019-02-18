@@ -177,7 +177,7 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 
 		// Second line (separator)
 		final String separator = lines.remove(0);
-		if (!separator.equals(PATTERN_SEPARATOR)) {
+		if (!Patterns.matches(PATTERN_SEPARATOR, separator).isPresent()) {
 			throw new JesFtpFileEntryParserException("Expected [%s] as separator line, got [%s].",
 					PATTERN_SEPARATOR,
 					separator);
