@@ -175,7 +175,7 @@ public class Job {
 	public JobOutput createOutput(final int index,
 			final String outputName,
 			final int length,
-			final String step,
+			final Optional<String> step,
 			final Optional<String> procedureStep,
 			final Optional<String> outputClass) {
 		if (getStatus() != JobStatus.OUTPUT && getStatus() != JobStatus.ALL) {

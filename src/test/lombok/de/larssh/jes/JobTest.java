@@ -37,25 +37,27 @@ public class JobTest {
 	@Test
 	public void testCreateOutput() {
 		final Job job = new Job("a", "b", JobStatus.OUTPUT, "d");
-		final JobOutput jobOutputA = new JobOutput(job, 1, "c", 0, "g", Optional.empty(), Optional.empty());
-		final JobOutput jobOutputB = new JobOutput(job, 3, "d", 7, "h", Optional.of("j"), Optional.of("l"));
+		final JobOutput jobOutputA
+				= new JobOutput(job, 1, "c", 0, Optional.empty(), Optional.empty(), Optional.empty());
+		final JobOutput jobOutputB
+				= new JobOutput(job, 3, "d", 7, Optional.of("h"), Optional.of("j"), Optional.of("l"));
 
 		assertEquals(emptyList(), job.getOutputs());
-		assertEquals(jobOutputA, job.createOutput(1, "c", 0, "g", Optional.empty(), Optional.empty()));
+		assertEquals(jobOutputA, job.createOutput(1, "c", 0, Optional.empty(), Optional.empty(), Optional.empty()));
 		assertEquals(singletonList(jobOutputA), job.getOutputs());
-		assertEquals(jobOutputB, job.createOutput(3, "d", 7, "h", Optional.of("j"), Optional.of("k")));
+		assertEquals(jobOutputB, job.createOutput(3, "d", 7, Optional.of("h"), Optional.of("j"), Optional.of("k")));
 		assertEquals(Arrays.asList(jobOutputA, jobOutputB), job.getOutputs());
 
 		final Job jobAll = new Job("a", "b", JobStatus.ALL, "d");
-		assertDoesNotThrow(() -> jobAll.createOutput(1, "c", 0, "g", Optional.empty(), Optional.empty()));
+		assertDoesNotThrow(() -> jobAll.createOutput(1, "c", 0, Optional.empty(), Optional.empty(), Optional.empty()));
 
 		final Job jobActive = new Job("a", "b", JobStatus.ACTIVE, "d");
 		assertThrows(JobFieldInconsistentException.class,
-				() -> jobActive.createOutput(1, "c", 0, "g", Optional.empty(), Optional.empty()));
+				() -> jobActive.createOutput(1, "c", 0, Optional.empty(), Optional.empty(), Optional.empty()));
 
 		final Job jobInput = new Job("a", "b", JobStatus.INPUT, "d");
 		assertThrows(JobFieldInconsistentException.class,
-				() -> jobInput.createOutput(1, "c", 0, "g", Optional.empty(), Optional.empty()));
+				() -> jobInput.createOutput(1, "c", 0, Optional.empty(), Optional.empty(), Optional.empty()));
 	}
 
 	/**

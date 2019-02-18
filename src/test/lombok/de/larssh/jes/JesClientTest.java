@@ -750,8 +750,10 @@ public class JesClientTest {
 	@Test
 	public void testRetrieve() {
 		final Job job = new Job("id", "name", JobStatus.OUTPUT, "owner");
-		final JobOutput jobOutput1 = job.createOutput(1, "outputName", 10, "step", Optional.empty(), Optional.empty());
-		final JobOutput jobOutput2 = job.createOutput(2, "outputName", 10, "step", Optional.empty(), Optional.empty());
+		final JobOutput jobOutput1
+				= job.createOutput(1, "outputName", 10, Optional.empty(), Optional.empty(), Optional.empty());
+		final JobOutput jobOutput2
+				= job.createOutput(2, "outputName", 10, Optional.of("step"), Optional.empty(), Optional.empty());
 
 		// given
 		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
@@ -811,8 +813,10 @@ public class JesClientTest {
 	@Test
 	public void testRetrieveOutputs() {
 		final Job job = new Job("id", "name", JobStatus.OUTPUT, "owner");
-		final JobOutput jobOutput1 = job.createOutput(1, "outputName", 10, "step", Optional.empty(), Optional.empty());
-		final JobOutput jobOutput2 = job.createOutput(2, "outputName", 10, "step", Optional.empty(), Optional.empty());
+		final JobOutput jobOutput1
+				= job.createOutput(1, "outputName", 10, Optional.empty(), Optional.empty(), Optional.empty());
+		final JobOutput jobOutput2
+				= job.createOutput(2, "outputName", 10, Optional.of("step"), Optional.empty(), Optional.empty());
 
 		// given
 		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {

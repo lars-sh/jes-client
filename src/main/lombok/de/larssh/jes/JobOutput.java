@@ -52,7 +52,7 @@ public class JobOutput {
 	 *
 	 * @return step
 	 */
-	String step;
+	Optional<String> step;
 
 	/**
 	 * The job outputs procedure step name
@@ -88,14 +88,14 @@ public class JobOutput {
 			final int index,
 			final String name,
 			final int length,
-			final String step,
+			final Optional<String> step,
 			final Optional<String> procedureStep,
 			final Optional<String> outputClass) {
 		this.job = job;
 		this.index = index;
 		this.name = Strings.toNeutralUpperCase(name.trim());
 		this.length = length;
-		this.step = Strings.toNeutralUpperCase(step.trim());
+		this.step = step.map(String::trim).map(Strings::toNeutralUpperCase);
 		this.procedureStep = procedureStep.map(String::trim).map(Strings::toNeutralUpperCase);
 		this.outputClass = outputClass.map(String::trim).map(Strings::toNeutralUpperCase);
 
@@ -127,8 +127,8 @@ public class JobOutput {
 		if (getLength() < 0) {
 			throw new JobFieldInconsistentException("Length must not be less than zero.");
 		}
-		if (getStep().isEmpty()) {
-			throw new JobFieldInconsistentException("Step must not be empty.");
+		if (getStep().filter(String::isEmpty).isPresent()) {
+			throw new JobFieldInconsistentException("Step must not be empty if present.");
 		}
 		if (getProcedureStep().filter(String::isEmpty).isPresent()) {
 			throw new JobFieldInconsistentException("Procedure Step must not be empty if present.");

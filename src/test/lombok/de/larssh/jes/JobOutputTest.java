@@ -18,9 +18,11 @@ import lombok.NoArgsConstructor;
 public class JobOutputTest {
 	private static final Job JOB = new Job("a", "b", JobStatus.OUTPUT, "d");
 
-	private static final JobOutput A = new JobOutput(JOB, 1, "c", 0, "g", Optional.empty(), Optional.empty());
+	private static final JobOutput A
+			= new JobOutput(JOB, 1, "c", 0, Optional.empty(), Optional.empty(), Optional.empty());
 
-	private static final JobOutput B = new JobOutput(JOB, 3, "d ", 7, "h ", Optional.of("j "), Optional.of("l "));
+	private static final JobOutput B
+			= new JobOutput(JOB, 3, "d ", 7, Optional.of("h "), Optional.of("j "), Optional.of("l "));
 
 	/**
 	 * {@link JobOutput#equals(Object)} and {@link JobOutput#hashCode()}
@@ -32,7 +34,7 @@ public class JobOutputTest {
 						.add(1, 3, false)
 						.add("c", "d", true)
 						.add(0, 7, true)
-						.add("g", "h", true)
+						.add(Optional.empty(), Optional.of("h"), true)
 						.add(Optional.empty(), Optional.of("j"), true)
 						.add(Optional.empty(), Optional.of("l"), true));
 	}
@@ -45,9 +47,9 @@ public class JobOutputTest {
 		assertEquals(1, A.getIndex());
 		assertEquals(3, B.getIndex());
 		assertThrows(JobFieldInconsistentException.class,
-				() -> new JobOutput(JOB, -1, "a", 0, "b", Optional.empty(), Optional.empty()));
+				() -> new JobOutput(JOB, -1, "a", 0, Optional.empty(), Optional.empty(), Optional.empty()));
 		assertThrows(JobFieldInconsistentException.class,
-				() -> new JobOutput(JOB, 0, "a", 0, "b", Optional.empty(), Optional.empty()));
+				() -> new JobOutput(JOB, 0, "a", 0, Optional.empty(), Optional.empty(), Optional.empty()));
 	}
 
 	/**
@@ -59,7 +61,7 @@ public class JobOutputTest {
 		assertEquals(JOB, B.getJob());
 
 		final Job job = new Job("e", "f", JobStatus.ALL, "h");
-		assertEquals(job, new JobOutput(job, 1, "a", 0, "b", Optional.empty(), Optional.empty()).getJob());
+		assertEquals(job, new JobOutput(job, 1, "a", 0, Optional.empty(), Optional.empty(), Optional.empty()).getJob());
 	}
 
 	/**
@@ -70,7 +72,7 @@ public class JobOutputTest {
 		assertEquals(0, A.getLength());
 		assertEquals(7, B.getLength());
 		assertThrows(JobFieldInconsistentException.class,
-				() -> new JobOutput(JOB, 1, "a", -1, "b", Optional.empty(), Optional.empty()));
+				() -> new JobOutput(JOB, 1, "a", -1, Optional.empty(), Optional.empty(), Optional.empty()));
 	}
 
 	/**
@@ -81,9 +83,9 @@ public class JobOutputTest {
 		assertEquals("C", A.getName());
 		assertEquals("D", B.getName());
 		assertThrows(JobFieldInconsistentException.class,
-				() -> new JobOutput(JOB, 1, "", 0, "b", Optional.empty(), Optional.empty()));
+				() -> new JobOutput(JOB, 1, "", 0, Optional.empty(), Optional.empty(), Optional.empty()));
 		assertThrows(JobFieldInconsistentException.class,
-				() -> new JobOutput(JOB, 1, " ", 0, "b", Optional.empty(), Optional.empty()));
+				() -> new JobOutput(JOB, 1, " ", 0, Optional.empty(), Optional.empty(), Optional.empty()));
 	}
 
 	/**
@@ -94,7 +96,7 @@ public class JobOutputTest {
 		assertEquals(Optional.empty(), A.getOutputClass());
 		assertEquals(Optional.of("L"), B.getOutputClass());
 		assertThrows(JobFieldInconsistentException.class,
-				() -> new JobOutput(JOB, 1, "a", 0, "b", Optional.of(" "), Optional.empty()));
+				() -> new JobOutput(JOB, 1, "a", 0, Optional.empty(), Optional.of(" "), Optional.empty()));
 	}
 
 	/**
@@ -105,7 +107,7 @@ public class JobOutputTest {
 		assertEquals(Optional.empty(), A.getProcedureStep());
 		assertEquals(Optional.of("J"), B.getProcedureStep());
 		assertThrows(JobFieldInconsistentException.class,
-				() -> new JobOutput(JOB, 1, "a", 0, "b", Optional.empty(), Optional.of(" ")));
+				() -> new JobOutput(JOB, 1, "a", 0, Optional.empty(), Optional.empty(), Optional.of(" ")));
 	}
 
 	/**
@@ -113,9 +115,9 @@ public class JobOutputTest {
 	 */
 	@Test
 	public void testGetStep() {
-		assertEquals("G", A.getStep());
-		assertEquals("H", B.getStep());
+		assertEquals(Optional.empty(), A.getStep());
+		assertEquals(Optional.of("H"), B.getStep());
 		assertThrows(JobFieldInconsistentException.class,
-				() -> new JobOutput(JOB, 1, "a", 0, " ", Optional.empty(), Optional.empty()));
+				() -> new JobOutput(JOB, 1, "a", 0, Optional.of(" "), Optional.empty(), Optional.empty()));
 	}
 }
