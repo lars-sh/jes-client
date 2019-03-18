@@ -5,7 +5,6 @@ import static java.util.stream.Collectors.joining;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPFileEntryParser;
@@ -25,14 +24,19 @@ public class DebuggingFtpFileEntryParser implements FTPFileEntryParser {
 	@Nullable
 	@Override
 	public FTPFile parseFTPEntry(@Nullable final String listEntry) {
-		throw new DebuggingFtpFileEntryParserException("parseFTPEntry", String.valueOf(listEntry));
+		if (listEntry == null) {
+			throw new IllegalArgumentException("listEntry");
+		}
+		throw new DebuggingFtpFileEntryParserException("parseFTPEntry", listEntry);
 	}
 
 	/** {@inheritDoc} */
 	@Nullable
 	@Override
 	public String readNextEntry(@Nullable final BufferedReader reader) throws IOException {
-		Objects.requireNonNull(reader);
+		if (reader == null) {
+			throw new IllegalArgumentException("reader");
+		}
 		return reader.readLine();
 	}
 
@@ -40,7 +44,10 @@ public class DebuggingFtpFileEntryParser implements FTPFileEntryParser {
 	@NonNull
 	@Override
 	public List<String> preParse(@Nullable final List<String> original) {
+		if (original == null) {
+			throw new IllegalArgumentException("original");
+		}
 		throw new DebuggingFtpFileEntryParserException("preParse",
-				original == null ? String.valueOf(original) : original.stream().collect(joining(Strings.NEW_LINE)));
+				original.stream().collect(joining(Strings.NEW_LINE)));
 	}
 }

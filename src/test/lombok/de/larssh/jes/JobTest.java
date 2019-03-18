@@ -32,7 +32,7 @@ public class JobTest {
 			= new Job("d ", "h", JobStatus.OUTPUT, "p ", Optional.of("r "), OptionalInt.of(20), Optional.empty());
 
 	/**
-	 * {@link Job#createOutput(int, String, int, String, Optional, Optional)}
+	 * {@link Job#createOutput(int, String, int, Optional, Optional, Optional)}
 	 */
 	@Test
 	public void testCreateOutput() {

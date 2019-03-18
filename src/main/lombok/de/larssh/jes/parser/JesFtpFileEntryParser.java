@@ -238,7 +238,9 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 	@Nullable
 	@Override
 	public FTPFile parseFTPEntry(@Nullable final String listEntry) {
-		Objects.requireNonNull(listEntry);
+		if (listEntry == null) {
+			throw new IllegalArgumentException("listEntry");
+		}
 		return new JesFtpFile(createJobAndOutputs(listEntry), listEntry);
 	}
 
@@ -246,7 +248,9 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 	@Nullable
 	@Override
 	public String readNextEntry(@Nullable final BufferedReader reader) throws IOException {
-		Objects.requireNonNull(reader);
+		if (reader == null) {
+			throw new IllegalArgumentException("reader");
+		}
 		return reader.readLine();
 	}
 
@@ -255,7 +259,9 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 	@Override
 	@SuppressFBWarnings(value = "CFS_CONFUSING_FUNCTION_SEMANTICS", justification = "based on interface contract")
 	public List<String> preParse(@Nullable final List<String> original) {
-		Objects.requireNonNull(original);
+		if (original == null) {
+			throw new IllegalArgumentException("original");
+		}
 
 		// Empty list
 		if (original.isEmpty()) {
