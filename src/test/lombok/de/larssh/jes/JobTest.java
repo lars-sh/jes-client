@@ -1,13 +1,17 @@
 package de.larssh.jes;
 
 import static de.larssh.utils.test.Assertions.assertEqualsAndHashCode;
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
+import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.OptionalInt;
 
@@ -23,13 +27,26 @@ import lombok.NoArgsConstructor;
 public class JobTest {
 	private static final Job A = new Job("a", JesClient.FILTER_WILDCARD, JobStatus.ACTIVE, "m");
 
-	private static final Job B
-			= new Job("b ", "", JobStatus.ALL, "n", Optional.empty(), OptionalInt.empty(), Optional.of("u "));
+	private static final Job B = new Job("b ",
+			"",
+			JobStatus.ALL,
+			"n",
+			Optional.empty(),
+			OptionalInt.empty(),
+			Optional.of("u "),
+			JobFlag.DUP);
 
 	private static final Job C = new Job("c", "g* ", JobStatus.INPUT, "o");
 
-	private static final Job D
-			= new Job("d ", "h", JobStatus.OUTPUT, "p ", Optional.of("r "), OptionalInt.of(20), Optional.empty());
+	private static final Job D = new Job("d ",
+			"h",
+			JobStatus.OUTPUT,
+			"p ",
+			Optional.of("r "),
+			OptionalInt.of(20),
+			Optional.empty(),
+			JobFlag.HELD,
+			JobFlag.JCL_ERROR);
 
 	/**
 	 * {@link Job#createOutput(int, String, int, Optional, Optional, Optional)}
@@ -78,7 +95,8 @@ public class JobTest {
 						.add("G", "H", true)
 						.add(Optional.empty(), Optional.of("J"), true)
 						.add(OptionalInt.empty(), OptionalInt.of(12), true)
-						.add(Optional.empty(), Optional.empty(), true));
+						.add(Optional.empty(), Optional.empty(), true)
+						.add(new JobFlag[0], new JobFlag[] { JobFlag.DUP }, true));
 
 		assertEqualsAndHashCode(Job.class,
 				new AssertEqualsAndHashCodeArguments().add("A", "B", false)
@@ -87,7 +105,8 @@ public class JobTest {
 						.add("G", "H", true)
 						.add(Optional.empty(), Optional.empty(), true)
 						.add(OptionalInt.empty(), OptionalInt.of(12), true)
-						.add(Optional.empty(), Optional.of("N"), true));
+						.add(Optional.empty(), Optional.of("N"), true)
+						.add(new JobFlag[0], new JobFlag[] { JobFlag.DUP }, true));
 	}
 
 	/**
@@ -113,6 +132,17 @@ public class JobTest {
 		assertEquals("C", C.getId());
 		assertEquals("D", D.getId());
 		assertThrows(JobFieldInconsistentException.class, () -> new Job(" ", "b", JobStatus.INPUT, "c"));
+	}
+
+	/**
+	 * {@link Job#getFlags()}
+	 */
+	@Test
+	public void testGetFlags() {
+		assertEquals(emptySet(), A.getFlags());
+		assertEquals(singleton(JobFlag.DUP), B.getFlags());
+		assertEquals(emptySet(), C.getFlags());
+		assertEquals(new HashSet<>(asList(JobFlag.HELD, JobFlag.JCL_ERROR)), D.getFlags());
 	}
 
 	/**
