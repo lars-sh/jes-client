@@ -1,0 +1,3 @@
+JOBNAME  JOBID    OWNER    STATUS  CLASS
+ABCDEF3  STC85256 USER3    OUTPUT  STC     -HELD- RC=0000 spool files not accessible 
+ABCDEF4  STC21743 USER4    OUTPUT  STC     -HELD- RC and spool files not accessible 

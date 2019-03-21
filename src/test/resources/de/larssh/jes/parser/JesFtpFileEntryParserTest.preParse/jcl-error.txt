@@ -1,0 +1,2 @@
+JOBNAME  JOBID    OWNER    STATUS  CLASS
+JABC123  JOB00008 USER8    OUTPUT  H       (JCL error) 4 spool files
