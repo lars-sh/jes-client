@@ -1,7 +1,5 @@
 package de.larssh.jes.parser;
 
-import static java.util.stream.Collectors.joining;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
@@ -47,7 +45,6 @@ public class DebuggingFtpFileEntryParser implements FTPFileEntryParser {
 		if (original == null) {
 			throw new IllegalArgumentException("original");
 		}
-		throw new DebuggingFtpFileEntryParserException("preParse",
-				original.stream().collect(joining(Strings.NEW_LINE)));
+		throw new DebuggingFtpFileEntryParserException("preParse", String.join(Strings.NEW_LINE, original));
 	}
 }

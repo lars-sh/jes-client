@@ -2,11 +2,12 @@ package de.larssh.jes.parser;
 
 import static de.larssh.utils.Finals.constant;
 import static de.larssh.utils.text.Strings.NEW_LINE;
-import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
@@ -17,6 +18,7 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPFileEntryParser;
 
 import de.larssh.jes.Job;
+import de.larssh.jes.JobFlag;
 import de.larssh.jes.JobOutput;
 import de.larssh.jes.JobStatus;
 import de.larssh.utils.Optionals;
@@ -58,18 +60,7 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 	 * </ul>
 	 */
 	private static final Pattern PATTERN_JOB = Pattern.compile(
-			"^(?<name>.{8}) (?<id>.{8}) (?<owner>.{8}) (?<status>(INPUT|ACTIVE|OUTPUT)) (?<class>.{1,8})( (?<rest>.*))?$");
-
-	/**
-	 * Pattern to find the result code inside a response line
-	 *
-	 * <p>
-	 * List of named groups:
-	 * <ul>
-	 * <li>returnCode
-	 * </ul>
-	 */
-	private static final Pattern PATTERN_JOB_RETURN_CODE = Pattern.compile("RC=(?<returnCode>\\d+)");
+			"^(?<name>[^ ]+) +(?<id>[^ ]+) +(?<owner>[^ ]+) +(?<status>(INPUT|ACTIVE|OUTPUT)) +(?<class>[^ ]+)( +(?<rest>.*))?$");
 
 	/**
 	 * Pattern to find the abend code inside a response line
@@ -81,6 +72,17 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 	 * </ul>
 	 */
 	private static final Pattern PATTERN_JOB_ABEND = Pattern.compile("ABEND=(?<abend>\\S+)");
+
+	/**
+	 * Pattern to find the result code inside a response line
+	 *
+	 * <p>
+	 * List of named groups:
+	 * <ul>
+	 * <li>returnCode
+	 * </ul>
+	 */
+	private static final Pattern PATTERN_JOB_RETURN_CODE = Pattern.compile("RC=(?<returnCode>\\d+)");
 
 	/**
 	 * Pattern to match the separator response line
@@ -140,8 +142,11 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 				Integer::parseInt);
 		final Optional<String> abendCode
 				= rest.flatMap(r -> Patterns.find(PATTERN_JOB_ABEND, r)).map(m -> m.group("abend"));
+		final List<JobFlag> flags = Arrays.stream(JobFlag.values())
+				.filter(flag -> rest.map(r -> Patterns.find(flag.getRestPattern(), r).isPresent()).orElse(false))
+				.collect(toList());
 
-		return new Job(id, name, status, owner, jesClass, resultCode, abendCode);
+		return new Job(id, name, status, owner, jesClass, resultCode, abendCode, flags.toArray(new JobFlag[0]));
 	}
 
 	/**
@@ -286,7 +291,7 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 
 			if ((line.flatMap(l -> Patterns.matches(PATTERN_JOB, l)).isPresent() || isLast)
 					&& !linesOfCurrentJob.isEmpty()) {
-				lines.add(linesOfCurrentJob.stream().collect(joining(NEW_LINE)));
+				lines.add(String.join(NEW_LINE, linesOfCurrentJob));
 				linesOfCurrentJob.clear();
 			}
 			line.ifPresent(linesOfCurrentJob::add);

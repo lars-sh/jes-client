@@ -1,11 +1,15 @@
 package de.larssh.jes;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableSet;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
+import java.util.Set;
 
 import de.larssh.utils.OptionalInts;
 import de.larssh.utils.text.Strings;
@@ -97,6 +101,13 @@ public class Job {
 	Optional<String> abendCode;
 
 	/**
+	 * The jobs flags
+	 *
+	 * @return flags
+	 */
+	Set<JobFlag> flags;
+
+	/**
 	 * List of job output details
 	 *
 	 * <p>
@@ -134,6 +145,7 @@ public class Job {
 	 * @param jesClass   the jobs JES class
 	 * @param resultCode the jobs result code, when held (finished)
 	 * @param abendCode  the jobs abend code, when held (finished)
+	 * @param flags      the jobs flags
 	 * @throws JobFieldInconsistentException on inconsistent field value
 	 */
 	@SuppressFBWarnings(value = "PCOA_PARTIALLY_CONSTRUCTED_OBJECT_ACCESS",
@@ -144,7 +156,8 @@ public class Job {
 			final String owner,
 			final Optional<String> jesClass,
 			final OptionalInt resultCode,
-			final Optional<String> abendCode) {
+			final Optional<String> abendCode,
+			final JobFlag... flags) {
 		this.id = Strings.toNeutralUpperCase(id.trim());
 		this.name = Strings.toNeutralUpperCase(name.trim());
 		this.status = status;
@@ -152,6 +165,7 @@ public class Job {
 		this.jesClass = jesClass.map(String::trim).map(Strings::toNeutralUpperCase);
 		this.abendCode = abendCode.map(String::trim).map(Strings::toNeutralUpperCase);
 		this.resultCode = resultCode;
+		this.flags = unmodifiableSet(new HashSet<>(asList(flags)));
 
 		validate();
 	}
