@@ -27,6 +27,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -118,7 +119,7 @@ public class JesClientTest {
 			verify(jesClient.getFtpClient()).disconnect();
 			verifyEnd(jesClient);
 		} catch (final IOException e) {
-			throw new SneakyException(e);
+			throw new UncheckedIOException(e);
 		}
 
 		// given
@@ -138,7 +139,7 @@ public class JesClientTest {
 			verify(jesClient.getFtpClient()).disconnect();
 			verifyEnd(jesClient);
 		} catch (final IOException e) {
-			throw new SneakyException(e);
+			throw new UncheckedIOException(e);
 		}
 
 		// given
@@ -157,7 +158,7 @@ public class JesClientTest {
 			verify(jesClient.getFtpClient()).isConnected();
 			verifyEnd(jesClient);
 		} catch (final IOException e) {
-			throw new SneakyException(e);
+			throw new UncheckedIOException(e);
 		}
 	}
 
@@ -177,7 +178,9 @@ public class JesClientTest {
 			verify(jesClient).delete(any());
 			verify(jesClient.getFtpClient()).deleteFile("ID");
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -192,7 +195,9 @@ public class JesClientTest {
 			verify(jesClient).delete(any());
 			verify(jesClient.getFtpClient()).deleteFile("ID");
 			verifyEndWithJesException(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 	}
@@ -213,7 +218,9 @@ public class JesClientTest {
 			verify(jesClient).enterJesMode();
 			verify(jesClient.getFtpClient()).sendSiteCommand("FILEtype=JES");
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -228,7 +235,9 @@ public class JesClientTest {
 			verify(jesClient).enterJesMode();
 			verify(jesClient.getFtpClient()).sendSiteCommand("FILEtype=JES");
 			verifyEndWithJesException(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 	}
@@ -252,7 +261,9 @@ public class JesClientTest {
 			verify(jesClient).setJesFilters("NAME", JobStatus.INPUT, "OWNER", 2);
 			verify(jesClient.getFtpClient()).listNames("ID");
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -269,7 +280,9 @@ public class JesClientTest {
 			verify(jesClient).setJesFilters("NAME", JobStatus.INPUT, "OWNER", 2);
 			verify(jesClient.getFtpClient()).listNames("ID");
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 	}
@@ -309,7 +322,7 @@ public class JesClientTest {
 			verify(jesClient).getJesOwner();
 			verifyEnd(jesClient);
 		} catch (final IOException e) {
-			throw new SneakyException(e);
+			throw new UncheckedIOException(e);
 		}
 	}
 
@@ -332,7 +345,9 @@ public class JesClientTest {
 			verify(jesClient).setJesFilters("NAME", JobStatus.ALL, "OWNER", 1024);
 			verify(jesClient.getFtpClient()).listFiles("ID");
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -349,7 +364,9 @@ public class JesClientTest {
 			verify(jesClient).setJesFilters("NAME", JobStatus.ALL, "OWNER", 1024);
 			verify(jesClient.getFtpClient()).listFiles("ID");
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 	}
@@ -372,7 +389,9 @@ public class JesClientTest {
 			verify(jesClient.getFtpClient()).stat();
 			verify(jesClient.getFtpClient()).getReplyStrings();
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -391,7 +410,9 @@ public class JesClientTest {
 			verify(jesClient.getFtpClient()).stat();
 			verify(jesClient.getFtpClient()).getReplyStrings();
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -411,7 +432,9 @@ public class JesClientTest {
 			verify(jesClient.getFtpClient()).stat();
 			verify(jesClient.getFtpClient()).getReplyStrings();
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -428,7 +451,9 @@ public class JesClientTest {
 			verify(jesClient.getFtpClient()).stat();
 			verify(jesClient.getFtpClient()).getReplyStrings();
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -443,7 +468,9 @@ public class JesClientTest {
 			verify(jesClient).getServerProperties();
 			verify(jesClient.getFtpClient()).stat();
 			verifyEndWithJesException(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 	}
@@ -472,7 +499,9 @@ public class JesClientTest {
 			verify(jesClient).list(any());
 			verify(jesClient).list(nameFilter, JobStatus.ALL);
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -487,7 +516,9 @@ public class JesClientTest {
 			verify(jesClient).list(any(), any());
 			verify(jesClient).list(nameFilter, status, "*");
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -502,7 +533,9 @@ public class JesClientTest {
 			verify(jesClient).list(any(), any(), any());
 			verify(jesClient).list(nameFilter, status, ownerFilter, 1024);
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -521,7 +554,9 @@ public class JesClientTest {
 			verify(jesClient.getFtpClient()).listNames();
 			verify(jesClient).throwIfLimitReached(limit, asList(TEST_DATA_JOB, TEST_DATA_JOB));
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -540,7 +575,9 @@ public class JesClientTest {
 			verify(jesClient.getFtpClient()).listNames();
 			verify(jesClient).throwIfLimitReached(limit, jobs);
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -559,7 +596,9 @@ public class JesClientTest {
 			verify(jesClient.getFtpClient()).listNames();
 			verify(jesClient).throwIfLimitReached(limit, emptyList());
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -577,7 +616,9 @@ public class JesClientTest {
 			verify(jesClient).setJesFilters(nameFilter, status, ownerFilter, limit);
 			verify(jesClient.getFtpClient()).listNames();
 			verifyEndWithJesException(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 	}
@@ -607,7 +648,9 @@ public class JesClientTest {
 			verify(jesClient).listFilled(any());
 			verify(jesClient).listFilled(nameFilter, JobStatus.ALL);
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -622,7 +665,9 @@ public class JesClientTest {
 			verify(jesClient).listFilled(any(), any());
 			verify(jesClient).listFilled(nameFilter, status, "*");
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -637,7 +682,9 @@ public class JesClientTest {
 			verify(jesClient).listFilled(any(), any(), any());
 			verify(jesClient).listFilled(nameFilter, status, ownerFilter, 1024);
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -657,7 +704,9 @@ public class JesClientTest {
 			verify(jesClient.getFtpClient()).listFiles();
 			verify(jesClient).throwIfLimitReached(limit, jobs);
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -678,7 +727,9 @@ public class JesClientTest {
 			verify(jesClient.getFtpClient()).listFiles();
 			verify(jesClient).throwIfLimitReached(limit, asList(TEST_DATA_JOB, TEST_DATA_JOB));
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -697,7 +748,9 @@ public class JesClientTest {
 			verify(jesClient.getFtpClient()).listFiles();
 			verify(jesClient).throwIfLimitReached(limit, emptyList());
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 	}
@@ -723,7 +776,9 @@ public class JesClientTest {
 			verify(jesClient).setJesOwner("username");
 			verify(jesClient).enterJesMode();
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -739,7 +794,9 @@ public class JesClientTest {
 			verify(jesClient).login(any(), any());
 			verify(jesClient.getFtpClient()).login("username", "password");
 			verifyEndWithJesException(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 	}
@@ -769,7 +826,9 @@ public class JesClientTest {
 			verify(jesClient).retrieve(any());
 			verify(jesClient.getFtpClient()).retrieveFile(eq("ID.1"), any());
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -787,7 +846,9 @@ public class JesClientTest {
 			verify(jesClient).retrieve(any());
 			verify(jesClient.getFtpClient()).retrieveFile(eq("ID.2"), any());
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -802,7 +863,9 @@ public class JesClientTest {
 			verify(jesClient).retrieve(any());
 			verify(jesClient.getFtpClient()).retrieveFile(eq("ID.1"), any());
 			verifyEndWithJesException(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 	}
@@ -834,7 +897,9 @@ public class JesClientTest {
 			verify(jesClient).retrieve(jobOutput1);
 			verify(jesClient).retrieve(jobOutput2);
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -856,7 +921,9 @@ public class JesClientTest {
 			verify(jesClient).retrieve(jobOutput1);
 			verify(jesClient).retrieve(jobOutput2);
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -871,7 +938,9 @@ public class JesClientTest {
 			verify(jesClient).retrieveOutputs(any());
 			verify(jesClient).getJobDetails(TEST_DATA_JOB);
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 	}
@@ -910,7 +979,9 @@ public class JesClientTest {
 			verify(jesClient.getFtpClient()).sendSiteCommand(siteCommandStatusFilter);
 			verify(jesClient.getFtpClient()).sendSiteCommand(siteCommandLimitFilter);
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -933,7 +1004,9 @@ public class JesClientTest {
 			verify(jesClient.getFtpClient()).sendSiteCommand(siteCommandStatusFilter);
 			verify(jesClient.getFtpClient()).sendSiteCommand(siteCommandLimitFilter);
 			verifyEndWithJesException(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -954,7 +1027,9 @@ public class JesClientTest {
 			verify(jesClient.getFtpClient()).sendSiteCommand(siteCommandOwnerFilter);
 			verify(jesClient.getFtpClient()).sendSiteCommand(siteCommandStatusFilter);
 			verifyEndWithJesException(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -973,7 +1048,9 @@ public class JesClientTest {
 			verify(jesClient.getFtpClient()).sendSiteCommand(siteCommandNameFilter);
 			verify(jesClient.getFtpClient()).sendSiteCommand(siteCommandOwnerFilter);
 			verifyEndWithJesException(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -990,7 +1067,9 @@ public class JesClientTest {
 			verify(jesClient).setJesFilters(nameFilter, status, ownerFilter, limit);
 			verify(jesClient.getFtpClient()).sendSiteCommand(siteCommandNameFilter);
 			verifyEndWithJesException(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 	}
@@ -1021,7 +1100,9 @@ public class JesClientTest {
 			verify(jesClient.getFtpClient()).getReplyString();
 			verify(jesClient).getJesOwner();
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -1039,7 +1120,9 @@ public class JesClientTest {
 			verify(jesClient.getFtpClient()).getReplyString();
 			verify(jesClient).getJesOwner();
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -1054,7 +1137,9 @@ public class JesClientTest {
 			verify(jesClient).submit(any());
 			verify(jesClient.getFtpClient()).storeUniqueFile(any());
 			verifyEndWithJesException(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -1071,7 +1156,9 @@ public class JesClientTest {
 			verify(jesClient.getFtpClient()).storeUniqueFile(any());
 			verify(jesClient.getFtpClient(), times(2)).getReplyString();
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 	}
@@ -1095,7 +1182,9 @@ public class JesClientTest {
 			verify(jesClient).throwIfLimitReached(limit, jobs);
 			verify(jesClient.getFtpClient()).getReplyString();
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -1114,7 +1203,9 @@ public class JesClientTest {
 			verifyEnd(jesClient);
 			assertEquals(limit, exception.getLimit());
 			assertEquals(jobs, exception.getJobs());
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 	}
@@ -1138,8 +1229,10 @@ public class JesClientTest {
 			verify(jesClient).waitFor(any());
 			verify(jesClient).waitFor(TEST_DATA_JOB, 1000);
 			verifyEnd(jesClient);
-		} catch (final InterruptedException | IOException | JesException e) {
+		} catch (final InterruptedException | JesException e) {
 			throw new SneakyException(e);
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
 		}
 
 		// given
@@ -1153,8 +1246,10 @@ public class JesClientTest {
 			verify(jesClient).waitFor(any(), anyLong());
 			verify(jesClient).waitFor(TEST_DATA_JOB, 123, Long.MAX_VALUE);
 			verifyEnd(jesClient);
-		} catch (final InterruptedException | IOException | JesException e) {
+		} catch (final InterruptedException | JesException e) {
 			throw new SneakyException(e);
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
 		}
 
 		// given
@@ -1168,8 +1263,10 @@ public class JesClientTest {
 			verify(jesClient).waitFor(any(), anyLong());
 			verify(jesClient).waitFor(TEST_DATA_JOB, 123, Long.MAX_VALUE);
 			verifyEnd(jesClient);
-		} catch (final InterruptedException | IOException | JesException e) {
+		} catch (final InterruptedException | JesException e) {
 			throw new SneakyException(e);
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
 		}
 
 		// given
@@ -1183,8 +1280,10 @@ public class JesClientTest {
 			verify(jesClient).waitFor(any(), anyLong(), anyLong());
 			verify(jesClient).waitFor(eq(TEST_DATA_JOB), any(), eq(456L));
 			verifyEnd(jesClient);
-		} catch (final InterruptedException | IOException | JesException e) {
+		} catch (final InterruptedException | JesException e) {
 			throw new SneakyException(e);
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
 		}
 
 		// given
@@ -1198,8 +1297,10 @@ public class JesClientTest {
 			verify(jesClient).waitFor(any(), anyLong(), anyLong());
 			verify(jesClient).waitFor(eq(TEST_DATA_JOB), any(), eq(456L));
 			verifyEnd(jesClient);
-		} catch (final InterruptedException | IOException | JesException e) {
+		} catch (final InterruptedException | JesException e) {
 			throw new SneakyException(e);
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
 		}
 
 		// given
@@ -1216,7 +1317,9 @@ public class JesClientTest {
 			verify(jesClient).waitFor(any(), any());
 			verify(jesClient).waitFor(TEST_DATA_JOB, noop, Long.MAX_VALUE);
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -1234,7 +1337,9 @@ public class JesClientTest {
 			verify(jesClient).waitFor(any(), any());
 			verify(jesClient).waitFor(TEST_DATA_JOB, noop, Long.MAX_VALUE);
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -1249,7 +1354,9 @@ public class JesClientTest {
 			// then
 			verify(jesClient).waitFor(any(), any(), anyLong());
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -1265,7 +1372,9 @@ public class JesClientTest {
 			// then
 			verify(jesClient).waitFor(any(), any(), anyLong());
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -1283,7 +1392,9 @@ public class JesClientTest {
 			verify(jesClient).waitFor(any(), any(), anyLong());
 			verify(jesClient).exists(job, JobStatus.ACTIVE);
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -1302,7 +1413,9 @@ public class JesClientTest {
 			verify(jesClient).waitFor(any(), any(), anyLong());
 			verify(jesClient, times(2)).exists(job, JobStatus.ACTIVE);
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -1324,7 +1437,9 @@ public class JesClientTest {
 			verify(jesClient).waitFor(any(), any(), anyLong());
 			verify(jesClient, atLeastOnce()).exists(job, JobStatus.ACTIVE);
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -1347,7 +1462,9 @@ public class JesClientTest {
 			verify(jesClient).waitFor(any(), any(), anyLong());
 			verify(jesClient).exists(job, JobStatus.ACTIVE);
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 
@@ -1369,7 +1486,9 @@ public class JesClientTest {
 			verify(jesClient, times(2)).exists(job, JobStatus.INPUT);
 			verify(jesClient, times(2)).exists(job, JobStatus.ACTIVE);
 			verifyEnd(jesClient);
-		} catch (final IOException | JesException e) {
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
 			throw new SneakyException(e);
 		}
 	}
