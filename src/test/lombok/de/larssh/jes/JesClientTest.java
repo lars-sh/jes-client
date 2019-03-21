@@ -58,6 +58,7 @@ import lombok.experimental.NonFinal;
  */
 @NoArgsConstructor
 @SuppressWarnings({
+		"checkstyle:SuppressWarnings",
 		"PMD.AvoidDuplicateLiterals",
 		"PMD.ExcessiveClassLength",
 		"PMD.ExcessiveImports",

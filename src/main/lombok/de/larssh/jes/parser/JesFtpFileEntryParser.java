@@ -143,7 +143,8 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 		final Optional<String> abendCode
 				= rest.flatMap(r -> Patterns.find(PATTERN_JOB_ABEND, r)).map(m -> m.group("abend"));
 		final List<JobFlag> flags = Arrays.stream(JobFlag.values())
-				.filter(flag -> rest.map(r -> Patterns.find(flag.getRestPattern(), r).isPresent()).orElse(false))
+				.filter(flag -> rest.map(r -> Patterns.find(flag.getRestPattern(), r).isPresent())
+						.orElse(Boolean.FALSE))
 				.collect(toList());
 
 		return new Job(id, name, status, owner, jesClass, resultCode, abendCode, flags.toArray(new JobFlag[0]));

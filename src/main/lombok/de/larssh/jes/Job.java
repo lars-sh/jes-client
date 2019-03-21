@@ -148,6 +148,7 @@ public class Job {
 	 * @param flags      the jobs flags
 	 * @throws JobFieldInconsistentException on inconsistent field value
 	 */
+	@SuppressWarnings("checkstyle:ParameterNumber")
 	@SuppressFBWarnings(value = "PCOA_PARTIALLY_CONSTRUCTED_OBJECT_ACCESS",
 			justification = "fb-contrib issue, see https://github.com/mebigfatguy/fb-contrib/issues/325")
 	public Job(final String id,

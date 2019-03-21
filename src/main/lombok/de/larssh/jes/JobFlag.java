@@ -37,7 +37,7 @@ public enum JobFlag {
 	 * @param restPattern pattern used for JES communication to parse jobs rest
 	 *                    values
 	 */
-	private JobFlag(final String restPattern) {
+	JobFlag(final String restPattern) {
 		this.restPattern = Pattern.compile(restPattern);
 	}
 }
