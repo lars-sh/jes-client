@@ -3,8 +3,8 @@ package de.larssh.jes.parser;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.stream.Collectors.toList;
-import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.BufferedReader;
