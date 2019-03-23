@@ -14,7 +14,6 @@ import java.util.OptionalInt;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPFileEntryParser;
 
 import de.larssh.jes.Job;
@@ -242,7 +241,7 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 	/** {@inheritDoc} */
 	@Nullable
 	@Override
-	public FTPFile parseFTPEntry(@Nullable final String listEntry) {
+	public JesFtpFile parseFTPEntry(@Nullable final String listEntry) {
 		if (listEntry == null) {
 			throw new IllegalArgumentException("listEntry");
 		}
