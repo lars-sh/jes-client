@@ -31,10 +31,12 @@ import de.larssh.jes.Job;
 import de.larssh.jes.JobFlag;
 import de.larssh.jes.JobStatus;
 import de.larssh.utils.SneakyException;
+import lombok.NoArgsConstructor;
 
 /**
  * {@link JesFtpFileEntryParser}
  */
+@NoArgsConstructor
 public final class JesFtpFileEntryParserTest {
 	private final static JesFtpFileEntryParser INSTANCE = new JesFtpFileEntryParser();
 
