@@ -20,6 +20,7 @@ import de.larssh.jes.Job;
 import de.larssh.jes.JobFlag;
 import de.larssh.jes.JobOutput;
 import de.larssh.jes.JobStatus;
+import de.larssh.utils.Nullables;
 import de.larssh.utils.Optionals;
 import de.larssh.utils.text.Patterns;
 import de.larssh.utils.text.Strings;
@@ -241,10 +242,8 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 	/** {@inheritDoc} */
 	@Nullable
 	@Override
-	public JesFtpFile parseFTPEntry(@Nullable final String listEntry) {
-		if (listEntry == null) {
-			throw new IllegalArgumentException("listEntry");
-		}
+	public JesFtpFile parseFTPEntry(@Nullable final String listEntryNullable) {
+		final String listEntry = Nullables.orElseThrow(listEntryNullable);
 		return new JesFtpFile(createJobAndOutputs(listEntry), listEntry);
 	}
 
@@ -252,20 +251,15 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 	@Nullable
 	@Override
 	public String readNextEntry(@Nullable final BufferedReader reader) throws IOException {
-		if (reader == null) {
-			throw new IllegalArgumentException("reader");
-		}
-		return reader.readLine();
+		return Nullables.orElseThrow(reader).readLine();
 	}
 
 	/** {@inheritDoc} */
 	@NonNull
 	@Override
 	@SuppressFBWarnings(value = "CFS_CONFUSING_FUNCTION_SEMANTICS", justification = "based on interface contract")
-	public List<String> preParse(@Nullable final List<String> original) {
-		if (original == null) {
-			throw new IllegalArgumentException("original");
-		}
+	public List<String> preParse(@Nullable final List<String> originalNullable) {
+		final List<String> original = Nullables.orElseThrow(originalNullable);
 
 		// Empty list
 		if (original.isEmpty()) {
@@ -287,14 +281,15 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 		final int size = original.size();
 		for (int index = 1; index <= size; index += 1) {
 			final boolean isLast = index >= size;
-			final Optional<String> line = isLast ? Optional.empty() : Optional.of(original.get(index));
 
-			if ((line.flatMap(l -> Patterns.matches(PATTERN_JOB, l)).isPresent() || isLast)
+			if ((isLast || Patterns.matches(PATTERN_JOB, original.get(index)).isPresent())
 					&& !linesOfCurrentJob.isEmpty()) {
 				lines.add(String.join(NEW_LINE, linesOfCurrentJob));
 				linesOfCurrentJob.clear();
 			}
-			line.ifPresent(linesOfCurrentJob::add);
+			if (!isLast) {
+				linesOfCurrentJob.add(original.get(index));
+			}
 		}
 
 		// The interface requires us to return "original" - nothing else!

@@ -32,7 +32,6 @@ import java.nio.charset.Charset;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -45,6 +44,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.invocation.Invocation;
 
 import de.larssh.jes.parser.JesFtpFile;
+import de.larssh.utils.Nullables;
 import de.larssh.utils.SneakyException;
 import de.larssh.utils.function.ThrowingRunnable;
 import de.larssh.utils.test.Reflects;
@@ -169,7 +169,7 @@ public class JesClientTest {
 	@Test
 	public void testDelete() {
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			when(jesClient.getFtpClient().deleteFile(any())).thenReturn(true);
 
 			// when
@@ -186,7 +186,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			when(jesClient.getFtpClient().deleteFile(any())).thenReturn(false);
 
 			// when
@@ -209,7 +209,7 @@ public class JesClientTest {
 	@Test
 	public void testEnterJesMode() {
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			when(jesClient.getFtpClient().sendSiteCommand(any())).thenReturn(true);
 
 			// when
@@ -226,7 +226,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			when(jesClient.getFtpClient().sendSiteCommand(any())).thenReturn(false);
 
 			// when
@@ -250,7 +250,7 @@ public class JesClientTest {
 	public void testExists() {
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			doNothing().when(jesClient).setJesFilters(any(), any(), any(), anyInt());
 			when(jesClient.getFtpClient().listNames(any())).thenReturn(new String[0]);
 
@@ -269,7 +269,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			doNothing().when(jesClient).setJesFilters(any(), any(), any(), anyInt());
 			when(jesClient.getFtpClient().listNames(any())).thenReturn(new String[] { "ID" });
 
@@ -296,7 +296,7 @@ public class JesClientTest {
 			justification = "Return value of Mockedverify(jesClient).getJesOwner() does not matter.")
 	public void testGetAndSetJesOwner() {
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 
 			// when 1
 			assertEquals("*", jesClient.getJesOwner());
@@ -333,7 +333,7 @@ public class JesClientTest {
 	@Test
 	public void testGetJobDetails() {
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			doNothing().when(jesClient).setJesFilters(any(), any(), any(), anyInt());
 			when(jesClient.getFtpClient().listFiles(any()))
 					.thenReturn(new JesFtpFile[] { new JesFtpFile(TEST_DATA_JOB, "") });
@@ -353,7 +353,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			doNothing().when(jesClient).setJesFilters(any(), any(), any(), anyInt());
 			when(jesClient.getFtpClient().listFiles(any())).thenReturn(new JesFtpFile[0]);
 
@@ -378,7 +378,7 @@ public class JesClientTest {
 	@Test
 	public void testGetServerProperties() {
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			when(jesClient.getFtpClient().stat()).thenReturn(FTPReply.COMMAND_OK);
 			when(jesClient.getFtpClient().getReplyStrings()).thenReturn(new String[0]);
 
@@ -397,7 +397,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			when(jesClient.getFtpClient().stat()).thenReturn(FTPReply.COMMAND_OK);
 			when(jesClient.getFtpClient().getReplyStrings()).thenReturn(new String[] { "abc", "211-a IS b", "def" });
 
@@ -418,7 +418,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			when(jesClient.getFtpClient().stat()).thenReturn(FTPReply.COMMAND_OK);
 			when(jesClient.getFtpClient().getReplyStrings()).thenReturn(new String[] { "211-a IS b", "211-c IS d" });
 
@@ -440,7 +440,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			when(jesClient.getFtpClient().stat()).thenReturn(FTPReply.COMMAND_OK);
 			when(jesClient.getFtpClient().getReplyStrings()).thenReturn(new String[] { "211-a IS b", "211-a IS d" });
 
@@ -459,7 +459,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			when(jesClient.getFtpClient().stat()).thenReturn(FTPReply.COMMAND_NOT_IMPLEMENTED);
 
 			// when
@@ -490,7 +490,7 @@ public class JesClientTest {
 		final List<Job> jobs = asList(TEST_DATA_JOB);
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			doReturn(jobs).when(jesClient).list(any(), any());
 
 			// when
@@ -507,7 +507,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			doReturn(jobs).when(jesClient).list(any(), any(), any());
 
 			// when
@@ -524,7 +524,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			doReturn(jobs).when(jesClient).list(any(), any(), any(), anyInt());
 
 			// when
@@ -541,7 +541,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			doNothing().when(jesClient).setJesFilters(any(), any(), any(), anyInt());
 			when(jesClient.getFtpClient().listNames()).thenReturn(new String[] { "id", "id" });
 			doAnswer(invocation -> invocation.getArgument(1)).when(jesClient).throwIfLimitReached(anyInt(), any());
@@ -562,7 +562,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			doNothing().when(jesClient).setJesFilters(any(), any(), any(), anyInt());
 			when(jesClient.getFtpClient().listNames()).thenReturn(new String[] { "id" });
 			doAnswer(invocation -> invocation.getArgument(1)).when(jesClient).throwIfLimitReached(anyInt(), any());
@@ -583,7 +583,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			doNothing().when(jesClient).setJesFilters(any(), any(), any(), anyInt());
 			when(jesClient.getFtpClient().listNames()).thenReturn(new String[0]);
 			doAnswer(invocation -> invocation.getArgument(1)).when(jesClient).throwIfLimitReached(anyInt(), any());
@@ -604,7 +604,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			doNothing().when(jesClient).setJesFilters(any(), any(), any(), anyInt());
 			when(jesClient.getFtpClient().listNames()).thenReturn(null);
 			when(jesClient.getFtpClient().getReplyString()).thenReturn("");
@@ -639,7 +639,7 @@ public class JesClientTest {
 		final List<Job> jobs = asList(TEST_DATA_JOB);
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			doReturn(jobs).when(jesClient).listFilled(any(), any());
 
 			// when
@@ -656,7 +656,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			doReturn(jobs).when(jesClient).listFilled(any(), any(), any());
 
 			// when
@@ -673,7 +673,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			doReturn(jobs).when(jesClient).listFilled(any(), any(), any(), anyInt());
 
 			// when
@@ -690,7 +690,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			doNothing().when(jesClient).setJesFilters(any(), any(), any(), anyInt());
 			when(jesClient.getFtpClient().listFiles())
 					.thenReturn(new JesFtpFile[] { new JesFtpFile(TEST_DATA_JOB, "") });
@@ -712,7 +712,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			doNothing().when(jesClient).setJesFilters(any(), any(), any(), anyInt());
 			when(jesClient.getFtpClient().listFiles()).thenReturn(
 					new JesFtpFile[] { new JesFtpFile(TEST_DATA_JOB, ""), new JesFtpFile(TEST_DATA_JOB, "") });
@@ -735,7 +735,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			doNothing().when(jesClient).setJesFilters(any(), any(), any(), anyInt());
 			when(jesClient.getFtpClient().listFiles()).thenReturn(new JesFtpFile[0]);
 			doAnswer(invocation -> invocation.getArgument(1)).when(jesClient).throwIfLimitReached(anyInt(), any());
@@ -762,7 +762,7 @@ public class JesClientTest {
 	@Test
 	public void testLogin() {
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			when(jesClient.getFtpClient().login(any(), any())).thenReturn(true);
 			when(jesClient.getFtpClient().sendSiteCommand(any())).thenReturn(true);
 			doNothing().when(jesClient).enterJesMode();
@@ -784,7 +784,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			when(jesClient.getFtpClient().login(any(), any())).thenReturn(false);
 			when(jesClient.getFtpClient().sendSiteCommand(any())).thenReturn(true);
 
@@ -814,7 +814,7 @@ public class JesClientTest {
 				= job.createOutput(2, "outputName", 10, Optional.of("step"), Optional.empty(), Optional.empty());
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			when(jesClient.getFtpClient().retrieveFile(any(), any())).then(in -> {
 				((OutputStream) in.getArgument(1)).write("jobOutput1".getBytes(Charset.defaultCharset()));
 				return true;
@@ -834,7 +834,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			when(jesClient.getFtpClient().retrieveFile(any(), any())).then(in -> {
 				((OutputStream) in.getArgument(1)).write("jobOutput2".getBytes(Charset.defaultCharset()));
 				return true;
@@ -854,7 +854,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			when(jesClient.getFtpClient().retrieveFile(any(), any())).thenReturn(false);
 
 			// when
@@ -883,7 +883,7 @@ public class JesClientTest {
 				= job.createOutput(2, "outputName", 10, Optional.of("step"), Optional.empty(), Optional.empty());
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			doReturn("jobOutput1").when(jesClient).retrieve(jobOutput1);
 			doReturn("jobOutput2").when(jesClient).retrieve(jobOutput2);
 
@@ -905,7 +905,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			doReturn(Optional.of(job)).when(jesClient).getJobDetails(any());
 			doReturn("jobOutput1").when(jesClient).retrieve(jobOutput1);
 			doReturn("jobOutput2").when(jesClient).retrieve(jobOutput2);
@@ -929,7 +929,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			doReturn(Optional.empty()).when(jesClient).getJobDetails(any());
 
 			// when
@@ -964,7 +964,7 @@ public class JesClientTest {
 		final String siteCommandLimitFilter = "JESENTRYLIMIT=" + Integer.toString(limit);
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			when(jesClient.getFtpClient().sendSiteCommand(siteCommandNameFilter)).thenReturn(true);
 			when(jesClient.getFtpClient().sendSiteCommand(siteCommandOwnerFilter)).thenReturn(true);
 			when(jesClient.getFtpClient().sendSiteCommand(siteCommandStatusFilter)).thenReturn(true);
@@ -987,7 +987,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			when(jesClient.getFtpClient().sendSiteCommand(siteCommandNameFilter)).thenReturn(true);
 			when(jesClient.getFtpClient().sendSiteCommand(siteCommandOwnerFilter)).thenReturn(true);
 			when(jesClient.getFtpClient().sendSiteCommand(siteCommandStatusFilter)).thenReturn(true);
@@ -1012,7 +1012,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			when(jesClient.getFtpClient().sendSiteCommand(siteCommandNameFilter)).thenReturn(true);
 			when(jesClient.getFtpClient().sendSiteCommand(siteCommandOwnerFilter)).thenReturn(true);
 			when(jesClient.getFtpClient().sendSiteCommand(siteCommandStatusFilter)).thenReturn(false);
@@ -1035,7 +1035,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			when(jesClient.getFtpClient().sendSiteCommand(siteCommandNameFilter)).thenReturn(true);
 			when(jesClient.getFtpClient().sendSiteCommand(siteCommandOwnerFilter)).thenReturn(false);
 
@@ -1056,7 +1056,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			when(jesClient.getFtpClient().sendSiteCommand(siteCommandNameFilter)).thenReturn(false);
 
 			// when
@@ -1083,9 +1083,9 @@ public class JesClientTest {
 			justification = "Return value of Mockedverify(jesClient).getJesOwner() does not matter.")
 	public void testSubmit() {
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			when(jesClient.getFtpClient().storeUniqueFile(any())).then(invocation -> {
-				try (final InputStream inputStream = invocation.getArgument(0)) {
+				try (InputStream inputStream = invocation.getArgument(0)) {
 					assertEquals("jclContent", IOUtils.toString(inputStream, Charset.defaultCharset()));
 				}
 				return true;
@@ -1108,7 +1108,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			when(jesClient.getFtpClient().storeUniqueFile(any())).thenReturn(true);
 			when(jesClient.getFtpClient().getReplyString()).thenReturn(".id");
 
@@ -1128,7 +1128,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			when(jesClient.getFtpClient().storeUniqueFile(any())).thenReturn(false);
 
 			// when
@@ -1145,7 +1145,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			when(jesClient.getFtpClient().storeUniqueFile(any())).thenReturn(true);
 			when(jesClient.getFtpClient().getReplyString()).thenReturn("");
 
@@ -1173,7 +1173,7 @@ public class JesClientTest {
 		final List<Job> jobs = asList(TEST_DATA_JOB);
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			when(jesClient.getFtpClient().getReplyString()).thenReturn("");
 
 			// when
@@ -1190,7 +1190,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			when(jesClient.getFtpClient().getReplyString())
 					.thenReturn("250-JESENTRYLIMIT OF 456 REACHED.  ADDITIONAL ENTRIES NOT DISPLAYED");
 
@@ -1220,7 +1220,7 @@ public class JesClientTest {
 	@Test
 	public void testWaitFor() {
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			doNothing().when(jesClient).waitFor(any(), anyLong());
 
 			// when
@@ -1237,7 +1237,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			doReturn(true).when(jesClient).waitFor(any(), anyLong(), anyLong());
 
 			// when
@@ -1254,7 +1254,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			doReturn(false).when(jesClient).waitFor(any(), anyLong(), anyLong());
 
 			// when
@@ -1271,7 +1271,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			doReturn(true).when(jesClient).waitFor(any(), any(), anyLong());
 
 			// when
@@ -1288,7 +1288,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			doReturn(false).when(jesClient).waitFor(any(), any(), anyLong());
 
 			// when
@@ -1305,7 +1305,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			doReturn(true).when(jesClient).waitFor(any(), any(), anyLong());
 
 			// when
@@ -1325,7 +1325,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			doReturn(false).when(jesClient).waitFor(any(), any(), anyLong());
 
 			// when
@@ -1345,7 +1345,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 
 			// when
 			final AtomicInteger sleepCalls = new AtomicInteger(0);
@@ -1362,7 +1362,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 
 			// when
 			final AtomicInteger sleepCalls = new AtomicInteger(0);
@@ -1380,7 +1380,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			doReturn(false).when(jesClient).exists(any(), any());
 
 			// when
@@ -1400,7 +1400,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			final AtomicBoolean existsActive = new AtomicBoolean(true);
 			doAnswer(invocation -> existsActive.getAndSet(false)).when(jesClient).exists(any(), any());
 
@@ -1421,7 +1421,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			doAnswer(invocation -> {
 				Thread.sleep(123);
 				return true;
@@ -1445,7 +1445,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			final AtomicBoolean existsActive = new AtomicBoolean(true);
 			doAnswer(invocation -> existsActive.getAndSet(false)).when(jesClient).exists(any(), any());
 
@@ -1470,7 +1470,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			final Job job = new Job("id", "name", JobStatus.INPUT, "owner");
 			final AtomicBoolean existsInput = new AtomicBoolean(true);
 			doAnswer(invocation -> existsInput.getAndSet(false)).when(jesClient).exists(job, JobStatus.INPUT);
@@ -1525,7 +1525,7 @@ public class JesClientTest {
 			if (ftpClient == null) {
 				ftpClient = mock(FTPClient.class);
 			}
-			return Objects.requireNonNull(ftpClient);
+			return Nullables.orElseThrow(ftpClient);
 		}
 	}
 }

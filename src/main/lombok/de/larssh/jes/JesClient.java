@@ -29,6 +29,7 @@ import org.apache.commons.net.ftp.FTPReply;
 
 import de.larssh.jes.parser.JesFtpFile;
 import de.larssh.jes.parser.JesFtpFileEntryParserFactory;
+import de.larssh.utils.Nullables;
 import de.larssh.utils.Optionals;
 import de.larssh.utils.function.ThrowingRunnable;
 import de.larssh.utils.text.Patterns;
@@ -313,8 +314,8 @@ public class JesClient implements Closeable {
 	public boolean exists(final Job job, final JobStatus status) throws IOException, JesException {
 		setJesFilters(job.getName(), status, job.getOwner(), LIST_LIMIT_EXISTS);
 
-		final String[] ids = Optional.ofNullable(getFtpClient().listNames(job.getId()))
-				.orElseThrow(() -> new JesException(getFtpClient(),
+		final String[] ids = Nullables.orElseThrow(getFtpClient().listNames(job.getId()),
+				() -> new JesException(getFtpClient(),
 						"Retrieving job [%s] failed. Probably no FTP data connection socket could be opened.",
 						job.getId()));
 		return Optionals.ofSingle(ids).isPresent();
@@ -476,8 +477,8 @@ public class JesClient implements Closeable {
 			throws IOException, JesException {
 		setJesFilters(nameFilter, status, ownerFilter, limit);
 
-		final String[] ids = Optional.ofNullable(getFtpClient().listNames())
-				.orElseThrow(() -> new JesException(getFtpClient(),
+		final String[] ids = Nullables.orElseThrow(getFtpClient().listNames(),
+				() -> new JesException(getFtpClient(),
 						"Retrieving the list of job IDs failed. Probably no FTP data connection socket could be opened."));
 
 		return throwIfLimitReached(limit,

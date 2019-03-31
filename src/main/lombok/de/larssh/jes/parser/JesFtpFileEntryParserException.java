@@ -19,7 +19,6 @@ public class JesFtpFileEntryParserException extends RuntimeException {
 	 * @param arguments arguments referenced by format specifiers in {@code message}
 	 */
 	public JesFtpFileEntryParserException(final String message, final Object... arguments) {
-		super(Strings.format(message, arguments));
-		initCause(null);
+		super(Strings.format(message, arguments), null);
 	}
 }

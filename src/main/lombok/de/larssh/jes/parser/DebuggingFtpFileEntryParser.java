@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPFileEntryParser;
 
+import de.larssh.utils.Nullables;
 import de.larssh.utils.text.Strings;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -21,10 +22,8 @@ public class DebuggingFtpFileEntryParser implements FTPFileEntryParser {
 	/** {@inheritDoc} */
 	@Nullable
 	@Override
-	public FTPFile parseFTPEntry(@Nullable final String listEntry) {
-		if (listEntry == null) {
-			throw new IllegalArgumentException("listEntry");
-		}
+	public FTPFile parseFTPEntry(@Nullable final String listEntryNullable) {
+		final String listEntry = Nullables.orElseThrow(listEntryNullable);
 		throw new DebuggingFtpFileEntryParserException("parseFTPEntry", listEntry);
 	}
 
@@ -32,19 +31,14 @@ public class DebuggingFtpFileEntryParser implements FTPFileEntryParser {
 	@Nullable
 	@Override
 	public String readNextEntry(@Nullable final BufferedReader reader) throws IOException {
-		if (reader == null) {
-			throw new IllegalArgumentException("reader");
-		}
-		return reader.readLine();
+		return Nullables.orElseThrow(reader).readLine();
 	}
 
 	/** {@inheritDoc} */
 	@NonNull
 	@Override
-	public List<String> preParse(@Nullable final List<String> original) {
-		if (original == null) {
-			throw new IllegalArgumentException("original");
-		}
+	public List<String> preParse(@Nullable final List<String> originalNullable) {
+		final List<String> original = Nullables.orElseThrow(originalNullable);
 		throw new DebuggingFtpFileEntryParserException("preParse", String.join(Strings.NEW_LINE, original));
 	}
 }

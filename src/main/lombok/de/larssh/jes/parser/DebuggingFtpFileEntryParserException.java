@@ -35,8 +35,7 @@ public class DebuggingFtpFileEntryParserException extends RuntimeException {
 	 * @param value      the stringified value supplied to the called method
 	 */
 	public DebuggingFtpFileEntryParserException(final String methodName, final String value) {
-		super(Strings.format("Method %s called using:%s%s", methodName, Strings.NEW_LINE, value));
-		initCause(null);
+		super(Strings.format("Method %s called using:%s%s", methodName, Strings.NEW_LINE, value), null);
 
 		this.methodName = methodName;
 		this.value = value;
