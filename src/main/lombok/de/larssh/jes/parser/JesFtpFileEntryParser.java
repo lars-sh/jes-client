@@ -182,7 +182,7 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 
 		// Second line (separator)
 		final String separator = lines.remove(0);
-		if (!Patterns.matches(PATTERN_SEPARATOR, separator).isPresent()) {
+		if (!Strings.matches(separator, PATTERN_SEPARATOR)) {
 			throw new JesFtpFileEntryParserException("Expected [%s] as separator line, got [%s].",
 					PATTERN_SEPARATOR,
 					separator);
@@ -198,7 +198,7 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 
 		// Last line (spool files)
 		final String spoolFiles = lines.remove(lines.size() - 1);
-		if (!Patterns.matches(PATTERN_SPOOL_FILES, spoolFiles).isPresent()) {
+		if (!Strings.matches(spoolFiles, PATTERN_SPOOL_FILES)) {
 			throw new JesFtpFileEntryParserException("Expected [%s] as spool files line, got [%s].",
 					PATTERN_SPOOL_FILES.pattern(),
 					spoolFiles);
@@ -267,7 +267,7 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 		}
 
 		// First line
-		if (!Patterns.matches(PATTERN_TITLE, original.get(0)).isPresent()) {
+		if (!Strings.matches(original.get(0), PATTERN_TITLE)) {
 			throw new JesFtpFileEntryParserException("Parsing JES job details failed. Unexpected first line: [%s].",
 					original.get(0));
 		}
