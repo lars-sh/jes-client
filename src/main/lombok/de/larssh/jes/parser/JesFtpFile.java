@@ -14,7 +14,7 @@ import lombok.ToString;
  * {@link FTPFile} implementation to hold a {@link Job} object.
  */
 @Getter
-@ToString
+@ToString(callSuper = false)
 public class JesFtpFile extends FTPFile {
 	// @EqualsAndHashCode(callSuper = true, onParam_ = { @Nullable })
 

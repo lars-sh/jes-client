@@ -32,6 +32,7 @@ import de.larssh.jes.JobFlag;
 import de.larssh.jes.JobStatus;
 import de.larssh.utils.Nullables;
 import de.larssh.utils.SneakyException;
+import de.larssh.utils.text.Strings;
 import lombok.NoArgsConstructor;
 
 /**
@@ -104,7 +105,7 @@ public final class JesFtpFileEntryParserTest {
 			paths.filter(Files::isRegularFile).forEach(path -> {
 				final Path fileName = Nullables.orElseThrow(path.getFileName(),
 						() -> new IllegalArgumentException(
-								String.format("Missing expected jobs for file [%s].", path)));
+								Strings.format("Missing expected jobs for file [%s].", path)));
 
 				try (BufferedReader reader = Files.newBufferedReader(path)) {
 					assertEquals(PARSE_FTP_ENTRY_EXPECTED_JOBS.get(fileName.toString()),
@@ -136,7 +137,7 @@ public final class JesFtpFileEntryParserTest {
 			paths.filter(Files::isRegularFile).forEach(path -> {
 				final Path fileName = Nullables.orElseThrow(path.getFileName(),
 						() -> new IllegalArgumentException(
-								String.format("Missing expected size for file [%s].", path)));
+								Strings.format("Missing expected size for file [%s].", path)));
 
 				try (BufferedReader reader = Files.newBufferedReader(path)) {
 					assertEquals(PRE_PARSE_EXPECTED_SIZES.get(fileName.toString()),

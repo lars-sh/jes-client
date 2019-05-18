@@ -16,7 +16,7 @@ import lombok.ToString;
  * entries up to the specified JES limit.
  */
 @Getter
-@ToString
+@ToString(callSuper = false)
 @EqualsAndHashCode(callSuper = true, onParam_ = { @Nullable })
 public class JesLimitReachedException extends JesException {
 	private static final long serialVersionUID = 4549905450879298755L;
@@ -60,6 +60,7 @@ public class JesLimitReachedException extends JesException {
 	/** {@inheritDoc} */
 	@Override
 	@ToString.Include(name = "message", rank = 1)
+	@SuppressWarnings("PMD.UselessOverridingMethod")
 	public String getMessage() {
 		return super.getMessage();
 	}
