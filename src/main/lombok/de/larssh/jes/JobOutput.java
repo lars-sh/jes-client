@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import de.larssh.utils.text.Strings;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -82,8 +81,6 @@ public class JobOutput {
 	 * @param outputClass   the output class
 	 * @throws JobFieldInconsistentException on inconsistent field value
 	 */
-	@SuppressFBWarnings(value = "PCOA_PARTIALLY_CONSTRUCTED_OBJECT_ACCESS",
-			justification = "fb-contrib issue, see https://github.com/mebigfatguy/fb-contrib/issues/325")
 	protected JobOutput(final Job job,
 			final int index,
 			final String name,
@@ -117,23 +114,24 @@ public class JobOutput {
 	 *
 	 * @throws JobFieldInconsistentException on inconsistent field value
 	 */
+	@SuppressWarnings("PMD.CyclomaticComplexity")
 	private void validate() {
-		if (getIndex() < 1) {
+		if (index < 1) {
 			throw new JobFieldInconsistentException("Index must not be less than one.");
 		}
-		if (getName().isEmpty()) {
+		if (name.isEmpty()) {
 			throw new JobFieldInconsistentException("Name must not be empty.");
 		}
-		if (getLength() < 0) {
+		if (length < 0) {
 			throw new JobFieldInconsistentException("Length must not be less than zero.");
 		}
-		if (getStep().filter(String::isEmpty).isPresent()) {
+		if (step.filter(String::isEmpty).isPresent()) {
 			throw new JobFieldInconsistentException("Step must not be empty if present.");
 		}
-		if (getProcedureStep().filter(String::isEmpty).isPresent()) {
+		if (procedureStep.filter(String::isEmpty).isPresent()) {
 			throw new JobFieldInconsistentException("Procedure Step must not be empty if present.");
 		}
-		if (getOutputClass().filter(String::isEmpty).isPresent()) {
+		if (outputClass.filter(String::isEmpty).isPresent()) {
 			throw new JobFieldInconsistentException("Output class must not be empty if present.");
 		}
 	}

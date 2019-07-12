@@ -130,7 +130,7 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 
 		// Checkstyle: Ignore duplicate "name" for 2 lines
 		// Checkstyle: Ignore duplicate "class" for 5 lines
-		final String id = matcher.group("id");
+		final String jobId = matcher.group("id");
 		final String name = matcher.group("name");
 		final JobStatus status = JobStatus.valueOf(matcher.group("status"));
 		final String owner = matcher.group("owner");
@@ -147,7 +147,7 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 						.orElse(Boolean.FALSE))
 				.collect(toList());
 
-		return new Job(id, name, status, owner, jesClass, resultCode, abendCode, flags.toArray(new JobFlag[0]));
+		return new Job(jobId, name, status, owner, jesClass, resultCode, abendCode, flags.toArray(new JobFlag[0]));
 	}
 
 	/**
@@ -162,6 +162,7 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 	 * @return {@link Job} object
 	 * @throws JesFtpFileEntryParserException on unexpected {@code listEntry}
 	 */
+	@SuppressWarnings("PMD.CyclomaticComplexity")
 	private Job createJobAndOutputs(final String listEntry) {
 		final List<String> lines = new ArrayList<>(Strings.getLines(listEntry));
 		if (lines.isEmpty()) {
@@ -257,7 +258,9 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 	/** {@inheritDoc} */
 	@NonNull
 	@Override
-	@SuppressFBWarnings(value = "CFS_CONFUSING_FUNCTION_SEMANTICS", justification = "based on interface contract")
+	@SuppressWarnings("PMD.CyclomaticComplexity")
+	@SuppressFBWarnings(value = "CFS_CONFUSING_FUNCTION_SEMANTICS",
+			justification = "returning input variable as required by interface contract")
 	public List<String> preParse(@Nullable final List<String> originalNullable) {
 		final List<String> original = Nullables.orElseThrow(originalNullable);
 
@@ -292,7 +295,7 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 			}
 		}
 
-		// The interface requires us to return "original" - nothing else!
+		// The interface tells us to return the input variable.
 		original.clear();
 		original.addAll(lines);
 		return original;

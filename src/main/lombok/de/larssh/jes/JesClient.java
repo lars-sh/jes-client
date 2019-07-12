@@ -231,9 +231,9 @@ public class JesClient implements Closeable {
 	 * The default port is {@link org.apache.commons.net.ftp.FTP#DEFAULT_PORT}.
 	 *
 	 * <p>
-	 * <b>Warning:</b> This constructor calls the non-final methods
-	 * {@link #getFtpClient()} and {@link #login(String, String)}. Therefore better
-	 * not call this from an extending class, that overrides one of them.
+	 * <b>Warning:</b> This constructor calls the overridable method
+	 * {@link #login(String, String)}, which might lead to uninitialized fields when
+	 * overriding that method.
 	 *
 	 * @param hostname FTP hostname
 	 * @param port     FTP port
@@ -242,11 +242,12 @@ public class JesClient implements Closeable {
 	 * @throws IOException  Technical FTP failure
 	 * @throws JesException Logical JES failure
 	 */
+	@SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
 	@SuppressFBWarnings(value = "PCOA_PARTIALLY_CONSTRUCTED_OBJECT_ACCESS", justification = "see JavaDoc")
 	public JesClient(final String hostname, final int port, final String username, final String password)
 			throws IOException, JesException {
 		this();
-		getFtpClient().connect(hostname, port);
+		ftpClient.connect(hostname, port);
 		login(username, password);
 	}
 
@@ -739,14 +740,14 @@ public class JesClient implements Closeable {
 			}
 		}
 
-		final String id = Patterns.find(PATTERN_FTP_SUBMIT_ID, getFtpClient().getReplyString())
+		final String jobId = Patterns.find(PATTERN_FTP_SUBMIT_ID, getFtpClient().getReplyString())
 				.map(matcher -> matcher.group("id"))
 				.orElseThrow(() -> new JesException(getFtpClient(), "Started job, but could not extract its ID."));
 		final String name = Patterns.find(PATTERN_JCL_JOB_NAME, jclContent)
 				.map(matcher -> matcher.group("name"))
 				.orElse(FILTER_WILDCARD);
 
-		return new Job(id, name, JobStatus.INPUT, getJesOwner());
+		return new Job(jobId, name, JobStatus.INPUT, getJesOwner());
 	}
 
 	/**

@@ -36,8 +36,6 @@ public class JesFtpFile extends FTPFile {
 	 */
 	@SuppressWarnings("PMD.CallSuperInConstructor")
 	public JesFtpFile(final Job job, final String rawListing) {
-		super();
-
 		this.job = job;
 		setRawListing(rawListing);
 	}

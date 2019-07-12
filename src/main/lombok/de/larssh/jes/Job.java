@@ -14,7 +14,6 @@ import java.util.Set;
 import de.larssh.utils.OptionalInts;
 import de.larssh.utils.text.Strings;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -30,6 +29,7 @@ import lombok.ToString;
  */
 @Getter
 @ToString
+@SuppressWarnings("PMD.ShortClassName")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, onParam_ = { @Nullable })
 public class Job {
 	/**
@@ -38,6 +38,7 @@ public class Job {
 	 * @return job id
 	 */
 	@EqualsAndHashCode.Include
+	@SuppressWarnings("PMD.ShortVariable")
 	String id;
 
 	/**
@@ -124,21 +125,21 @@ public class Job {
 	 * This constructor creates a {@link Job} in its simplest form. String
 	 * parameters are trimmed and converted to upper case.
 	 *
-	 * @param id     the jobs ID, must not be empty
+	 * @param jobId  the jobs ID, must not be empty
 	 * @param name   the jobs name or a name filter value
 	 * @param status the jobs status or {@link JobStatus#ALL}
 	 * @param owner  the jobs owner or an owner filter value
 	 * @throws JobFieldInconsistentException on inconsistent field value
 	 */
-	public Job(final String id, final String name, final JobStatus status, final String owner) {
-		this(id, name, status, owner, Optional.empty(), OptionalInt.empty(), Optional.empty());
+	public Job(final String jobId, final String name, final JobStatus status, final String owner) {
+		this(jobId, name, status, owner, Optional.empty(), OptionalInt.empty(), Optional.empty());
 	}
 
 	/**
 	 * This constructor creates a {@link Job} allowing to set any field. String
 	 * parameters are trimmed and converted to upper case.
 	 *
-	 * @param id         the jobs ID, must not be empty
+	 * @param jobId      the jobs ID, must not be empty
 	 * @param name       the jobs name or a name filter value
 	 * @param status     the jobs status or {@link JobStatus#ALL}
 	 * @param owner      the jobs owner or an owner filter value
@@ -149,9 +150,7 @@ public class Job {
 	 * @throws JobFieldInconsistentException on inconsistent field value
 	 */
 	@SuppressWarnings("checkstyle:ParameterNumber")
-	@SuppressFBWarnings(value = "PCOA_PARTIALLY_CONSTRUCTED_OBJECT_ACCESS",
-			justification = "fb-contrib issue, see https://github.com/mebigfatguy/fb-contrib/issues/325")
-	public Job(final String id,
+	public Job(final String jobId,
 			final String name,
 			final JobStatus status,
 			final String owner,
@@ -159,7 +158,7 @@ public class Job {
 			final OptionalInt resultCode,
 			final Optional<String> abendCode,
 			final JobFlag... flags) {
-		this.id = Strings.toNeutralUpperCase(id.trim());
+		id = Strings.toNeutralUpperCase(jobId.trim());
 		this.name = Strings.toNeutralUpperCase(name.trim());
 		this.status = status;
 		this.owner = Strings.toNeutralUpperCase(owner.trim());
@@ -224,30 +223,31 @@ public class Job {
 	 *
 	 * @throws JobFieldInconsistentException on inconsistent field value
 	 */
+	@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 	private void validate() {
-		if (getId().isEmpty()) {
+		if (id.isEmpty()) {
 			throw new JobFieldInconsistentException("Job ID must be filled, but is empty.");
 		}
-		if (getJesClass().filter(String::isEmpty).isPresent()) {
+		if (jesClass.filter(String::isEmpty).isPresent()) {
 			throw new JobFieldInconsistentException("JES class must not be empty if present.");
 		}
-		if (getResultCode().isPresent() && getAbendCode().isPresent()) {
+		if (resultCode.isPresent() && abendCode.isPresent()) {
 			throw new JobFieldInconsistentException("Result Code and Abend Code must not be present at the same time.");
 		}
-		if (OptionalInts.filter(getResultCode(), r -> r < 0).isPresent()) {
+		if (OptionalInts.filter(resultCode, r -> r < 0).isPresent()) {
 			throw new JobFieldInconsistentException("Result Code must not be less than zero.");
 		}
-		if (getAbendCode().filter(String::isEmpty).isPresent()) {
+		if (abendCode.filter(String::isEmpty).isPresent()) {
 			throw new JobFieldInconsistentException("Abend Code must not be empty if present.");
 		}
-		if (getStatus() != JobStatus.OUTPUT && getStatus() != JobStatus.ALL) {
-			if (getResultCode().isPresent()) {
+		if (status != JobStatus.OUTPUT && status != JobStatus.ALL) {
+			if (resultCode.isPresent()) {
 				throw new JobFieldInconsistentException(
-						Strings.format("Result Code must not be present for status [%s].", getStatus()));
+						Strings.format("Result Code must not be present for status [%s].", status));
 			}
-			if (getAbendCode().isPresent()) {
+			if (abendCode.isPresent()) {
 				throw new JobFieldInconsistentException(
-						Strings.format("Abend Code must not be present for status [%s].", getStatus()));
+						Strings.format("Abend Code must not be present for status [%s].", status));
 			}
 		}
 	}
