@@ -247,7 +247,6 @@ public class JesClientTest {
 	 */
 	@Test
 	public void testExists() {
-
 		// given
 		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			doNothing().when(jesClient).setJesFilters(any(), any(), any(), anyInt());
@@ -279,6 +278,48 @@ public class JesClientTest {
 			verify(jesClient).exists(any(), any());
 			verify(jesClient).setJesFilters("NAME", JobStatus.INPUT, "OWNER", 2);
 			verify(jesClient.getFtpClient()).listNames("ID");
+			verifyEnd(jesClient);
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
+			throw new SneakyException(e);
+		}
+
+		// given
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
+			doNothing().when(jesClient).setJesFilters(any(), any(), any(), anyInt());
+			when(jesClient.getFtpClient().listNames(any())).thenReturn(null);
+			when(jesClient.getFtpClient().getReplyString()).thenReturn("");
+
+			// when
+			assertThrows(JesException.class, () -> jesClient.exists(TEST_DATA_JOB, JobStatus.INPUT));
+
+			// then
+			verify(jesClient).exists(any(), any());
+			verify(jesClient).setJesFilters("NAME", JobStatus.INPUT, "OWNER", 2);
+			verify(jesClient.getFtpClient()).listNames("ID");
+			verify(jesClient.getFtpClient(), times(2)).getReplyString();
+			verifyEnd(jesClient);
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
+			throw new SneakyException(e);
+		}
+
+		// given
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
+			doNothing().when(jesClient).setJesFilters(any(), any(), any(), anyInt());
+			when(jesClient.getFtpClient().listNames(any())).thenReturn(null);
+			when(jesClient.getFtpClient().getReplyString()).thenReturn("550 NO JOBS FOUND FOR ...");
+
+			// when
+			assertFalse(jesClient.exists(TEST_DATA_JOB, JobStatus.INPUT));
+
+			// then
+			verify(jesClient).exists(any(), any());
+			verify(jesClient).setJesFilters("NAME", JobStatus.INPUT, "OWNER", 2);
+			verify(jesClient.getFtpClient()).listNames("ID");
+			verify(jesClient.getFtpClient()).getReplyString();
 			verifyEnd(jesClient);
 		} catch (final IOException e) {
 			throw new UncheckedIOException(e);
@@ -615,7 +656,30 @@ public class JesClientTest {
 			verify(jesClient).list(any(), any(), any(), anyInt());
 			verify(jesClient).setJesFilters(nameFilter, status, ownerFilter, limit);
 			verify(jesClient.getFtpClient()).listNames();
-			verifyEndWithJesException(jesClient);
+			verify(jesClient.getFtpClient(), times(2)).getReplyString();
+			verifyEnd(jesClient);
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (final JesException e) {
+			throw new SneakyException(e);
+		}
+
+		// given
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
+			doNothing().when(jesClient).setJesFilters(any(), any(), any(), anyInt());
+			when(jesClient.getFtpClient().listNames()).thenReturn(null);
+			when(jesClient.getFtpClient().getReplyString()).thenReturn("550 NO JOBS FOUND FOR ...");
+
+			// when
+			assertEquals(emptyList(), jesClient.list(nameFilter, status, ownerFilter, limit));
+
+			// then
+			verify(jesClient).list(any(), any(), any(), anyInt());
+			verify(jesClient).setJesFilters(nameFilter, status, ownerFilter, limit);
+			verify(jesClient.getFtpClient()).listNames();
+			verify(jesClient.getFtpClient(), times(2)).getReplyString();
+			verify(jesClient).throwIfLimitReached(limit, emptyList());
+			verifyEnd(jesClient);
 		} catch (final IOException e) {
 			throw new UncheckedIOException(e);
 		} catch (final JesException e) {
@@ -1083,20 +1147,20 @@ public class JesClientTest {
 	public void testSubmit() {
 		// given
 		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
-			when(jesClient.getFtpClient().storeUniqueFile(any())).then(invocation -> {
-				try (InputStream inputStream = invocation.getArgument(0)) {
+			when(jesClient.getFtpClient().storeUniqueFile(any(), any())).then(invocation -> {
+				try (InputStream inputStream = invocation.getArgument(1)) {
 					assertEquals("jclContent", IOUtils.toString(inputStream, Charset.defaultCharset()));
 				}
 				return true;
 			});
-			when(jesClient.getFtpClient().getReplyString()).thenReturn(".id");
+			when(jesClient.getFtpClient().getReplyString()).thenReturn("250-IT IS KNOWN TO JES AS id");
 
 			// when
 			assertEquals(new Job("id", "*", JobStatus.INPUT, "*"), jesClient.submit("jclContent"));
 
 			// then
 			verify(jesClient).submit(any());
-			verify(jesClient.getFtpClient()).storeUniqueFile(any());
+			verify(jesClient.getFtpClient()).storeUniqueFile(any(), any());
 			verify(jesClient.getFtpClient()).getReplyString();
 			verify(jesClient).getJesOwner();
 			verifyEnd(jesClient);
@@ -1108,15 +1172,15 @@ public class JesClientTest {
 
 		// given
 		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
-			when(jesClient.getFtpClient().storeUniqueFile(any())).thenReturn(true);
-			when(jesClient.getFtpClient().getReplyString()).thenReturn(".id");
+			when(jesClient.getFtpClient().storeUniqueFile(any(), any())).thenReturn(true);
+			when(jesClient.getFtpClient().getReplyString()).thenReturn("250-IT IS KNOWN TO JES AS id");
 
 			// when
 			assertEquals(new Job("id", "name", JobStatus.INPUT, "*"), jesClient.submit("//name\njclContent"));
 
 			// then
 			verify(jesClient).submit(any());
-			verify(jesClient.getFtpClient()).storeUniqueFile(any());
+			verify(jesClient.getFtpClient()).storeUniqueFile(any(), any());
 			verify(jesClient.getFtpClient()).getReplyString();
 			verify(jesClient).getJesOwner();
 			verifyEnd(jesClient);
@@ -1128,14 +1192,14 @@ public class JesClientTest {
 
 		// given
 		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
-			when(jesClient.getFtpClient().storeUniqueFile(any())).thenReturn(false);
+			when(jesClient.getFtpClient().storeUniqueFile(any(), any())).thenReturn(false);
 
 			// when
 			assertThrows(JesException.class, () -> jesClient.submit("jclContent"));
 
 			// then
 			verify(jesClient).submit(any());
-			verify(jesClient.getFtpClient()).storeUniqueFile(any());
+			verify(jesClient.getFtpClient()).storeUniqueFile(any(), any());
 			verifyEndWithJesException(jesClient);
 		} catch (final IOException e) {
 			throw new UncheckedIOException(e);
@@ -1145,7 +1209,7 @@ public class JesClientTest {
 
 		// given
 		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
-			when(jesClient.getFtpClient().storeUniqueFile(any())).thenReturn(true);
+			when(jesClient.getFtpClient().storeUniqueFile(any(), any())).thenReturn(true);
 			when(jesClient.getFtpClient().getReplyString()).thenReturn("");
 
 			// when
@@ -1153,7 +1217,7 @@ public class JesClientTest {
 
 			// then
 			verify(jesClient).submit(any());
-			verify(jesClient.getFtpClient()).storeUniqueFile(any());
+			verify(jesClient.getFtpClient()).storeUniqueFile(any(), any());
 			verify(jesClient.getFtpClient(), times(2)).getReplyString();
 			verifyEnd(jesClient);
 		} catch (final IOException e) {

@@ -7,8 +7,9 @@ All notable changes to this project will be documented in this file.
 
 Download at TODO
 
-### Changed
-* TODO
+### Fixed
+* Handling empty FTP list results
+* Submitting jobs
 
 <a name="0.9.0"></a>
 

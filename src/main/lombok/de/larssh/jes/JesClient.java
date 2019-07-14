@@ -29,11 +29,11 @@ import org.apache.commons.net.ftp.FTPReply;
 
 import de.larssh.jes.parser.JesFtpFile;
 import de.larssh.jes.parser.JesFtpFileEntryParserFactory;
-import de.larssh.utils.Nullables;
 import de.larssh.utils.Optionals;
 import de.larssh.utils.function.ThrowingRunnable;
 import de.larssh.utils.text.Patterns;
 import de.larssh.utils.text.Strings;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
 import lombok.experimental.NonFinal;
@@ -126,7 +126,7 @@ public class JesClient implements Closeable {
 	/**
 	 * Pattern to find the job ID inside the FTP response after submitting a JCL.
 	 */
-	private static final Pattern PATTERN_FTP_SUBMIT_ID = Pattern.compile("\\.\\s*(?<id>[^.]+?)\\s*$");
+	private static final Pattern PATTERN_FTP_SUBMIT_ID = Pattern.compile("^250-IT IS KNOWN TO JES AS (?<id>\\S+)");
 
 	/**
 	 * Pattern to find the job name inside a valid JCL.
@@ -140,6 +140,11 @@ public class JesClient implements Closeable {
 			= Pattern.compile("^250-JESENTRYLIMIT OF \\d+ REACHED\\.  ADDITIONAL ENTRIES NOT DISPLAYED$");
 
 	/**
+	 * Pattern to check the response string for the empty list warning.
+	 */
+	private static final Pattern PATTERN_LIST_NAMES_NO_JOBS_FOUND = Pattern.compile("^550 NO JOBS FOUND FOR ");
+
+	/**
 	 * Pattern to retrieve status values from response strings.
 	 */
 	private static final Pattern PATTERN_STATUS = Pattern
@@ -148,7 +153,12 @@ public class JesClient implements Closeable {
 	/**
 	 * Default sleep interval used by {@link #waitFor(Job)}
 	 */
-	protected static final long SLEEP_DURATION_MILLIS_DEFAULT = constant(1000);
+	public static final long SLEEP_DURATION_MILLIS_DEFAULT = constant(1000);
+
+	/**
+	 * Remote file name that is used when submitting a JCL.
+	 */
+	private static final String SUBMIT_REMOTE_FILE_NAME = JesClient.class.getSimpleName() + ".jcl";
 
 	/**
 	 * FTP Client used by the current JES client instance.
@@ -315,8 +325,8 @@ public class JesClient implements Closeable {
 	public boolean exists(final Job job, final JobStatus status) throws IOException, JesException {
 		setJesFilters(job.getName(), status, job.getOwner(), LIST_LIMIT_EXISTS);
 
-		final String[] ids = Nullables.orElseThrow(getFtpClient().listNames(job.getId()),
-				() -> new JesException(getFtpClient(),
+		final String[] ids = getListNameResults(getFtpClient().listNames(job.getId()))
+				.orElseThrow(() -> new JesException(getFtpClient(),
 						"Retrieving job [%s] failed. Probably no FTP data connection socket could be opened.",
 						job.getId()));
 		return Optionals.ofSingle(ids).isPresent();
@@ -340,6 +350,26 @@ public class JesClient implements Closeable {
 				.ofSingle(stream(getFtpClient().listFiles(job.getId())).filter(file -> file instanceof JesFtpFile)
 						.map(file -> (JesFtpFile) file)
 						.map(JesFtpFile::getJob));
+	}
+
+	/**
+	 * Corrects the result of {@link FTPClient#listNames()} and
+	 * {@link FTPClient#listNames(String)} as the mainframe FTP server marks empty
+	 * name listings as error.
+	 *
+	 * @param names result of {@link FTPClient#listNames()} and
+	 *              {@link FTPClient#listNames(String)}
+	 * @return array of names or {@link Optional#empty()} on real FTP error
+	 */
+	@SuppressWarnings("PMD.UseVarargs")
+	@SuppressFBWarnings(value = "UVA_USE_VAR_ARGS",
+			justification = "No varargs needed as this is for special technical reasons only.")
+	private Optional<String[]> getListNameResults(@Nullable final String[] names) {
+		if (names == null) {
+			return Patterns.find(PATTERN_LIST_NAMES_NO_JOBS_FOUND, getFtpClient().getReplyString())
+					.map(matcher -> new String[0]);
+		}
+		return Optional.of(names);
 	}
 
 	/**
@@ -478,9 +508,9 @@ public class JesClient implements Closeable {
 			throws IOException, JesException {
 		setJesFilters(nameFilter, status, ownerFilter, limit);
 
-		final String[] ids = Nullables.orElseThrow(getFtpClient().listNames(),
-				() -> new JesException(getFtpClient(),
-						"Retrieving the list of job IDs failed. Probably no FTP data connection socket could be opened."));
+		final String[] ids = getListNameResults(getFtpClient().listNames()).orElseThrow(() -> new JesException(
+				getFtpClient(),
+				"Retrieving the list of job IDs failed. Probably no FTP data connection socket could be opened."));
 
 		return throwIfLimitReached(limit,
 				stream(ids).map(id -> new Job(id, nameFilter, status, ownerFilter)).collect(toList()));
@@ -735,7 +765,7 @@ public class JesClient implements Closeable {
 	 */
 	public Job submit(final String jclContent) throws IOException, JesException {
 		try (InputStream inputStream = new ReaderInputStream(new StringReader(jclContent), Charset.defaultCharset())) {
-			if (!getFtpClient().storeUniqueFile(inputStream)) {
+			if (!getFtpClient().storeUniqueFile(SUBMIT_REMOTE_FILE_NAME, inputStream)) {
 				throw new JesException(getFtpClient(), "Submitting JCL failed.");
 			}
 		}
