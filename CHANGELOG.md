@@ -7,6 +7,9 @@ All notable changes to this project will be documented in this file.
 
 Download at TODO
 
+### Changed
+* Overhaul of the JesClient.waitFor(...) methods
+
 ### Fixed
 * Handling empty FTP list results
 * Submitting jobs

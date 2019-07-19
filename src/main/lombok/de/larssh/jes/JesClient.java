@@ -14,10 +14,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.charset.Charset;
+import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,10 +31,12 @@ import org.apache.commons.net.ftp.FTPReply;
 
 import de.larssh.jes.parser.JesFtpFile;
 import de.larssh.jes.parser.JesFtpFileEntryParserFactory;
+import de.larssh.utils.Nullables;
 import de.larssh.utils.Optionals;
-import de.larssh.utils.function.ThrowingRunnable;
+import de.larssh.utils.function.ThrowingConsumer;
 import de.larssh.utils.text.Patterns;
 import de.larssh.utils.text.Strings;
+import de.larssh.utils.time.Stopwatch;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
@@ -116,12 +120,12 @@ public class JesClient implements Closeable {
 	 * Checking for existence does not need a limit, but using a limit allows to
 	 * handle an additional error case.
 	 */
-	protected static final int LIST_LIMIT_EXISTS = constant(2);
+	private static final int LIST_LIMIT_EXISTS = constant(2);
 
 	/**
 	 * Minimum limit of spool entries (including)
 	 */
-	public static final int LIST_LIMIT_MIN = constant(1);
+	private static final int LIST_LIMIT_MIN = constant(1);
 
 	/**
 	 * Pattern to find the job ID inside the FTP response after submitting a JCL.
@@ -149,11 +153,6 @@ public class JesClient implements Closeable {
 	 */
 	private static final Pattern PATTERN_STATUS = Pattern
 			.compile("^211-(SERVER SITE VARIABLE |TIMER )?(?<key>\\S+)( VALUE)? IS (SET TO )?(?<value>\\S+?)\\.?$");
-
-	/**
-	 * Default sleep interval used by {@link #waitFor(Job)}
-	 */
-	public static final long SLEEP_DURATION_MILLIS_DEFAULT = constant(1000);
 
 	/**
 	 * Remote file name that is used when submitting a JCL.
@@ -803,9 +802,9 @@ public class JesClient implements Closeable {
 	}
 
 	/**
-	 * Waits for {@code job} to be finished using {@code Thread#sleep} for sleeping
-	 * between {@link #exists(Job, JobStatus)} calls and not timing out. The sleep
-	 * duration is {@link #SLEEP_DURATION_MILLIS_DEFAULT}.
+	 * Waits for {@code job} to be finished using {@code Thread#sleep(long)} for
+	 * waiting between {@link #exists(Job, JobStatus)} calls and timing out after a
+	 * given duration. {@code waiting} allows to specify the duration to wait.
 	 *
 	 * <p>
 	 * The given jobs status specifies, which status are waited for:
@@ -816,72 +815,12 @@ public class JesClient implements Closeable {
 	 * {@link JobStatus#ACTIVE}
 	 * <li>{@link JobStatus#ACTIVE}: waiting for {@link JobStatus#ACTIVE} only
 	 * <li>{@link JobStatus#OUTPUT}: returning {@code true} with no checks and
-	 * without sleeping
+	 * without waiting
 	 * </ul>
 	 *
-	 * @param job the job to wait for
-	 * @throws InterruptedException if any thread has interrupted the current thread
-	 * @throws IOException          Technical FTP failure
-	 * @throws JesException         Logical JES failure
-	 */
-	public void waitFor(final Job job) throws InterruptedException, IOException, JesException {
-		waitFor(job, SLEEP_DURATION_MILLIS_DEFAULT);
-	}
-
-	/**
-	 * Waits for {@code job} to be finished using {@code Thread#sleep} for sleeping
-	 * between {@link #exists(Job, JobStatus)} calls and not timing out.
-	 * {@code sleepDurationMillis} allows to specify the milliseconds to sleep.
-	 *
-	 * <p>
-	 * The given jobs status specifies, which status are waited for:
-	 * <ul>
-	 * <li>{@link JobStatus#ALL}: waiting for {@link JobStatus#INPUT} and
-	 * {@link JobStatus#ACTIVE}
-	 * <li>{@link JobStatus#INPUT}: waiting for {@link JobStatus#INPUT} and
-	 * {@link JobStatus#ACTIVE}
-	 * <li>{@link JobStatus#ACTIVE}: waiting for {@link JobStatus#ACTIVE} only
-	 * <li>{@link JobStatus#OUTPUT}: returning {@code true} with no checks and
-	 * without sleeping
-	 * </ul>
-	 *
-	 * @param job                 the job to wait for
-	 * @param sleepDurationMillis milliseconds to sleep
-	 * @throws InterruptedException if any thread has interrupted the current thread
-	 * @throws IOException          Technical FTP failure
-	 * @throws JesException         Logical JES failure
-	 */
-	public void waitFor(final Job job, final long sleepDurationMillis)
-			throws InterruptedException, IOException, JesException {
-		if (!waitFor(job, sleepDurationMillis, Long.MAX_VALUE)) {
-			throw new JesException(
-					"JesClient.waitFor(%s, %d, Long.MAX_VALUE) returned false while it should have waited forever.",
-					job.getId(),
-					sleepDurationMillis);
-		}
-	}
-
-	/**
-	 * Waits for {@code job} to be finished using {@code Thread#sleep} for sleeping
-	 * between {@link #exists(Job, JobStatus)} calls and timing out after a given
-	 * amount of milliseconds. {@code sleepDurationMillis} allows to specify the
-	 * milliseconds to sleep.
-	 *
-	 * <p>
-	 * The given jobs status specifies, which status are waited for:
-	 * <ul>
-	 * <li>{@link JobStatus#ALL}: waiting for {@link JobStatus#INPUT} and
-	 * {@link JobStatus#ACTIVE}
-	 * <li>{@link JobStatus#INPUT}: waiting for {@link JobStatus#INPUT} and
-	 * {@link JobStatus#ACTIVE}
-	 * <li>{@link JobStatus#ACTIVE}: waiting for {@link JobStatus#ACTIVE} only
-	 * <li>{@link JobStatus#OUTPUT}: returning {@code true} with no checks and
-	 * without sleeping
-	 * </ul>
-	 *
-	 * @param job                 the job to wait for
-	 * @param sleepDurationMillis milliseconds to sleep
-	 * @param timeoutMillis       timeout in milliseconds
+	 * @param job     the job to wait for
+	 * @param waiting duration to wait
+	 * @param timeout timeout duration
 	 * @return {@code true} if the job finished and {@code false} if the timeout has
 	 *         been reached
 	 * @throws InterruptedException if any thread has interrupted the current thread
@@ -889,14 +828,18 @@ public class JesClient implements Closeable {
 	 * @throws JesException         Logical JES failure
 	 */
 	@SuppressWarnings("unused")
-	public boolean waitFor(final Job job, final long sleepDurationMillis, final long timeoutMillis)
+	public boolean waitFor(final Job job, final Duration waiting, final Duration timeout)
 			throws InterruptedException, IOException, JesException {
-		return waitFor(job, ThrowingRunnable.throwing(() -> Thread.sleep(sleepDurationMillis)), timeoutMillis);
+		return waitFor(job,
+				waiting,
+				timeout,
+				ThrowingConsumer.throwing(duration -> Thread.sleep(Nullables.orElseThrow(duration).toMillis())));
 	}
 
 	/**
-	 * Waits for {@code job} to be finished using {@code sleep} for sleeping between
-	 * {@link #exists(Job, JobStatus)} calls and not timing out.
+	 * Waits for {@code job} to be finished using {@code wait} for waiting between
+	 * {@link #exists(Job, JobStatus)} calls and timing out after a given duration.
+	 * {@code waiting} allows to specify the duration to wait.
 	 *
 	 * <p>
 	 * The given jobs status specifies, which status are waited for:
@@ -907,79 +850,44 @@ public class JesClient implements Closeable {
 	 * {@link JobStatus#ACTIVE}
 	 * <li>{@link JobStatus#ACTIVE}: waiting for {@link JobStatus#ACTIVE} only
 	 * <li>{@link JobStatus#OUTPUT}: returning {@code true} with no checks and
-	 * without sleeping
+	 * without waiting
 	 * </ul>
 	 *
-	 * @param job   the job to wait for
-	 * @param sleep method to use for sleeping
-	 * @throws IOException  Technical FTP failure
-	 * @throws JesException Logical JES failure
-	 */
-	public void waitFor(final Job job, final Runnable sleep) throws IOException, JesException {
-		if (!waitFor(job, sleep, Long.MAX_VALUE)) {
-			throw new JesException(
-					"JesClient.waitFor(%s, Runnable, Long.MAX_VALUE) returned false while it should have waited forever.",
-					job.getId());
-		}
-	}
-
-	/**
-	 * Waits for {@code job} to be finished using {@code sleep} for sleeping between
-	 * {@link #exists(Job, JobStatus)} calls and timing out after a given amount of
-	 * milliseconds.
-	 *
-	 * <p>
-	 * The given jobs status specifies, which status are waited for:
-	 * <ul>
-	 * <li>{@link JobStatus#ALL}: waiting for {@link JobStatus#INPUT} and
-	 * {@link JobStatus#ACTIVE}
-	 * <li>{@link JobStatus#INPUT}: waiting for {@link JobStatus#INPUT} and
-	 * {@link JobStatus#ACTIVE}
-	 * <li>{@link JobStatus#ACTIVE}: waiting for {@link JobStatus#ACTIVE} only
-	 * <li>{@link JobStatus#OUTPUT}: returning {@code true} with no checks and
-	 * without sleeping
-	 * </ul>
-	 *
-	 * @param job           the job to wait for
-	 * @param sleep         method to use for sleeping
-	 * @param timeoutMillis timeout in milliseconds
+	 * @param job     the job to wait for
+	 * @param waiting duration to wait
+	 * @param timeout timeout duration
+	 * @param wait    method to use for waiting
 	 * @return {@code true} if the job finished and {@code false} if the timeout has
 	 *         been reached
 	 * @throws IOException  Technical FTP failure
 	 * @throws JesException Logical JES failure
 	 */
-	public boolean waitFor(final Job job, final Runnable sleep, final long timeoutMillis)
+	public boolean waitFor(final Job job, final Duration waiting, final Duration timeout, final Consumer<Duration> wait)
 			throws IOException, JesException {
-		// Early exits
+		if (waiting.isNegative()) {
+			throw new JesException("Parameter \"waiting\" must not be negative.", waiting);
+		}
+		if (timeout.isNegative()) {
+			throw new JesException("Parameter \"timeout\" must not be negative.", timeout);
+		}
 		if (job.getStatus() == JobStatus.OUTPUT) {
 			return true;
 		}
-		if (timeoutMillis <= 0) {
-			return false;
-		}
 
-		// Status INPUT and ACTIVE might need to be waited for.
-		final List<JobStatus> stati;
-		if (job.getStatus() == JobStatus.ACTIVE) {
-			stati = singletonList(JobStatus.ACTIVE);
-		} else {
-			stati = asList(JobStatus.INPUT, JobStatus.ACTIVE);
-		}
+		// Status INPUT and ACTIVE might need to be waited for
+		final List<JobStatus> stati = job.getStatus() == JobStatus.ACTIVE
+				? singletonList(JobStatus.ACTIVE)
+				: asList(JobStatus.INPUT, JobStatus.ACTIVE);
 
-		// Sleep and check for timeout
-		final long startTimeMillis = System.currentTimeMillis();
+		// Waiting for the status
+		final Stopwatch stopwatch = new Stopwatch();
 		for (final JobStatus status : stati) {
 			while (exists(job, status)) {
-				if (startTimeMillis + timeoutMillis <= System.currentTimeMillis()) {
-					return false;
-				}
-				sleep.run();
-				if (startTimeMillis + timeoutMillis <= System.currentTimeMillis()) {
+				if (stopwatch.waitFor(waiting, timeout, wait)) {
 					return false;
 				}
 			}
 		}
-
 		return true;
 	}
 }
