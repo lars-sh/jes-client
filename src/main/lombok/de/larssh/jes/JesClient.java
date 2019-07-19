@@ -864,12 +864,6 @@ public class JesClient implements Closeable {
 	 */
 	public boolean waitFor(final Job job, final Duration waiting, final Duration timeout, final Consumer<Duration> wait)
 			throws IOException, JesException {
-		if (waiting.isNegative()) {
-			throw new JesException("Parameter \"waiting\" must not be negative.", waiting);
-		}
-		if (timeout.isNegative()) {
-			throw new JesException("Parameter \"timeout\" must not be negative.", timeout);
-		}
 		if (job.getStatus() == JobStatus.OUTPUT) {
 			return true;
 		}

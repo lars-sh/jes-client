@@ -7,6 +7,9 @@ All notable changes to this project will be documented in this file.
 
 Download at TODO
 
+### Added
+* New method Job.getOutput(name)
+
 ### Changed
 * Overhaul of the JesClient.waitFor(...) methods
 

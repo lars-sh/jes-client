@@ -204,6 +204,18 @@ public class Job {
 	}
 
 	/**
+	 * Returns the job output details referenced by {@code name} or
+	 * {@link Optional#empty()} if no such job output exists.
+	 *
+	 * @param name job output name to search for
+	 * @return job output details referenced by {@code name} or
+	 *         {@link Optional#empty()} if no such job output exists
+	 */
+	public Optional<JobOutput> getOutput(final String name) {
+		return getOutputs().stream().filter(output -> output.getName().equals(name)).findFirst();
+	}
+
+	/**
 	 * List of job output details
 	 *
 	 * <p>
