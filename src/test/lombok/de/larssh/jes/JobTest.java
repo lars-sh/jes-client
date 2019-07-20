@@ -170,6 +170,24 @@ public class JobTest {
 	}
 
 	/**
+	 * {@link Job#getOutput(String)}
+	 */
+	@Test
+	public void testGetOutput() {
+		final Job job = new Job("a", "b", JobStatus.OUTPUT, "d");
+		job.createOutput(1, "c", 0, Optional.empty(), Optional.empty(), Optional.empty());
+		job.createOutput(2, "d", 0, Optional.empty(), Optional.empty(), Optional.empty());
+		job.createOutput(3, "e", 0, Optional.empty(), Optional.empty(), Optional.empty());
+
+		final Optional<JobOutput> jobOutput
+				= Optional.of(new JobOutput(job, 2, "d", 0, Optional.empty(), Optional.empty(), Optional.empty()));
+
+		assertEquals(jobOutput, job.getOutput("D"));
+		assertEquals(jobOutput, job.getOutput("d"));
+		assertEquals(Optional.empty(), job.getOutput("z"));
+	}
+
+	/**
 	 * {@link Job#getOutputs()}
 	 */
 	@Test

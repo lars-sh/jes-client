@@ -212,7 +212,7 @@ public class Job {
 	 *         {@link Optional#empty()} if no such job output exists
 	 */
 	public Optional<JobOutput> getOutput(final String name) {
-		return getOutputs().stream().filter(output -> output.getName().equals(name)).findFirst();
+		return getOutputs().stream().filter(output -> output.getName().equalsIgnoreCase(name.trim())).findFirst();
 	}
 
 	/**
