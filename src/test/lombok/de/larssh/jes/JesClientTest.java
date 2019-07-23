@@ -1300,7 +1300,7 @@ public class JesClientTest {
 		}
 
 		// given
-		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 
 			// when
 			final AtomicInteger sleepCalls = new AtomicInteger(0);
