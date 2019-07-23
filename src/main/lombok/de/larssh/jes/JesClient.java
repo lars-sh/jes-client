@@ -55,9 +55,9 @@ import lombok.experimental.NonFinal;
  *
  * <p>
  * {@link #submit(String)} submits JCLs based on the FTP users permissions.
- * {@link #waitFor(Job)} can be used to wait until a job terminates. Job outputs
- * can be retrieved using {@link #retrieve(JobOutput)} and removed using
- * {@link #delete(Job)}.
+ * {@link #waitFor(Job, Duration, Duration)} can be used to wait until a job
+ * terminates. Job outputs can be retrieved using {@link #retrieve(JobOutput)}
+ * and removed using {@link #delete(Job)}.
  *
  * <p>
  * <b>Usage example:</b> The following shows the JesClient used inside a
@@ -69,22 +69,22 @@ import lombok.experimental.NonFinal;
  * try (JesClient jesClient = new JesClient(hostname, port, username, password)) {
  *
  *     // Submit JCL
- *     Job submittedJob = jesClient.submit(jclContent);
+ *     Job job = jesClient.submit(jclContent);
  *
- *     // Wait for submitted job to be finished
- *     Optional&lt;Job&gt; finishedJob = jesClient.waitFor(submittedJob);
- *
- *     // Handle the case, a finished job cannot be found inside JES spool any longer
- *     if (!finishedJob.isPresent()) {
- *         ...
- *     } else {
- *
- *         // Gather finished jobs outputs
- *         List&lt;JobOutput&gt; jobOutput = jesClient.get(finishedJob.get());
- *
- *         // Delete job from JES spool
- *         jesClient.delete(finishedJob.get());
+ *     // Wait for job to be finished
+ *     if (!jesClient.waitFor(job)) {
+ *         // Handle the case, a finished job cannot be found inside JES spool any longer
+ *         throw ...;
  *     }
+ *
+ *     // Gather job status details
+ *     Job detailedJob = jesClient.getJobDetails(job);
+ *
+ *     // Gather finished jobs outputs
+ *     List&lt;JobOutput&gt; jobOutput = jesClient.get(job);
+ *
+ *     // Delete job from JES spool
+ *     jesClient.delete(job);
  *
  * // Logout and disconnect using try-with-resource (close method)
  * }
