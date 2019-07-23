@@ -1277,7 +1277,7 @@ public class JesClientTest {
 	}
 
 	/**
-	 * {@link JesClient#waitFor(Job, Duration, Duration))},
+	 * {@link JesClient#waitFor(Job, Duration, Duration)},
 	 * {@link JesClient#waitFor(Job, Duration, Duration, Consumer)}
 	 */
 	@Test
