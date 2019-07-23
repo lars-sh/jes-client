@@ -9,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.clearInvocations;
@@ -29,24 +28,27 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
+import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 import org.joor.Reflect;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.invocation.Invocation;
 
 import de.larssh.jes.parser.JesFtpFile;
 import de.larssh.utils.Nullables;
 import de.larssh.utils.SneakyException;
-import de.larssh.utils.function.ThrowingRunnable;
+import de.larssh.utils.function.ThrowingConsumer;
 import de.larssh.utils.test.Reflects;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -1275,23 +1277,21 @@ public class JesClientTest {
 	}
 
 	/**
-	 * {@link JesClient#waitFor(Job)}, {@link JesClient#waitFor(Job, long)},
-	 * {@link JesClient#waitFor(Job, Runnable)},
-	 * {@link JesClient#waitFor(Job, long, long)},
-	 * {@link JesClient#waitFor(Job, Runnable, long)}
+	 * {@link JesClient#waitFor(Job, Duration, Duration))},
+	 * {@link JesClient#waitFor(Job, Duration, Duration, Consumer)}
 	 */
 	@Test
 	public void testWaitFor() {
 		// given
 		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
-			doNothing().when(jesClient).waitFor(any(), anyLong());
+			doReturn(true).when(jesClient).waitFor(any(), any(), any(), any());
 
 			// when
-			jesClient.waitFor(TEST_DATA_JOB);
+			jesClient.waitFor(TEST_DATA_JOB, Duration.ofMillis(123), Duration.ofMillis(456));
 
 			// then
-			verify(jesClient).waitFor(any());
-			verify(jesClient).waitFor(TEST_DATA_JOB, 1000);
+			verify(jesClient).waitFor(any(), any(), any());
+			verify(jesClient).waitFor(any(), any(), any(), any());
 			verifyEnd(jesClient);
 		} catch (final InterruptedException | JesException e) {
 			throw new SneakyException(e);
@@ -1300,141 +1300,18 @@ public class JesClientTest {
 		}
 
 		// given
-		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
-			doReturn(true).when(jesClient).waitFor(any(), anyLong(), anyLong());
-
-			// when
-			jesClient.waitFor(TEST_DATA_JOB, 123);
-
-			// then
-			verify(jesClient).waitFor(any(), anyLong());
-			verify(jesClient).waitFor(TEST_DATA_JOB, 123, Long.MAX_VALUE);
-			verifyEnd(jesClient);
-		} catch (final InterruptedException | JesException e) {
-			throw new SneakyException(e);
-		} catch (final IOException e) {
-			throw new UncheckedIOException(e);
-		}
-
-		// given
-		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
-			doReturn(false).when(jesClient).waitFor(any(), anyLong(), anyLong());
-
-			// when
-			assertThrows(JesException.class, () -> jesClient.waitFor(TEST_DATA_JOB, 123));
-
-			// then
-			verify(jesClient).waitFor(any(), anyLong());
-			verify(jesClient).waitFor(TEST_DATA_JOB, 123, Long.MAX_VALUE);
-			verifyEnd(jesClient);
-		} catch (final InterruptedException | JesException e) {
-			throw new SneakyException(e);
-		} catch (final IOException e) {
-			throw new UncheckedIOException(e);
-		}
-
-		// given
-		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
-			doReturn(true).when(jesClient).waitFor(any(), any(), anyLong());
-
-			// when
-			assertTrue(jesClient.waitFor(TEST_DATA_JOB, 123, 456));
-
-			// then
-			verify(jesClient).waitFor(any(), anyLong(), anyLong());
-			verify(jesClient).waitFor(eq(TEST_DATA_JOB), any(), eq(456L));
-			verifyEnd(jesClient);
-		} catch (final InterruptedException | JesException e) {
-			throw new SneakyException(e);
-		} catch (final IOException e) {
-			throw new UncheckedIOException(e);
-		}
-
-		// given
-		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
-			doReturn(false).when(jesClient).waitFor(any(), any(), anyLong());
-
-			// when
-			assertFalse(jesClient.waitFor(TEST_DATA_JOB, 123, 456));
-
-			// then
-			verify(jesClient).waitFor(any(), anyLong(), anyLong());
-			verify(jesClient).waitFor(eq(TEST_DATA_JOB), any(), eq(456L));
-			verifyEnd(jesClient);
-		} catch (final InterruptedException | JesException e) {
-			throw new SneakyException(e);
-		} catch (final IOException e) {
-			throw new UncheckedIOException(e);
-		}
-
-		// given
-		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
-			doReturn(true).when(jesClient).waitFor(any(), any(), anyLong());
-
-			// when
-			final Runnable noop = () -> {
-				// empty by design
-			};
-			jesClient.waitFor(TEST_DATA_JOB, noop);
-
-			// then
-			verify(jesClient).waitFor(any(), any());
-			verify(jesClient).waitFor(TEST_DATA_JOB, noop, Long.MAX_VALUE);
-			verifyEnd(jesClient);
-		} catch (final IOException e) {
-			throw new UncheckedIOException(e);
-		} catch (final JesException e) {
-			throw new SneakyException(e);
-		}
-
-		// given
-		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
-			doReturn(false).when(jesClient).waitFor(any(), any(), anyLong());
-
-			// when
-			final Runnable noop = () -> {
-				// empty by design
-			};
-			assertThrows(JesException.class, () -> jesClient.waitFor(TEST_DATA_JOB, noop));
-
-			// then
-			verify(jesClient).waitFor(any(), any());
-			verify(jesClient).waitFor(TEST_DATA_JOB, noop, Long.MAX_VALUE);
-			verifyEnd(jesClient);
-		} catch (final IOException e) {
-			throw new UncheckedIOException(e);
-		} catch (final JesException e) {
-			throw new SneakyException(e);
-		}
-
-		// given
-		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
+		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
 
 			// when
 			final AtomicInteger sleepCalls = new AtomicInteger(0);
-			assertTrue(jesClient.waitFor(TEST_DATA_JOB, sleepCalls::incrementAndGet, 123));
+			assertTrue(jesClient.waitFor(TEST_DATA_JOB,
+					Duration.ofMillis(123),
+					Duration.ofMillis(456),
+					duration -> sleepCalls.incrementAndGet()));
 			assertEquals(0, sleepCalls.get());
 
 			// then
-			verify(jesClient).waitFor(any(), any(), anyLong());
-			verifyEnd(jesClient);
-		} catch (final IOException e) {
-			throw new UncheckedIOException(e);
-		} catch (final JesException e) {
-			throw new SneakyException(e);
-		}
-
-		// given
-		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
-
-			// when
-			final AtomicInteger sleepCalls = new AtomicInteger(0);
-			assertFalse(jesClient
-					.waitFor(new Job("id", "name", JobStatus.INPUT, "owner"), sleepCalls::incrementAndGet, -123));
-			assertEquals(0, sleepCalls.get());
-
-			// then
-			verify(jesClient).waitFor(any(), any(), anyLong());
+			verify(jesClient).waitFor(any(), any(), any(), any());
 			verifyEnd(jesClient);
 		} catch (final IOException e) {
 			throw new UncheckedIOException(e);
@@ -1449,11 +1326,14 @@ public class JesClientTest {
 			// when
 			final Job job = new Job("id", "name", JobStatus.ACTIVE, "owner");
 			final AtomicInteger sleepCalls = new AtomicInteger(0);
-			assertTrue(jesClient.waitFor(job, sleepCalls::incrementAndGet, 123));
+			assertTrue(jesClient.waitFor(job,
+					Duration.ofMillis(123),
+					Duration.ofMillis(456),
+					duration -> sleepCalls.incrementAndGet()));
 			assertEquals(0, sleepCalls.get());
 
 			// then
-			verify(jesClient).waitFor(any(), any(), anyLong());
+			verify(jesClient).waitFor(any(), any(), any(), any());
 			verify(jesClient).exists(job, JobStatus.ACTIVE);
 			verifyEnd(jesClient);
 		} catch (final IOException e) {
@@ -1470,11 +1350,14 @@ public class JesClientTest {
 			// when
 			final Job job = new Job("id", "name", JobStatus.ACTIVE, "owner");
 			final AtomicInteger sleepCalls = new AtomicInteger(0);
-			assertTrue(jesClient.waitFor(job, sleepCalls::incrementAndGet, 123));
+			assertTrue(jesClient.waitFor(job,
+					Duration.ofMillis(123),
+					Duration.ofMillis(456),
+					duration -> sleepCalls.incrementAndGet()));
 			assertEquals(1, sleepCalls.get());
 
 			// then
-			verify(jesClient).waitFor(any(), any(), anyLong());
+			verify(jesClient).waitFor(any(), any(), any(), any());
 			verify(jesClient, times(2)).exists(job, JobStatus.ACTIVE);
 			verifyEnd(jesClient);
 		} catch (final IOException e) {
@@ -1492,13 +1375,13 @@ public class JesClientTest {
 
 			// when
 			final Job job = new Job("id", "name", JobStatus.ACTIVE, "owner");
-			final Runnable noop = () -> {
+			final Consumer<Duration> noop = duration -> {
 				// empty by design
 			};
-			assertFalse(jesClient.waitFor(job, noop, 123));
+			assertFalse(jesClient.waitFor(job, Duration.ofMillis(123), Duration.ofMillis(456), noop));
 
 			// then
-			verify(jesClient).waitFor(any(), any(), anyLong());
+			verify(jesClient).waitFor(any(), any(), any(), any());
 			verify(jesClient, atLeastOnce()).exists(job, JobStatus.ACTIVE);
 			verifyEnd(jesClient);
 		} catch (final IOException e) {
@@ -1515,15 +1398,18 @@ public class JesClientTest {
 			// when
 			final Job job = new Job("id", "name", JobStatus.ACTIVE, "owner");
 			final AtomicInteger sleepCalls = new AtomicInteger(0);
-			final Runnable sleep = ThrowingRunnable.throwing(() -> {
+			final Consumer<Duration> sleep = ThrowingConsumer.throwing(duration -> {
 				sleepCalls.incrementAndGet();
-				Thread.sleep(123);
+
+				final long millis = Nullables.orElseThrow(duration).toMillis();
+				Assertions.assertTrue(millis <= 123);
+				Thread.sleep(millis);
 			});
-			assertFalse(jesClient.waitFor(job, sleep, 123));
+			assertFalse(jesClient.waitFor(job, Duration.ofMillis(456), Duration.ofMillis(123), sleep));
 			assertEquals(1, sleepCalls.get());
 
 			// then
-			verify(jesClient).waitFor(any(), any(), anyLong());
+			verify(jesClient).waitFor(any(), any(), any(), any());
 			verify(jesClient).exists(job, JobStatus.ACTIVE);
 			verifyEnd(jesClient);
 		} catch (final IOException e) {
@@ -1542,11 +1428,14 @@ public class JesClientTest {
 
 			// when
 			final AtomicInteger sleepCalls = new AtomicInteger(0);
-			assertTrue(jesClient.waitFor(job, sleepCalls::incrementAndGet, 123));
+			assertTrue(jesClient.waitFor(job,
+					Duration.ofMillis(123),
+					Duration.ofMillis(456),
+					duration -> sleepCalls.incrementAndGet()));
 			assertEquals(2, sleepCalls.get());
 
 			// then
-			verify(jesClient).waitFor(any(), any(), anyLong());
+			verify(jesClient).waitFor(any(), any(), any(), any());
 			verify(jesClient, times(2)).exists(job, JobStatus.INPUT);
 			verify(jesClient, times(2)).exists(job, JobStatus.ACTIVE);
 			verifyEnd(jesClient);

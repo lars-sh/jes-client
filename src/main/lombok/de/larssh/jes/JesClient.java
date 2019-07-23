@@ -877,7 +877,7 @@ public class JesClient implements Closeable {
 		final Stopwatch stopwatch = new Stopwatch();
 		for (final JobStatus status : stati) {
 			while (exists(job, status)) {
-				if (stopwatch.waitFor(waiting, timeout, wait)) {
+				if (!stopwatch.waitFor(waiting, timeout, wait)) {
 					return false;
 				}
 			}
