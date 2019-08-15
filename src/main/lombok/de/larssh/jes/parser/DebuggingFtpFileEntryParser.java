@@ -8,6 +8,7 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPFileEntryParser;
 
 import de.larssh.utils.Nullables;
+import de.larssh.utils.annotations.SuppressJacocoGenerated;
 import de.larssh.utils.text.Strings;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -18,6 +19,7 @@ import lombok.NoArgsConstructor;
  * throwing at each method to simplify debugging wrapped FTP connections
  */
 @NoArgsConstructor
+@SuppressJacocoGenerated(justification = "non-productive class, meant to be used for debugging purposes only")
 public class DebuggingFtpFileEntryParser implements FTPFileEntryParser {
 	/** {@inheritDoc} */
 	@Nullable

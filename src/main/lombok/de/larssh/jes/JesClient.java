@@ -33,6 +33,7 @@ import de.larssh.jes.parser.JesFtpFile;
 import de.larssh.jes.parser.JesFtpFileEntryParserFactory;
 import de.larssh.utils.Nullables;
 import de.larssh.utils.Optionals;
+import de.larssh.utils.annotations.SuppressJacocoGenerated;
 import de.larssh.utils.function.ThrowingConsumer;
 import de.larssh.utils.text.Patterns;
 import de.larssh.utils.text.Strings;
@@ -252,6 +253,7 @@ public class JesClient implements Closeable {
 	 * @throws JesException Logical JES failure
 	 */
 	@SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
+	@SuppressJacocoGenerated(justification = "this constructor cannot be mocked nicely")
 	@SuppressFBWarnings(value = "PCOA_PARTIALLY_CONSTRUCTED_OBJECT_ACCESS", justification = "see JavaDoc")
 	public JesClient(final String hostname, final int port, final String username, final String password)
 			throws IOException, JesException {

@@ -1,5 +1,6 @@
 package de.larssh.jes.parser;
 
+import de.larssh.utils.annotations.SuppressJacocoGenerated;
 import de.larssh.utils.text.Strings;
 import lombok.Getter;
 
@@ -8,6 +9,7 @@ import lombok.Getter;
  * {@link org.apache.commons.net.ftp.FTPFileEntryParser} function is called.
  */
 @Getter
+@SuppressJacocoGenerated(justification = "non-productive class, meant to be used for debugging purposes only")
 public class DebuggingFtpFileEntryParserException extends RuntimeException {
 	// @EqualsAndHashCode(callSuper = true, onParam_ = { @Nullable })
 

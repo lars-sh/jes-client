@@ -7,6 +7,7 @@ import java.io.ObjectOutputStream;
 import org.apache.commons.net.ftp.FTPFile;
 
 import de.larssh.jes.Job;
+import de.larssh.utils.annotations.SuppressJacocoGenerated;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -46,6 +47,7 @@ public class JesFtpFile extends FTPFile {
 	 * @param stream object input stream
 	 * @throws NotSerializableException This class cannot be deserialized.
 	 */
+	@SuppressJacocoGenerated(justification = "this is not serializable")
 	private void readObject(@SuppressWarnings("unused") final ObjectInputStream stream)
 			throws NotSerializableException {
 		throw new NotSerializableException(JesFtpFile.class.getName());
@@ -57,6 +59,7 @@ public class JesFtpFile extends FTPFile {
 	 * @param stream object output stream
 	 * @throws NotSerializableException This class cannot be serialized.
 	 */
+	@SuppressJacocoGenerated(justification = "this is not serializable")
 	private void writeObject(@SuppressWarnings("unused") final ObjectOutputStream stream)
 			throws NotSerializableException {
 		throw new NotSerializableException(JesFtpFile.class.getName());

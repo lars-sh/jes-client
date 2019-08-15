@@ -2,6 +2,7 @@ package de.larssh.jes;
 
 import java.util.Optional;
 
+import de.larssh.utils.annotations.SuppressJacocoGenerated;
 import de.larssh.utils.text.Strings;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import lombok.EqualsAndHashCode;
@@ -105,6 +106,7 @@ public class JobOutput {
 	 * @return the jobs ID
 	 */
 	@ToString.Include(name = "job.id", rank = 1)
+	@SuppressJacocoGenerated(justification = "private method, used for toString only")
 	private String getJobId() {
 		return getJob().getId();
 	}
