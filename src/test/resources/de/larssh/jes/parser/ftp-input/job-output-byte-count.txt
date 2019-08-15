@@ -1,0 +1,10 @@
+JOBNAME  JOBID    OWNER STATUS CLASS                               
+USER1    JOB00054 USER1 OUTPUT A           RC=000                  
+--------                                                           
+         ID  STEPNAME PROCSTEP C DDNAME   BYTE-COUNT               
+         001 JESE              H JESMSGLG      1200                
+         002 JESE              H JESJCL         526                
+         003 JESE              H JESYSMSG      1255                
+         004 STEP57            H SYSUT2         741                
+         005 STEP57            A SYSPRINT       209                
+5 spool files                                                      

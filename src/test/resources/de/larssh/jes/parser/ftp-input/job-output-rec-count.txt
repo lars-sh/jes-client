@@ -1,0 +1,6 @@
+JOBNAME  JOBID    OWNER    STATUS  CLASS
+USER3A   JOB00061 USER3    OUTPUT  D 3 spool files RC=0000
+         ID  STEPNAME PROCSTEP C DDNAME   REC-COUNT COMMENT
+         001 JESE              H JESMSGLG        18
+         002 JESE              H JESJCL          11 
+         003                   A JESYSMSG        22 

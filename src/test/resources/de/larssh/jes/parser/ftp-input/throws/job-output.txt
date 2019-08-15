@@ -1,0 +1,5 @@
+JOBNAME  JOBID    OWNER STATUS CLASS                               
+USER1    TSU00024 USER1 ACTIVE TSU                                 
+-------                                                           
+STEPNAME ++++++++ PROCNAME     OS390R5                             
+XXCPUTIME     0.503 ELAPSED TIME   3853.718                          

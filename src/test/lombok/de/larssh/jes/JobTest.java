@@ -119,7 +119,15 @@ public class JobTest {
 		assertEquals(Optional.empty(), C.getAbendCode());
 		assertEquals(Optional.empty(), D.getAbendCode());
 		assertThrows(JobFieldInconsistentException.class,
-				() -> new Job("a", "b", JobStatus.INPUT, "c", Optional.empty(), OptionalInt.empty(), Optional.of(" ")));
+				() -> new Job("a",
+						"b",
+						JobStatus.OUTPUT,
+						"c",
+						Optional.empty(),
+						OptionalInt.empty(),
+						Optional.of(" ")));
+		assertThrows(JobFieldInconsistentException.class,
+				() -> new Job("a", "b", JobStatus.INPUT, "c", Optional.empty(), OptionalInt.empty(), Optional.of("f")));
 	}
 
 	/**
