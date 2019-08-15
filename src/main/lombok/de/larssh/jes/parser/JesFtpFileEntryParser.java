@@ -1,6 +1,5 @@
 package de.larssh.jes.parser;
 
-import static de.larssh.utils.Finals.constant;
 import static de.larssh.utils.text.Strings.NEW_LINE;
 import static java.util.stream.Collectors.toList;
 
@@ -35,11 +34,6 @@ import lombok.NoArgsConstructor;
  */
 @NoArgsConstructor
 public class JesFtpFileEntryParser implements FTPFileEntryParser {
-	/**
-	 * Minimum number of lines of a job details entry
-	 */
-	private static final int JOB_OUTPUT_DETAILS_LINES_MIN = constant(4);
-
 	/**
 	 * Pattern to match the job details header response line
 	 */
@@ -92,7 +86,8 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 	/**
 	 * Pattern to match the job output header response line
 	 */
-	private static final String PATTERN_SUB_TITLE = constant("         ID  STEPNAME PROCSTEP C DDNAME   BYTE-COUNT  ");
+	private static final Pattern PATTERN_SUB_TITLE
+			= Pattern.compile("^ {9}ID  STEPNAME PROCSTEP C DDNAME   (BYTE|REC)-COUNT( COMMENT)? *$");
 
 	/**
 	 * Pattern to match job output lines inside response
@@ -109,7 +104,7 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 	 * </ul>
 	 */
 	private static final Pattern PATTERN_JOB_OUTPUT = Pattern.compile(
-			"^ {9}(?<index>\\d{3}) (?<step>.{8}) (?<procedureStep>.{8}) (?<class>.) (?<name>.{8}) {1,9}(?<length>\\d{1,9}) $");
+			"^ {9}(?<index>\\d{3}) (?<step>.{8}) (?<procedureStep>.{8}) (?<class>.) (?<name>.{8}) +(?<length>\\d+) *$");
 
 	/**
 	 * Pattern to match the response line containing the number of spool files
@@ -171,38 +166,26 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 
 		// First line (job)
 		final Job job = createJob(lines.remove(0));
-		if (lines.isEmpty()) {
-			return job;
-		}
-		if (lines.size() < JOB_OUTPUT_DETAILS_LINES_MIN) {
-			throw new JesFtpFileEntryParserException("Expected %d lines, got %d. List entry: %s",
-					JOB_OUTPUT_DETAILS_LINES_MIN,
-					lines.size(),
-					listEntry);
-		}
 
-		// Second line (separator)
-		final String separator = lines.remove(0);
-		if (!Strings.matches(separator, PATTERN_SEPARATOR)) {
-			throw new JesFtpFileEntryParserException("Expected [%s] as separator line, got [%s].",
-					PATTERN_SEPARATOR,
-					separator);
+		// Second line (separator, optional)
+		if (!lines.isEmpty() && Strings.matches(lines.get(0), PATTERN_SEPARATOR)) {
+			lines.remove(0);
 		}
 
 		// Third line (sub title)
+		if (lines.isEmpty()) {
+			return job;
+		}
 		final String subTitle = lines.remove(0);
-		if (!subTitle.equals(PATTERN_SUB_TITLE)) {
+		if (!Strings.matches(subTitle, PATTERN_SUB_TITLE)) {
 			throw new JesFtpFileEntryParserException("Expected [%s] as sub title line, got [%s].",
-					PATTERN_SUB_TITLE,
+					PATTERN_SUB_TITLE.pattern(),
 					subTitle);
 		}
 
-		// Last line (spool files)
-		final String spoolFiles = lines.remove(lines.size() - 1);
-		if (!Strings.matches(spoolFiles, PATTERN_SPOOL_FILES)) {
-			throw new JesFtpFileEntryParserException("Expected [%s] as spool files line, got [%s].",
-					PATTERN_SPOOL_FILES.pattern(),
-					spoolFiles);
+		// Last line (spool files, optional)
+		if (!lines.isEmpty() && Strings.matches(lines.get(lines.size() - 1), PATTERN_SPOOL_FILES)) {
+			lines.remove(lines.size() - 1);
 		}
 
 		// Further lines (job outputs)
