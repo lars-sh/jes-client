@@ -121,12 +121,12 @@ public class JesClient implements Closeable {
 	 * Checking for existence does not need a limit, but using a limit allows to
 	 * handle an additional error case.
 	 */
-	private static final int LIST_LIMIT_EXISTS = constant(2);
+	private static final int LIST_LIMIT_EXISTS = 2;
 
 	/**
 	 * Minimum limit of spool entries (including)
 	 */
-	private static final int LIST_LIMIT_MIN = constant(1);
+	private static final int LIST_LIMIT_MIN = 1;
 
 	/**
 	 * Pattern to find the job ID inside the FTP response after submitting a JCL.

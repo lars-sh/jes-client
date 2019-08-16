@@ -184,7 +184,8 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 		}
 
 		// Last line (spool files, optional)
-		if (!lines.isEmpty() && Strings.matches(lines.get(lines.size() - 1), PATTERN_SPOOL_FILES)) {
+		final String spoolFiles = lines.get(lines.size() - 1);
+		if (!lines.isEmpty() && Strings.matches(spoolFiles, PATTERN_SPOOL_FILES)) {
 			lines.remove(lines.size() - 1);
 		}
 
