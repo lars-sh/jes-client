@@ -76,15 +76,36 @@
 									<element>BUNDLE</element>
 									<limits>
 										<limit>
+											<counter>BRANCH</counter>
+											<value>COVEREDRATIO</value>
+											<minimum>100%</minimum>
+										</limit>
+										<limit>
 											<counter>INSTRUCTION</counter>
 											<value>COVEREDRATIO</value>
-											<maximum>100%</maximum>
+											<minimum>100%</minimum>
 										</limit>
+									</limits>
+								</rule>
+
+								<!-- Show the missing class name in output.
+								This can be accomplished as we want to fail on every missing class. -->
+								<rule>
+									<element>CLASS</element>
+									<limits>
 										<limit>
 											<counter>CLASS</counter>
 											<value>MISSEDCOUNT</value>
 											<maximum>0</maximum>
 										</limit>
+									</limits>
+								</rule>
+
+								<!-- Show the missing method name in output.
+								This can be accomplished as we want to fail on every missing method. -->
+								<rule>
+									<element>METHOD</element>
+									<limits>
 										<limit>
 											<counter>METHOD</counter>
 											<value>MISSEDCOUNT</value>
