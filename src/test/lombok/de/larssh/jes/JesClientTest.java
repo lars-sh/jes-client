@@ -50,6 +50,7 @@ import de.larssh.utils.Nullables;
 import de.larssh.utils.SneakyException;
 import de.larssh.utils.function.ThrowingConsumer;
 import de.larssh.utils.test.Reflects;
+import de.larssh.utils.time.Stopwatch;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.NoArgsConstructor;
@@ -1301,6 +1302,29 @@ public class JesClientTest {
 
 		// given
 		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
+			final AtomicBoolean existsActive = new AtomicBoolean(true);
+			doAnswer(invocation -> existsActive.getAndSet(false)).when(jesClient).exists(any(), any());
+			final Job job = new Job("id", "name", JobStatus.ACTIVE, "owner");
+			final Duration sleepDuration = Duration.ofMillis(123);
+
+			// when
+			final Stopwatch stopwatch = new Stopwatch();
+			assertTrue(jesClient.waitFor(job, sleepDuration, Duration.ofMillis(456)));
+			assertTrue(stopwatch.sinceLast().toMillis() > sleepDuration.toMillis());
+
+			// then
+			verify(jesClient).waitFor(any(), any(), any());
+			verify(jesClient).waitFor(any(), any(), any(), any());
+			verify(jesClient, times(2)).exists(any(), any());
+			verifyEnd(jesClient);
+		} catch (final InterruptedException | JesException e) {
+			throw new SneakyException(e);
+		} catch (final IOException e) {
+			throw new UncheckedIOException(e);
+		}
+
+		// given
+		try (final MockedJesClient jesClient = MockedJesClient.newInstance()) {
 
 			// when
 			final AtomicInteger sleepCalls = new AtomicInteger(0);
