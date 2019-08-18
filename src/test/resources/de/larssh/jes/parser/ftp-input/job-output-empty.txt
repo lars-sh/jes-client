@@ -1,0 +1,4 @@
+JOBNAME  JOBID    OWNER STATUS CLASS                               
+USER1    JOB00054 USER1 OUTPUT A           RC=000                  
+--------                                                           
+         ID  STEPNAME PROCSTEP C DDNAME   BYTE-COUNT               

@@ -88,6 +88,8 @@ public final class JesFtpFileEntryParserTest {
 				new Job("JOB00001", "JABC012", JobStatus.INPUT, "USER1", Optional.of("A"), OptionalInt.empty(), Optional.empty())));
 		parseFtpEntryExpectedJobs.put("job-output-byte-count.txt", singletonList(
 				new Job("JOB00054", "USER1", JobStatus.OUTPUT, "USER1", Optional.of("A"), OptionalInt.of(0), Optional.empty())));
+		parseFtpEntryExpectedJobs.put("job-output-empty.txt", singletonList(
+				new Job("JOB00054", "USER1", JobStatus.OUTPUT, "USER1", Optional.of("A"), OptionalInt.of(0), Optional.empty())));
 		parseFtpEntryExpectedJobs.put("job-output-rec-count.txt", singletonList(
 				new Job("JOB00061", "USER3A", JobStatus.OUTPUT, "USER3", Optional.of("D"), OptionalInt.of(0), Optional.empty())));
 		PARSE_FTP_ENTRY_EXPECTED_JOBS = unmodifiableMap(parseFtpEntryExpectedJobs);
