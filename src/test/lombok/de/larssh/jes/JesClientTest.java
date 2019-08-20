@@ -1429,7 +1429,7 @@ public class JesClientTest {
 				Assertions.assertTrue(millis <= 123);
 				Thread.sleep(millis);
 			});
-			assertFalse(jesClient.waitFor(job, Duration.ofMillis(456), Duration.ofMillis(123), sleep));
+			assertFalse(jesClient.waitFor(job, Duration.ofMillis(456789), Duration.ofMillis(123), sleep));
 			assertEquals(1, sleepCalls.get());
 
 			// then
