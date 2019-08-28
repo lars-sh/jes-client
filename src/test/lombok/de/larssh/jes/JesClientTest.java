@@ -1429,8 +1429,8 @@ public class JesClientTest {
 				// nanos. To avoid waiting some nanos less than requested millis are increased
 				// by one.
 				final long millis = Nullables.orElseThrow(duration).toMillis() + 1;
+				Assertions.assertTrue(millis <= 123 + 1);
 
-				Assertions.assertTrue(millis <= 123);
 				Thread.sleep(millis);
 			});
 			assertFalse(jesClient.waitFor(job, Duration.ofMillis(456789), Duration.ofMillis(123), sleep));
