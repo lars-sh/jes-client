@@ -1425,7 +1425,11 @@ public class JesClientTest {
 			final Consumer<Duration> sleep = ThrowingConsumer.throwing(duration -> {
 				sleepCalls.incrementAndGet();
 
-				final long millis = Nullables.orElseThrow(duration).toMillis();
+				// Thread.sleep is based on millis resolution while duration might contain
+				// nanos. To avoid waiting some nanos less than requested millis are increased
+				// by one.
+				final long millis = Nullables.orElseThrow(duration).toMillis() + 1;
+
 				Assertions.assertTrue(millis <= 123);
 				Thread.sleep(millis);
 			});
