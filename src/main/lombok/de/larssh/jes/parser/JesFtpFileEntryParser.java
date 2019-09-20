@@ -124,11 +124,11 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 						line));
 
 		final String jobId = matcher.group("id");
-		// Checkstyle: Ignore duplicate "name" for 1 line
+		@SuppressWarnings("checkstyle:MultipleStringLiterals")
 		final String name = matcher.group("name");
 		final JobStatus status = JobStatus.valueOf(matcher.group("status"));
 		final String owner = matcher.group("owner");
-		// Checkstyle: Ignore duplicate "class" for 1 line
+		@SuppressWarnings("checkstyle:MultipleStringLiterals")
 		final Optional<String> jesClass = Optionals.ofNonBlank(matcher.group("class"));
 
 		final Optional<String> rest = Optionals.ofNonBlank(matcher.group("rest"));
@@ -215,12 +215,12 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 								line));
 
 		final int index = Integer.parseInt(matcher.group("index"));
-		// Checkstyle: Ignore duplicate "name" for 1 line
+		@SuppressWarnings("checkstyle:MultipleStringLiterals")
 		final String name = matcher.group("name");
 		final int length = Integer.parseInt(matcher.group("length"));
 		final Optional<String> step = Optionals.ofNonBlank(matcher.group("step"));
 		final Optional<String> procedureStep = Optionals.ofNonBlank(matcher.group("procedureStep"));
-		// Checkstyle: Ignore duplicate "class" for 1 line
+		@SuppressWarnings("checkstyle:MultipleStringLiterals")
 		final Optional<String> jesClass = Optionals.ofNonBlank(matcher.group("class"));
 
 		return job.createOutput(index, name, length, step, procedureStep, jesClass);
