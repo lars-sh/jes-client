@@ -117,6 +117,7 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 	 * @param line job details response line
 	 * @return {@link Job} object
 	 */
+	@SuppressWarnings("checkstyle:MultipleStringLiterals")
 	private Job createJob(final String line) {
 		final Matcher matcher = Patterns.matches(PATTERN_JOB, line)
 				.orElseThrow(() -> new JesFtpFileEntryParserException("Expected [%s] as job details line, got [%s].",
@@ -124,11 +125,9 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 						line));
 
 		final String jobId = matcher.group("id");
-		@SuppressWarnings("checkstyle:MultipleStringLiterals")
 		final String name = matcher.group("name");
 		final JobStatus status = JobStatus.valueOf(matcher.group("status"));
 		final String owner = matcher.group("owner");
-		@SuppressWarnings("checkstyle:MultipleStringLiterals")
 		final Optional<String> jesClass = Optionals.ofNonBlank(matcher.group("class"));
 
 		final Optional<String> rest = Optionals.ofNonBlank(matcher.group("rest"));
@@ -206,6 +205,7 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 	 * @param line job details response line
 	 * @return {@link JobOutput} object
 	 */
+	@SuppressWarnings("checkstyle:MultipleStringLiterals")
 	private JobOutput createJobOutput(final Job job, final String line) {
 		final Matcher matcher
 				= Patterns.matches(PATTERN_JOB_OUTPUT, line)
@@ -215,12 +215,10 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 								line));
 
 		final int index = Integer.parseInt(matcher.group("index"));
-		@SuppressWarnings("checkstyle:MultipleStringLiterals")
 		final String name = matcher.group("name");
 		final int length = Integer.parseInt(matcher.group("length"));
 		final Optional<String> step = Optionals.ofNonBlank(matcher.group("step"));
 		final Optional<String> procedureStep = Optionals.ofNonBlank(matcher.group("procedureStep"));
-		@SuppressWarnings("checkstyle:MultipleStringLiterals")
 		final Optional<String> jesClass = Optionals.ofNonBlank(matcher.group("class"));
 
 		return job.createOutput(index, name, length, step, procedureStep, jesClass);
