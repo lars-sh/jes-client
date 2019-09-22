@@ -17,7 +17,6 @@ import lombok.ToString;
 @Getter
 @ToString(callSuper = false)
 public class JesFtpFile extends FTPFile {
-	// @EqualsAndHashCode(callSuper = true, onParam_ = { @Nullable })
 
 	private static final long serialVersionUID = 6881059052088614926L;
 

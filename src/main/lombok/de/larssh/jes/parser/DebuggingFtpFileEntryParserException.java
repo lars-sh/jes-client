@@ -11,7 +11,6 @@ import lombok.Getter;
 @Getter
 @SuppressJacocoGenerated(justification = "non-productive class, meant to be used for debugging purposes only")
 public class DebuggingFtpFileEntryParserException extends RuntimeException {
-	// @EqualsAndHashCode(callSuper = true, onParam_ = { @Nullable })
 
 	private static final long serialVersionUID = -3777777047932012565L;
 

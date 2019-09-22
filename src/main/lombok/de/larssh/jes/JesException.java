@@ -8,7 +8,6 @@ import de.larssh.utils.text.Strings;
  * Thrown to indicate that a logical JES exception occurred.
  */
 public class JesException extends Exception {
-	// @EqualsAndHashCode(callSuper = true, onParam_ = { @Nullable })
 
 	private static final long serialVersionUID = 4049707552379185213L;
 
