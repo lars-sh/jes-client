@@ -41,7 +41,7 @@
 	</issueManagement>
 	<ciManagement>
 		<system>Travis</system>
-		<url>https://travis-ci.org/lars-sh/jes-client</url>
+		<url>https://travis-ci.com/lars-sh/jes-client</url>
 	</ciManagement>
 
 	<properties>
