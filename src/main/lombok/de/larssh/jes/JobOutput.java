@@ -14,6 +14,7 @@ import lombok.ToString;
  */
 @Getter
 @ToString
+@SuppressWarnings("PMD.DataClass")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, onParam_ = { @Nullable })
 public class JobOutput {
 	/**
