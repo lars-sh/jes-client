@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>de.lars-sh</groupId>
 		<artifactId>parent</artifactId>
-		<version>0.9.4</version>
+		<version>0.9.5</version>
 		<relativePath></relativePath>
 	</parent>
 
@@ -43,10 +43,6 @@
 		<system>Travis</system>
 		<url>https://travis-ci.com/lars-sh/jes-client</url>
 	</ciManagement>
-
-	<properties>
-		<spotbugs.excludeFilterFile>${project.basedir}/spotbugs-excludes.xml</spotbugs.excludeFilterFile>
-	</properties>
 
 	<dependencies>
 		<dependency>

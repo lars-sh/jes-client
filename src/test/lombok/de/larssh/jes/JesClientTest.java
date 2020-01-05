@@ -340,7 +340,6 @@ public class JesClientTest {
 	public void testGetAndSetJesOwner() {
 		// given
 		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
-
 			// when 1
 			assertEquals("*", jesClient.getJesOwner());
 
@@ -1325,7 +1324,6 @@ public class JesClientTest {
 
 		// given
 		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
-
 			// when
 			final AtomicInteger sleepCalls = new AtomicInteger(0);
 			assertTrue(jesClient.waitFor(TEST_DATA_JOB,
