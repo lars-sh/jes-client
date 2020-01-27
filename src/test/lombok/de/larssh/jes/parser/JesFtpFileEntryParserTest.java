@@ -3,7 +3,6 @@ package de.larssh.jes.parser;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static java.util.Collections.unmodifiableMap;
 import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -35,6 +34,7 @@ import de.larssh.jes.Job;
 import de.larssh.jes.JobFlag;
 import de.larssh.jes.JobStatus;
 import de.larssh.utils.SneakyException;
+import de.larssh.utils.collection.Maps;
 import lombok.NoArgsConstructor;
 
 /**
@@ -48,12 +48,51 @@ public final class JesFtpFileEntryParserTest {
 
 	private static final Path PATH_FTP_INPUT_THROWS;
 
-	private static final Map<String, List<Job>> PARSE_FTP_ENTRY_EXPECTED_JOBS;
+	// @formatter:off
+	private static final Map<String, List<Job>> PARSE_FTP_ENTRY_EXPECTED_JOBS = Maps.builder(new LinkedHashMap<String, List<Job>>())
+			.put("abend.txt", asList(
+				new Job("JOB00009", "JABC456", JobStatus.OUTPUT, "USER9", Optional.of("I"), OptionalInt.empty(), Optional.of("622")),
+				new Job("JOB00010", "JABC789", JobStatus.OUTPUT, "USER10", Optional.of("J"), OptionalInt.empty(), Optional.of("EC6")),
+				new Job("TSU08743", "USER2", JobStatus.OUTPUT, "USER2", Optional.of("TSU"), OptionalInt.empty(), Optional.of("622"))))
+			.put("dup.txt", singletonList(
+				new Job("JOB00003", "JABC678", JobStatus.INPUT, "USER3", Optional.of("C"), OptionalInt.empty(), Optional.empty(), JobFlag.DUP)))
+			.put("held.txt", singletonList(
+				new Job("JOB00002", "JABC345", JobStatus.INPUT, "USER2", Optional.of("B"), OptionalInt.empty(), Optional.empty(), JobFlag.HELD)))
+			.put("jcl-error.txt", singletonList(
+				new Job("JOB00008", "JABC123", JobStatus.OUTPUT, "USER8", Optional.of("H"), OptionalInt.empty(), Optional.empty(), JobFlag.JCL_ERROR)))
+			.put("not-accessible.txt", asList(
+				new Job("STC85256", "ABCDEF3", JobStatus.OUTPUT, "USER3", Optional.of("STC"), OptionalInt.of(0), Optional.empty(), JobFlag.HELD),
+				new Job("STC21743", "ABCDEF4", JobStatus.OUTPUT, "USER4", Optional.of("STC"), OptionalInt.empty(), Optional.empty(), JobFlag.HELD)))
+			.put("rc.txt", asList(
+				new Job("JOB00005", "JABC234", JobStatus.OUTPUT, "USER5", Optional.of("E"), OptionalInt.of(0), Optional.empty()),
+				new Job("JOB00006", "JABC567", JobStatus.OUTPUT, "USER9", Optional.of("F"), OptionalInt.of(1), Optional.empty()),
+				new Job("JOB00007", "JABC890", JobStatus.OUTPUT, "USER7", Optional.of("G"), OptionalInt.empty(), Optional.empty()),
+				new Job("STC18403", "ABCDEF2", JobStatus.OUTPUT, "USER2", Optional.of("STC"), OptionalInt.of(2), Optional.empty()),
+				new Job("TSU15944", "USER3", JobStatus.OUTPUT, "USER3", Optional.of("TSU"), OptionalInt.of(3), Optional.empty())))
+			.put("simple.txt", singletonList(
+				new Job("JOB00001", "JABC012", JobStatus.INPUT, "USER1", Optional.of("A"), OptionalInt.empty(), Optional.empty())))
+			.put("job-output-byte-count.txt", singletonList(
+				new Job("JOB00054", "USER1", JobStatus.OUTPUT, "USER1", Optional.of("A"), OptionalInt.of(0), Optional.empty())))
+			.put("job-output-empty.txt", singletonList(
+				new Job("JOB00054", "USER1", JobStatus.OUTPUT, "USER1", Optional.of("A"), OptionalInt.of(0), Optional.empty())))
+			.put("job-output-rec-count.txt", singletonList(
+				new Job("JOB00061", "USER3A", JobStatus.OUTPUT, "USER3", Optional.of("D"), OptionalInt.of(0), Optional.empty())))
+			.unmodifiable();
+	// @formatter:on
 
 	private static final Set<String> PARSE_FTP_ENTRY_THROWS_EXPECTED_JOBS
 			= Collections.unmodifiableSet(new LinkedHashSet<>(asList("sub-title.txt", "job-output.txt")));
 
-	private static final Map<String, Integer> PRE_PARSE_EXPECTED_SIZES;
+	private static final Map<String, Integer> PRE_PARSE_EXPECTED_SIZES
+			= Maps.builder(new LinkedHashMap<String, Integer>())
+					.put("abend.txt", 3)
+					.put("dup.txt", 1)
+					.put("held.txt", 1)
+					.put("jcl-error.txt", 1)
+					.put("not-accessible.txt", 2)
+					.put("rc.txt", 5)
+					.put("simple.txt", 1)
+					.unmodifiable();
 
 	static {
 		try {
@@ -63,60 +102,18 @@ public final class JesFtpFileEntryParserTest {
 		}
 		PATH_FTP_INPUT_THROWS = PATH_FTP_INPUT.resolve("throws");
 
-		// @formatter:off
-		final Map<String, List<Job>> parseFtpEntryExpectedJobs = new LinkedHashMap<>();
-		parseFtpEntryExpectedJobs.put("abend.txt", asList(
-				new Job("JOB00009", "JABC456", JobStatus.OUTPUT, "USER9", Optional.of("I"), OptionalInt.empty(), Optional.of("622")),
-				new Job("JOB00010", "JABC789", JobStatus.OUTPUT, "USER10", Optional.of("J"), OptionalInt.empty(), Optional.of("EC6")),
-				new Job("TSU08743", "USER2", JobStatus.OUTPUT, "USER2", Optional.of("TSU"), OptionalInt.empty(), Optional.of("622"))));
-		parseFtpEntryExpectedJobs.put("dup.txt", singletonList(
-				new Job("JOB00003", "JABC678", JobStatus.INPUT, "USER3", Optional.of("C"), OptionalInt.empty(), Optional.empty(), JobFlag.DUP)));
-		parseFtpEntryExpectedJobs.put("held.txt", singletonList(
-				new Job("JOB00002", "JABC345", JobStatus.INPUT, "USER2", Optional.of("B"), OptionalInt.empty(), Optional.empty(), JobFlag.HELD)));
-		parseFtpEntryExpectedJobs.put("jcl-error.txt", singletonList(
-				new Job("JOB00008", "JABC123", JobStatus.OUTPUT, "USER8", Optional.of("H"), OptionalInt.empty(), Optional.empty(), JobFlag.JCL_ERROR)));
-		parseFtpEntryExpectedJobs.put("not-accessible.txt", asList(
-				new Job("STC85256", "ABCDEF3", JobStatus.OUTPUT, "USER3", Optional.of("STC"), OptionalInt.of(0), Optional.empty(), JobFlag.HELD),
-				new Job("STC21743", "ABCDEF4", JobStatus.OUTPUT, "USER4", Optional.of("STC"), OptionalInt.empty(), Optional.empty(), JobFlag.HELD)));
-		parseFtpEntryExpectedJobs.put("rc.txt", asList(
-				new Job("JOB00005", "JABC234", JobStatus.OUTPUT, "USER5", Optional.of("E"), OptionalInt.of(0), Optional.empty()),
-				new Job("JOB00006", "JABC567", JobStatus.OUTPUT, "USER9", Optional.of("F"), OptionalInt.of(1), Optional.empty()),
-				new Job("JOB00007", "JABC890", JobStatus.OUTPUT, "USER7", Optional.of("G"), OptionalInt.empty(), Optional.empty()),
-				new Job("STC18403", "ABCDEF2", JobStatus.OUTPUT, "USER2", Optional.of("STC"), OptionalInt.of(2), Optional.empty()),
-				new Job("TSU15944", "USER3", JobStatus.OUTPUT, "USER3", Optional.of("TSU"), OptionalInt.of(3), Optional.empty())));
-		parseFtpEntryExpectedJobs.put("simple.txt", singletonList(
-				new Job("JOB00001", "JABC012", JobStatus.INPUT, "USER1", Optional.of("A"), OptionalInt.empty(), Optional.empty())));
-		parseFtpEntryExpectedJobs.put("job-output-byte-count.txt", singletonList(
-				new Job("JOB00054", "USER1", JobStatus.OUTPUT, "USER1", Optional.of("A"), OptionalInt.of(0), Optional.empty())));
-		parseFtpEntryExpectedJobs.put("job-output-empty.txt", singletonList(
-				new Job("JOB00054", "USER1", JobStatus.OUTPUT, "USER1", Optional.of("A"), OptionalInt.of(0), Optional.empty())));
-		parseFtpEntryExpectedJobs.put("job-output-rec-count.txt", singletonList(
-				new Job("JOB00061", "USER3A", JobStatus.OUTPUT, "USER3", Optional.of("D"), OptionalInt.of(0), Optional.empty())));
-		PARSE_FTP_ENTRY_EXPECTED_JOBS = unmodifiableMap(parseFtpEntryExpectedJobs);
-
 		// Outputs
-		final Job jobOutputByteCount = parseFtpEntryExpectedJobs.get("job-output-byte-count.txt").get(0);
+		final Job jobOutputByteCount = PARSE_FTP_ENTRY_EXPECTED_JOBS.get("job-output-byte-count.txt").get(0);
 		jobOutputByteCount.createOutput(1, "JESMSGLG", 1200, Optional.of("JESE"), Optional.empty(), Optional.of("H"));
 		jobOutputByteCount.createOutput(2, "JESJCL", 526, Optional.of("JESE"), Optional.empty(), Optional.of("H"));
 		jobOutputByteCount.createOutput(3, "JESYSMSG", 1255, Optional.of("JESE"), Optional.empty(), Optional.of("H"));
 		jobOutputByteCount.createOutput(4, "SYSUT2", 741, Optional.of("STEP57"), Optional.empty(), Optional.of("H"));
 		jobOutputByteCount.createOutput(5, "SYSPRINT", 209, Optional.of("STEP57"), Optional.empty(), Optional.of("A"));
 
-		final Job jobOutputRecCount = parseFtpEntryExpectedJobs.get("job-output-rec-count.txt").get(0);
+		final Job jobOutputRecCount = PARSE_FTP_ENTRY_EXPECTED_JOBS.get("job-output-rec-count.txt").get(0);
 		jobOutputRecCount.createOutput(1, "JESMSGLG", 18, Optional.of("JESE"), Optional.empty(), Optional.of("H"));
 		jobOutputRecCount.createOutput(2, "JESJCL", 11, Optional.of("JESE"), Optional.empty(), Optional.of("H"));
 		jobOutputRecCount.createOutput(3, "JESYSMSG", 22, Optional.empty(), Optional.empty(), Optional.of("A"));
-		// @formatter:on
-
-		final Map<String, Integer> preParseExpectedSizes = new LinkedHashMap<>();
-		preParseExpectedSizes.put("abend.txt", 3);
-		preParseExpectedSizes.put("dup.txt", 1);
-		preParseExpectedSizes.put("held.txt", 1);
-		preParseExpectedSizes.put("jcl-error.txt", 1);
-		preParseExpectedSizes.put("not-accessible.txt", 2);
-		preParseExpectedSizes.put("rc.txt", 5);
-		preParseExpectedSizes.put("simple.txt", 1);
-		PRE_PARSE_EXPECTED_SIZES = unmodifiableMap(preParseExpectedSizes);
 	}
 
 	/**

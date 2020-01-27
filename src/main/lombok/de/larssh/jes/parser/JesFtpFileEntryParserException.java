@@ -6,7 +6,7 @@ import de.larssh.utils.text.Strings;
  * Thrown to indicate that parsing the JES job list failed.
  */
 public class JesFtpFileEntryParserException extends RuntimeException {
-	private static final long serialVersionUID = 5139270814035992446L;
+	private static final long serialVersionUID = 5564978554733262472L;
 
 	/**
 	 * Constructs a new {@link JesFtpFileEntryParserException} with the given

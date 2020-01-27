@@ -8,7 +8,7 @@ import de.larssh.utils.text.Strings;
  * Thrown to indicate that a logical JES exception occurred.
  */
 public class JesException extends Exception {
-	private static final long serialVersionUID = 4049707552379185213L;
+	private static final long serialVersionUID = 766509262119940207L;
 
 	/**
 	 * Constructs a new {@link JesException} with the given message, formatting as

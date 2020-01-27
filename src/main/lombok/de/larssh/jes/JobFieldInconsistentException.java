@@ -7,7 +7,7 @@ import de.larssh.utils.text.Strings;
  * are inconsistent.
  */
 public class JobFieldInconsistentException extends RuntimeException {
-	private static final long serialVersionUID = -7435373803567330152L;
+	private static final long serialVersionUID = -1395354329013583080L;
 
 	/**
 	 * Constructs a new {@link JobFieldInconsistentException} with the given
