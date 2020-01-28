@@ -48,6 +48,7 @@ import org.mockito.invocation.Invocation;
 import de.larssh.jes.parser.JesFtpFile;
 import de.larssh.utils.Nullables;
 import de.larssh.utils.SneakyException;
+import de.larssh.utils.collection.Maps;
 import de.larssh.utils.function.ThrowingConsumer;
 import de.larssh.utils.test.Reflects;
 import de.larssh.utils.time.Stopwatch;
@@ -444,8 +445,9 @@ public class JesClientTest {
 			when(jesClient.getFtpClient().getReplyStrings()).thenReturn(new String[] { "abc", "211-a IS b", "def" });
 
 			// when
-			final Map<String, String> properties = new LinkedHashMap<>();
-			properties.put("a", "b");
+			final Map<String, String> properties = Maps.builder(new LinkedHashMap<String, String>()) //
+					.put("a", "b")
+					.get();
 			assertEquals(properties, jesClient.getServerProperties());
 
 			// then
@@ -465,9 +467,10 @@ public class JesClientTest {
 			when(jesClient.getFtpClient().getReplyStrings()).thenReturn(new String[] { "211-a IS b", "211-c IS d" });
 
 			// when
-			final Map<String, String> properties = new LinkedHashMap<>();
-			properties.put("a", "b");
-			properties.put("c", "d");
+			final Map<String, String> properties = Maps.builder(new LinkedHashMap<String, String>()) //
+					.put("a", "b")
+					.put("c", "d")
+					.get();
 			assertEquals(properties, jesClient.getServerProperties());
 
 			// then
@@ -953,9 +956,10 @@ public class JesClientTest {
 			doReturn("jobOutput2").when(jesClient).retrieve(jobOutput2);
 
 			// when
-			final Map<JobOutput, String> jobOutputs = new LinkedHashMap<>();
-			jobOutputs.put(jobOutput1, "jobOutput1");
-			jobOutputs.put(jobOutput2, "jobOutput2");
+			final Map<JobOutput, String> jobOutputs = Maps.builder(new LinkedHashMap<JobOutput, String>())
+					.put(jobOutput1, "jobOutput1")
+					.put(jobOutput2, "jobOutput2")
+					.get();
 			assertEquals(jobOutputs, jesClient.retrieveOutputs(job));
 
 			// then
@@ -976,9 +980,10 @@ public class JesClientTest {
 			doReturn("jobOutput2").when(jesClient).retrieve(jobOutput2);
 
 			// when
-			final Map<JobOutput, String> jobOutputs = new LinkedHashMap<>();
-			jobOutputs.put(jobOutput1, "jobOutput1");
-			jobOutputs.put(jobOutput2, "jobOutput2");
+			final Map<JobOutput, String> jobOutputs = Maps.builder(new LinkedHashMap<JobOutput, String>())
+					.put(jobOutput1, "jobOutput1")
+					.put(jobOutput2, "jobOutput2")
+					.get();
 			assertEquals(jobOutputs, jesClient.retrieveOutputs(TEST_DATA_JOB));
 
 			// then
