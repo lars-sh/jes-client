@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import de.larssh.utils.annotations.SuppressJacocoGenerated;
 import de.larssh.utils.text.Strings;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;

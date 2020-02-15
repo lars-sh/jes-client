@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.apache.commons.net.ftp.FTPClient;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
