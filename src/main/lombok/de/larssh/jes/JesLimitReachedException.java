@@ -17,7 +17,7 @@ import lombok.ToString;
  */
 @Getter
 @ToString(callSuper = false)
-@EqualsAndHashCode(callSuper = true, onParam_ = { @Nullable })
+@EqualsAndHashCode(callSuper = true)
 public class JesLimitReachedException extends JesException {
 	private static final long serialVersionUID = -6980486894937034879L;
 

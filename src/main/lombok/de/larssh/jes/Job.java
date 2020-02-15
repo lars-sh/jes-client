@@ -30,7 +30,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @SuppressWarnings({ "PMD.DataClass", "PMD.ShortClassName" })
-@EqualsAndHashCode(onlyExplicitlyIncluded = true, onParam_ = { @Nullable })
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Job {
 	/**
 	 * The jobs ID, must not be empty
