@@ -4,9 +4,8 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -136,7 +135,7 @@ public final class JesFtpFileEntryParserTest {
 	private static void assertEqualsJobList(final List<Job> expected,
 			final List<Job> actual,
 			final Supplier<String> messageSupplier) {
-		assertEquals(expected.toString(), actual.toString(), messageSupplier);
+		assertThat(expected.toString()).isEqualTo(actual.toString(), messageSupplier);
 	}
 
 	/**
@@ -144,9 +143,9 @@ public final class JesFtpFileEntryParserTest {
 	 */
 	@Test
 	public void testParseFTPEntry() {
-		assertThrows(NullPointerException.class, () -> INSTANCE.parseFTPEntry(null));
-		assertThrows(JesFtpFileEntryParserException.class, () -> INSTANCE.parseFTPEntry(""));
-		assertThrows(JesFtpFileEntryParserException.class, () -> INSTANCE.parseFTPEntry(" "));
+		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> INSTANCE.parseFTPEntry(null));
+		assertThatExceptionOfType(JesFtpFileEntryParserException.class).isThrownBy(() -> INSTANCE.parseFTPEntry(""));
+		assertThatExceptionOfType(JesFtpFileEntryParserException.class).isThrownBy(() -> INSTANCE.parseFTPEntry(" "));
 
 		for (final Entry<String, List<Job>> entry : PARSE_FTP_ENTRY_EXPECTED_JOBS.entrySet()) {
 			final Path path = PATH_FTP_INPUT.resolve(entry.getKey());
@@ -167,7 +166,7 @@ public final class JesFtpFileEntryParserTest {
 		for (final String fileName : PARSE_FTP_ENTRY_THROWS_EXPECTED_JOBS) {
 			final Path path = PATH_FTP_INPUT_THROWS.resolve(fileName);
 			try (BufferedReader reader = Files.newBufferedReader(path)) {
-				assertThrows(JesFtpFileEntryParserException.class,
+				assertThatExceptionOfType(JesFtpFileEntryParserException.class).isThrownBy(
 						() -> INSTANCE.preParse(reader.lines().collect(toList())).forEach(INSTANCE::parseFTPEntry));
 			} catch (final IOException e) {
 				throw new UncheckedIOException(e);
@@ -180,17 +179,18 @@ public final class JesFtpFileEntryParserTest {
 	 */
 	@Test
 	public void testPreParse() {
-		assertThrows(NullPointerException.class, () -> INSTANCE.preParse(null));
-		assertThrows(JesFtpFileEntryParserException.class, () -> INSTANCE.preParse(emptyList()));
-		assertThrows(JesFtpFileEntryParserException.class, () -> INSTANCE.preParse(Arrays.asList(" ")));
+		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> INSTANCE.preParse(null));
+		assertThatExceptionOfType(JesFtpFileEntryParserException.class)
+				.isThrownBy(() -> INSTANCE.preParse(emptyList()));
+		assertThatExceptionOfType(JesFtpFileEntryParserException.class)
+				.isThrownBy(() -> INSTANCE.preParse(Arrays.asList(" ")));
 
 		for (final Entry<String, Integer> entry : PRE_PARSE_EXPECTED_SIZES.entrySet()) {
 			final Path path = PATH_FTP_INPUT.resolve(entry.getKey());
 
 			try (BufferedReader reader = Files.newBufferedReader(path)) {
-				assertEquals(entry.getValue(),
-						INSTANCE.preParse(reader.lines().collect(toList())).size(),
-						() -> path.toString());
+				assertThat(entry.getValue()).describedAs(path.toString())
+						.isEqualTo(INSTANCE.preParse(reader.lines().collect(toList())).size());
 			} catch (final IOException e) {
 				throw new UncheckedIOException(e);
 			}
@@ -203,45 +203,45 @@ public final class JesFtpFileEntryParserTest {
 	@Test
 	public void testReadNextEntry() {
 		try {
-			assertThrows(NullPointerException.class, () -> INSTANCE.readNextEntry(null));
-			assertNull(INSTANCE.readNextEntry(new BufferedReader(new StringReader(""))));
+			assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> INSTANCE.readNextEntry(null));
+			assertThat(INSTANCE.readNextEntry(new BufferedReader(new StringReader("")))).isNull();
 
 			try (BufferedReader reader = new BufferedReader(new StringReader("\n"))) {
-				assertEquals("", INSTANCE.readNextEntry(reader));
-				assertNull(INSTANCE.readNextEntry(reader));
+				assertThat("").isEqualTo(INSTANCE.readNextEntry(reader));
+				assertThat(INSTANCE.readNextEntry(reader)).isNull();
 			}
 			try (BufferedReader reader = new BufferedReader(new StringReader("\r\n"))) {
-				assertEquals("", INSTANCE.readNextEntry(reader));
-				assertNull(INSTANCE.readNextEntry(reader));
+				assertThat("").isEqualTo(INSTANCE.readNextEntry(reader));
+				assertThat(INSTANCE.readNextEntry(reader)).isNull();
 			}
 			try (BufferedReader reader = new BufferedReader(new StringReader("\r"))) {
-				assertEquals("", INSTANCE.readNextEntry(reader));
-				assertNull(INSTANCE.readNextEntry(reader));
+				assertThat("").isEqualTo(INSTANCE.readNextEntry(reader));
+				assertThat(INSTANCE.readNextEntry(reader)).isNull();
 			}
 
 			try (BufferedReader reader = new BufferedReader(new StringReader("a"))) {
-				assertEquals("a", INSTANCE.readNextEntry(reader));
-				assertNull(INSTANCE.readNextEntry(reader));
+				assertThat("a").isEqualTo(INSTANCE.readNextEntry(reader));
+				assertThat(INSTANCE.readNextEntry(reader)).isNull();
 			}
 			try (BufferedReader reader = new BufferedReader(new StringReader("a\n"))) {
-				assertEquals("a", INSTANCE.readNextEntry(reader));
-				assertNull(INSTANCE.readNextEntry(reader));
+				assertThat("a").isEqualTo(INSTANCE.readNextEntry(reader));
+				assertThat(INSTANCE.readNextEntry(reader)).isNull();
 			}
 			try (BufferedReader reader = new BufferedReader(new StringReader("a\nb"))) {
-				assertEquals("a", INSTANCE.readNextEntry(reader));
-				assertEquals("b", INSTANCE.readNextEntry(reader));
-				assertNull(INSTANCE.readNextEntry(reader));
+				assertThat("a").isEqualTo(INSTANCE.readNextEntry(reader));
+				assertThat("b").isEqualTo(INSTANCE.readNextEntry(reader));
+				assertThat(INSTANCE.readNextEntry(reader)).isNull();
 			}
 			try (BufferedReader reader = new BufferedReader(new StringReader("a\n\nb"))) {
-				assertEquals("a", INSTANCE.readNextEntry(reader));
-				assertEquals("", INSTANCE.readNextEntry(reader));
-				assertEquals("b", INSTANCE.readNextEntry(reader));
-				assertNull(INSTANCE.readNextEntry(reader));
+				assertThat("a").isEqualTo(INSTANCE.readNextEntry(reader));
+				assertThat("").isEqualTo(INSTANCE.readNextEntry(reader));
+				assertThat("b").isEqualTo(INSTANCE.readNextEntry(reader));
+				assertThat(INSTANCE.readNextEntry(reader)).isNull();
 			}
 			try (BufferedReader reader = new BufferedReader(new StringReader("a\r\nb"))) {
-				assertEquals("a", INSTANCE.readNextEntry(reader));
-				assertEquals("b", INSTANCE.readNextEntry(reader));
-				assertNull(INSTANCE.readNextEntry(reader));
+				assertThat("a").isEqualTo(INSTANCE.readNextEntry(reader));
+				assertThat("b").isEqualTo(INSTANCE.readNextEntry(reader));
+				assertThat(INSTANCE.readNextEntry(reader)).isNull();
 			}
 		} catch (final IOException e) {
 			throw new UncheckedIOException(e);

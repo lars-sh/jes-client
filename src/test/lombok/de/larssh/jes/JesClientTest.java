@@ -3,10 +3,8 @@ package de.larssh.jes;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -41,7 +39,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 import org.joor.Reflect;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.invocation.Invocation;
 
@@ -193,7 +190,7 @@ public class JesClientTest {
 			when(jesClient.getFtpClient().deleteFile(any())).thenReturn(false);
 
 			// when
-			assertThrows(JesException.class, () -> jesClient.delete(TEST_DATA_JOB));
+			assertThatExceptionOfType(JesException.class).isThrownBy(() -> jesClient.delete(TEST_DATA_JOB));
 
 			// then
 			verify(jesClient).delete(any());
@@ -233,7 +230,7 @@ public class JesClientTest {
 			when(jesClient.getFtpClient().sendSiteCommand(any())).thenReturn(false);
 
 			// when
-			assertThrows(JesException.class, () -> jesClient.enterJesMode());
+			assertThatExceptionOfType(JesException.class).isThrownBy(() -> jesClient.enterJesMode());
 
 			// then
 			verify(jesClient).enterJesMode();
@@ -257,7 +254,7 @@ public class JesClientTest {
 			when(jesClient.getFtpClient().listNames(any())).thenReturn(new String[0]);
 
 			// when
-			assertFalse(jesClient.exists(TEST_DATA_JOB, JobStatus.INPUT));
+			assertThat(jesClient.exists(TEST_DATA_JOB, JobStatus.INPUT)).isFalse();
 
 			// then
 			verify(jesClient).exists(any(), any());
@@ -276,7 +273,7 @@ public class JesClientTest {
 			when(jesClient.getFtpClient().listNames(any())).thenReturn(new String[] { "ID" });
 
 			// when
-			assertTrue(jesClient.exists(TEST_DATA_JOB, JobStatus.INPUT));
+			assertThat(jesClient.exists(TEST_DATA_JOB, JobStatus.INPUT)).isTrue();
 
 			// then
 			verify(jesClient).exists(any(), any());
@@ -296,7 +293,8 @@ public class JesClientTest {
 			when(jesClient.getFtpClient().getReplyString()).thenReturn("");
 
 			// when
-			assertThrows(JesException.class, () -> jesClient.exists(TEST_DATA_JOB, JobStatus.INPUT));
+			assertThatExceptionOfType(JesException.class)
+					.isThrownBy(() -> jesClient.exists(TEST_DATA_JOB, JobStatus.INPUT));
 
 			// then
 			verify(jesClient).exists(any(), any());
@@ -317,7 +315,7 @@ public class JesClientTest {
 			when(jesClient.getFtpClient().getReplyString()).thenReturn("550 NO JOBS FOUND FOR ...");
 
 			// when
-			assertFalse(jesClient.exists(TEST_DATA_JOB, JobStatus.INPUT));
+			assertThat(jesClient.exists(TEST_DATA_JOB, JobStatus.INPUT)).isFalse();
 
 			// then
 			verify(jesClient).exists(any(), any());
@@ -342,7 +340,7 @@ public class JesClientTest {
 		// given
 		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			// when 1
-			assertEquals("*", jesClient.getJesOwner());
+			assertThat("*").isEqualTo(jesClient.getJesOwner());
 
 			// then 1
 			verify(jesClient).getJesOwner();
@@ -350,7 +348,7 @@ public class JesClientTest {
 
 			// when 2
 			jesClient.setJesOwner("jesOwner1");
-			assertEquals("JESOWNER1", jesClient.getJesOwner());
+			assertThat("JESOWNER1").isEqualTo(jesClient.getJesOwner());
 
 			// then 2
 			verify(jesClient).setJesOwner(any());
@@ -359,7 +357,7 @@ public class JesClientTest {
 
 			// when 3
 			jesClient.setJesOwner(" jesOwner2 ");
-			assertEquals("JESOWNER2", jesClient.getJesOwner());
+			assertThat("JESOWNER2").isEqualTo(jesClient.getJesOwner());
 
 			// then 3
 			verify(jesClient).setJesOwner(any());
@@ -382,7 +380,7 @@ public class JesClientTest {
 					.thenReturn(new JesFtpFile[] { new JesFtpFile(TEST_DATA_JOB, "") });
 
 			// when
-			assertEquals(Optional.of(TEST_DATA_JOB), jesClient.getJobDetails(TEST_DATA_JOB));
+			assertThat(Optional.of(TEST_DATA_JOB)).isEqualTo(jesClient.getJobDetails(TEST_DATA_JOB));
 
 			// then
 			verify(jesClient).getJobDetails(any());
@@ -401,7 +399,7 @@ public class JesClientTest {
 			when(jesClient.getFtpClient().listFiles(any())).thenReturn(new JesFtpFile[0]);
 
 			// when
-			assertEquals(Optional.empty(), jesClient.getJobDetails(TEST_DATA_JOB));
+			assertThat(Optional.empty()).isEqualTo(jesClient.getJobDetails(TEST_DATA_JOB));
 
 			// then
 			verify(jesClient).getJobDetails(any());
@@ -426,7 +424,7 @@ public class JesClientTest {
 			when(jesClient.getFtpClient().getReplyStrings()).thenReturn(new String[0]);
 
 			// when
-			assertEquals(emptyMap(), jesClient.getServerProperties());
+			assertThat(emptyMap()).isEqualTo(jesClient.getServerProperties());
 
 			// then
 			verify(jesClient).getServerProperties();
@@ -448,7 +446,7 @@ public class JesClientTest {
 			final Map<String, String> properties = Maps.builder(new LinkedHashMap<String, String>()) //
 					.put("a", "b")
 					.get();
-			assertEquals(properties, jesClient.getServerProperties());
+			assertThat(properties).isEqualTo(jesClient.getServerProperties());
 
 			// then
 			verify(jesClient).getServerProperties();
@@ -471,7 +469,7 @@ public class JesClientTest {
 					.put("a", "b")
 					.put("c", "d")
 					.get();
-			assertEquals(properties, jesClient.getServerProperties());
+			assertThat(properties).isEqualTo(jesClient.getServerProperties());
 
 			// then
 			verify(jesClient).getServerProperties();
@@ -490,7 +488,7 @@ public class JesClientTest {
 			when(jesClient.getFtpClient().getReplyStrings()).thenReturn(new String[] { "211-a IS b", "211-a IS d" });
 
 			// when
-			assertThrows(JesException.class, () -> jesClient.getServerProperties());
+			assertThatExceptionOfType(JesException.class).isThrownBy(() -> jesClient.getServerProperties());
 
 			// then
 			verify(jesClient).getServerProperties();
@@ -508,7 +506,7 @@ public class JesClientTest {
 			when(jesClient.getFtpClient().stat()).thenReturn(FTPReply.COMMAND_NOT_IMPLEMENTED);
 
 			// when
-			assertThrows(JesException.class, () -> jesClient.getServerProperties());
+			assertThatExceptionOfType(JesException.class).isThrownBy(() -> jesClient.getServerProperties());
 
 			// then
 			verify(jesClient).getServerProperties();
@@ -539,7 +537,7 @@ public class JesClientTest {
 			doReturn(jobs).when(jesClient).list(any(), any());
 
 			// when
-			assertEquals(jobs, jesClient.list(nameFilter));
+			assertThat(jobs).isEqualTo(jesClient.list(nameFilter));
 
 			// then
 			verify(jesClient).list(any());
@@ -556,7 +554,7 @@ public class JesClientTest {
 			doReturn(jobs).when(jesClient).list(any(), any(), any());
 
 			// when
-			assertEquals(jobs, jesClient.list(nameFilter, status));
+			assertThat(jobs).isEqualTo(jesClient.list(nameFilter, status));
 
 			// then
 			verify(jesClient).list(any(), any());
@@ -573,7 +571,7 @@ public class JesClientTest {
 			doReturn(jobs).when(jesClient).list(any(), any(), any(), anyInt());
 
 			// when
-			assertEquals(jobs, jesClient.list(nameFilter, status, ownerFilter));
+			assertThat(jobs).isEqualTo(jesClient.list(nameFilter, status, ownerFilter));
 
 			// then
 			verify(jesClient).list(any(), any(), any());
@@ -592,7 +590,8 @@ public class JesClientTest {
 			doAnswer(invocation -> invocation.getArgument(1)).when(jesClient).throwIfLimitReached(anyInt(), any());
 
 			// when
-			assertEquals(asList(TEST_DATA_JOB, TEST_DATA_JOB), jesClient.list(nameFilter, status, ownerFilter, limit));
+			assertThat(asList(TEST_DATA_JOB, TEST_DATA_JOB))
+					.isEqualTo(jesClient.list(nameFilter, status, ownerFilter, limit));
 
 			// then
 			verify(jesClient).list(any(), any(), any(), anyInt());
@@ -613,7 +612,7 @@ public class JesClientTest {
 			doAnswer(invocation -> invocation.getArgument(1)).when(jesClient).throwIfLimitReached(anyInt(), any());
 
 			// when
-			assertEquals(jobs, jesClient.list(nameFilter, status, ownerFilter, limit));
+			assertThat(jobs).isEqualTo(jesClient.list(nameFilter, status, ownerFilter, limit));
 
 			// then
 			verify(jesClient).list(any(), any(), any(), anyInt());
@@ -634,7 +633,7 @@ public class JesClientTest {
 			doAnswer(invocation -> invocation.getArgument(1)).when(jesClient).throwIfLimitReached(anyInt(), any());
 
 			// when
-			assertEquals(emptyList(), jesClient.list(nameFilter, status, ownerFilter, limit));
+			assertThat(emptyList()).isEqualTo(jesClient.list(nameFilter, status, ownerFilter, limit));
 
 			// then
 			verify(jesClient).list(any(), any(), any(), anyInt());
@@ -655,7 +654,8 @@ public class JesClientTest {
 			when(jesClient.getFtpClient().getReplyString()).thenReturn("");
 
 			// when
-			assertThrows(JesException.class, () -> jesClient.list(nameFilter, status, ownerFilter, limit));
+			assertThatExceptionOfType(JesException.class)
+					.isThrownBy(() -> jesClient.list(nameFilter, status, ownerFilter, limit));
 
 			// then
 			verify(jesClient).list(any(), any(), any(), anyInt());
@@ -676,7 +676,7 @@ public class JesClientTest {
 			when(jesClient.getFtpClient().getReplyString()).thenReturn("550 NO JOBS FOUND FOR ...");
 
 			// when
-			assertEquals(emptyList(), jesClient.list(nameFilter, status, ownerFilter, limit));
+			assertThat(emptyList()).isEqualTo(jesClient.list(nameFilter, status, ownerFilter, limit));
 
 			// then
 			verify(jesClient).list(any(), any(), any(), anyInt());
@@ -711,7 +711,7 @@ public class JesClientTest {
 			doReturn(jobs).when(jesClient).listFilled(any(), any());
 
 			// when
-			assertEquals(jobs, jesClient.listFilled(nameFilter));
+			assertThat(jobs).isEqualTo(jesClient.listFilled(nameFilter));
 
 			// then
 			verify(jesClient).listFilled(any());
@@ -728,7 +728,7 @@ public class JesClientTest {
 			doReturn(jobs).when(jesClient).listFilled(any(), any(), any());
 
 			// when
-			assertEquals(jobs, jesClient.listFilled(nameFilter, status));
+			assertThat(jobs).isEqualTo(jesClient.listFilled(nameFilter, status));
 
 			// then
 			verify(jesClient).listFilled(any(), any());
@@ -745,7 +745,7 @@ public class JesClientTest {
 			doReturn(jobs).when(jesClient).listFilled(any(), any(), any(), anyInt());
 
 			// when
-			assertEquals(jobs, jesClient.listFilled(nameFilter, status, ownerFilter));
+			assertThat(jobs).isEqualTo(jesClient.listFilled(nameFilter, status, ownerFilter));
 
 			// then
 			verify(jesClient).listFilled(any(), any(), any());
@@ -765,7 +765,7 @@ public class JesClientTest {
 			doAnswer(invocation -> invocation.getArgument(1)).when(jesClient).throwIfLimitReached(anyInt(), any());
 
 			// when
-			assertEquals(jobs, jesClient.listFilled(nameFilter, status, ownerFilter, limit));
+			assertThat(jobs).isEqualTo(jesClient.listFilled(nameFilter, status, ownerFilter, limit));
 
 			// then
 			verify(jesClient).listFilled(any(), any(), any(), anyInt());
@@ -787,8 +787,8 @@ public class JesClientTest {
 			doAnswer(invocation -> invocation.getArgument(1)).when(jesClient).throwIfLimitReached(anyInt(), any());
 
 			// when
-			assertEquals(asList(TEST_DATA_JOB, TEST_DATA_JOB),
-					jesClient.listFilled(nameFilter, status, ownerFilter, limit));
+			assertThat(asList(TEST_DATA_JOB, TEST_DATA_JOB))
+					.isEqualTo(jesClient.listFilled(nameFilter, status, ownerFilter, limit));
 
 			// then
 			verify(jesClient).listFilled(any(), any(), any(), anyInt());
@@ -809,7 +809,7 @@ public class JesClientTest {
 			doAnswer(invocation -> invocation.getArgument(1)).when(jesClient).throwIfLimitReached(anyInt(), any());
 
 			// when
-			assertEquals(emptyList(), jesClient.listFilled(nameFilter, status, ownerFilter, limit));
+			assertThat(emptyList()).isEqualTo(jesClient.listFilled(nameFilter, status, ownerFilter, limit));
 
 			// then
 			verify(jesClient).listFilled(any(), any(), any(), anyInt());
@@ -857,7 +857,7 @@ public class JesClientTest {
 			when(jesClient.getFtpClient().sendSiteCommand(any())).thenReturn(true);
 
 			// when
-			assertThrows(JesException.class, () -> jesClient.login("username", "password"));
+			assertThatExceptionOfType(JesException.class).isThrownBy(() -> jesClient.login("username", "password"));
 
 			// then
 			verify(jesClient).login(any(), any());
@@ -889,7 +889,7 @@ public class JesClientTest {
 			});
 
 			// when
-			assertEquals("jobOutput1", jesClient.retrieve(jobOutput1));
+			assertThat("jobOutput1").isEqualTo(jesClient.retrieve(jobOutput1));
 
 			// then
 			verify(jesClient).retrieve(any());
@@ -909,7 +909,7 @@ public class JesClientTest {
 			});
 
 			// when
-			assertEquals("jobOutput2", jesClient.retrieve(jobOutput2));
+			assertThat("jobOutput2").isEqualTo(jesClient.retrieve(jobOutput2));
 
 			// then
 			verify(jesClient).retrieve(any());
@@ -926,7 +926,7 @@ public class JesClientTest {
 			when(jesClient.getFtpClient().retrieveFile(any(), any())).thenReturn(false);
 
 			// when
-			assertThrows(JesException.class, () -> jesClient.retrieve(jobOutput1));
+			assertThatExceptionOfType(JesException.class).isThrownBy(() -> jesClient.retrieve(jobOutput1));
 
 			// then
 			verify(jesClient).retrieve(any());
@@ -960,7 +960,7 @@ public class JesClientTest {
 					.put(jobOutput1, "jobOutput1")
 					.put(jobOutput2, "jobOutput2")
 					.get();
-			assertEquals(jobOutputs, jesClient.retrieveOutputs(job));
+			assertThat(jobOutputs).isEqualTo(jesClient.retrieveOutputs(job));
 
 			// then
 			verify(jesClient).retrieveOutputs(any());
@@ -984,7 +984,7 @@ public class JesClientTest {
 					.put(jobOutput1, "jobOutput1")
 					.put(jobOutput2, "jobOutput2")
 					.get();
-			assertEquals(jobOutputs, jesClient.retrieveOutputs(TEST_DATA_JOB));
+			assertThat(jobOutputs).isEqualTo(jesClient.retrieveOutputs(TEST_DATA_JOB));
 
 			// then
 			verify(jesClient, times(2)).retrieveOutputs(any());
@@ -1003,7 +1003,7 @@ public class JesClientTest {
 			doReturn(Optional.empty()).when(jesClient).getJobDetails(any());
 
 			// when
-			assertThrows(JesException.class, () -> jesClient.retrieveOutputs(TEST_DATA_JOB));
+			assertThatExceptionOfType(JesException.class).isThrownBy(() -> jesClient.retrieveOutputs(TEST_DATA_JOB));
 
 			// then
 			verify(jesClient).retrieveOutputs(any());
@@ -1064,9 +1064,8 @@ public class JesClientTest {
 			when(jesClient.getFtpClient().sendSiteCommand(siteCommandLimitFilter)).thenReturn(false);
 
 			// when
-			assertThrows(JesException.class,
-					() -> Reflects
-							.call(Reflect.on(jesClient), "setJesFilters", nameFilter, status, ownerFilter, limit));
+			assertThatExceptionOfType(JesException.class).isThrownBy(() -> Reflects
+					.call(Reflect.on(jesClient), "setJesFilters", nameFilter, status, ownerFilter, limit));
 
 			// then
 			verify(jesClient).setJesFilters(nameFilter, status, ownerFilter, limit);
@@ -1088,9 +1087,8 @@ public class JesClientTest {
 			when(jesClient.getFtpClient().sendSiteCommand(siteCommandStatusFilter)).thenReturn(false);
 
 			// when
-			assertThrows(JesException.class,
-					() -> Reflects
-							.call(Reflect.on(jesClient), "setJesFilters", nameFilter, status, ownerFilter, limit));
+			assertThatExceptionOfType(JesException.class).isThrownBy(() -> Reflects
+					.call(Reflect.on(jesClient), "setJesFilters", nameFilter, status, ownerFilter, limit));
 
 			// then
 			verify(jesClient).setJesFilters(nameFilter, status, ownerFilter, limit);
@@ -1110,9 +1108,8 @@ public class JesClientTest {
 			when(jesClient.getFtpClient().sendSiteCommand(siteCommandOwnerFilter)).thenReturn(false);
 
 			// when
-			assertThrows(JesException.class,
-					() -> Reflects
-							.call(Reflect.on(jesClient), "setJesFilters", nameFilter, status, ownerFilter, limit));
+			assertThatExceptionOfType(JesException.class).isThrownBy(() -> Reflects
+					.call(Reflect.on(jesClient), "setJesFilters", nameFilter, status, ownerFilter, limit));
 
 			// then
 			verify(jesClient).setJesFilters(nameFilter, status, ownerFilter, limit);
@@ -1130,9 +1127,8 @@ public class JesClientTest {
 			when(jesClient.getFtpClient().sendSiteCommand(siteCommandNameFilter)).thenReturn(false);
 
 			// when
-			assertThrows(JesException.class,
-					() -> Reflects
-							.call(Reflect.on(jesClient), "setJesFilters", nameFilter, status, ownerFilter, limit));
+			assertThatExceptionOfType(JesException.class).isThrownBy(() -> Reflects
+					.call(Reflect.on(jesClient), "setJesFilters", nameFilter, status, ownerFilter, limit));
 
 			// then
 			verify(jesClient).setJesFilters(nameFilter, status, ownerFilter, limit);
@@ -1156,14 +1152,14 @@ public class JesClientTest {
 		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			when(jesClient.getFtpClient().storeUniqueFile(any(), any())).then(invocation -> {
 				try (InputStream inputStream = invocation.getArgument(1)) {
-					assertEquals("jclContent", IOUtils.toString(inputStream, Charset.defaultCharset()));
+					assertThat("jclContent").isEqualTo(IOUtils.toString(inputStream, Charset.defaultCharset()));
 				}
 				return true;
 			});
 			when(jesClient.getFtpClient().getReplyString()).thenReturn("250-IT IS KNOWN TO JES AS id");
 
 			// when
-			assertEquals(new Job("id", "*", JobStatus.INPUT, "*"), jesClient.submit("jclContent"));
+			assertThat(new Job("id", "*", JobStatus.INPUT, "*")).isEqualTo(jesClient.submit("jclContent"));
 
 			// then
 			verify(jesClient).submit(any());
@@ -1183,7 +1179,7 @@ public class JesClientTest {
 			when(jesClient.getFtpClient().getReplyString()).thenReturn("250-IT IS KNOWN TO JES AS id");
 
 			// when
-			assertEquals(new Job("id", "name", JobStatus.INPUT, "*"), jesClient.submit("//name\njclContent"));
+			assertThat(new Job("id", "name", JobStatus.INPUT, "*")).isEqualTo(jesClient.submit("//name\njclContent"));
 
 			// then
 			verify(jesClient).submit(any());
@@ -1202,7 +1198,7 @@ public class JesClientTest {
 			when(jesClient.getFtpClient().storeUniqueFile(any(), any())).thenReturn(false);
 
 			// when
-			assertThrows(JesException.class, () -> jesClient.submit("jclContent"));
+			assertThatExceptionOfType(JesException.class).isThrownBy(() -> jesClient.submit("jclContent"));
 
 			// then
 			verify(jesClient).submit(any());
@@ -1220,7 +1216,7 @@ public class JesClientTest {
 			when(jesClient.getFtpClient().getReplyString()).thenReturn("");
 
 			// when
-			assertThrows(JesException.class, () -> jesClient.submit("jclContent"));
+			assertThatExceptionOfType(JesException.class).isThrownBy(() -> jesClient.submit("jclContent"));
 
 			// then
 			verify(jesClient).submit(any());
@@ -1238,6 +1234,7 @@ public class JesClientTest {
 	 * {@link JesClient#throwIfLimitReached(int, List)}
 	 */
 	@Test
+	@SuppressWarnings("checkstyle:XStringMatches")
 	public void testThrowIfLimitReached() {
 		final int limit = 123;
 		final List<Job> jobs = asList(TEST_DATA_JOB);
@@ -1247,7 +1244,7 @@ public class JesClientTest {
 			when(jesClient.getFtpClient().getReplyString()).thenReturn("");
 
 			// when
-			assertEquals(jobs, Reflect.on(jesClient).call("throwIfLimitReached", limit, jobs).get());
+			assertThat(jobs).isEqualTo(Reflect.on(jesClient).call("throwIfLimitReached", limit, jobs).get());
 
 			// then
 			verify(jesClient).throwIfLimitReached(limit, jobs);
@@ -1265,15 +1262,15 @@ public class JesClientTest {
 					.thenReturn("250-JESENTRYLIMIT OF 456 REACHED.  ADDITIONAL ENTRIES NOT DISPLAYED");
 
 			// when
-			final JesLimitReachedException exception = assertThrows(JesLimitReachedException.class,
-					() -> Reflects.call(Reflect.on(jesClient), "throwIfLimitReached", limit, jobs));
+			assertThatExceptionOfType(JesLimitReachedException.class)
+					.isThrownBy(() -> Reflects.call(Reflect.on(jesClient), "throwIfLimitReached", limit, jobs))
+					.matches(exception -> exception.getLimit() == limit)
+					.matches(exception -> exception.getJobs().equals(jobs));
 
 			// then
 			verify(jesClient).throwIfLimitReached(limit, jobs);
 			verify(jesClient.getFtpClient(), times(2)).getReplyString();
 			verifyEnd(jesClient);
-			assertEquals(limit, exception.getLimit());
-			assertEquals(jobs, exception.getJobs());
 		} catch (final IOException e) {
 			throw new UncheckedIOException(e);
 		} catch (final JesException e) {
@@ -1313,8 +1310,8 @@ public class JesClientTest {
 
 			// when
 			final Stopwatch stopwatch = new Stopwatch();
-			assertTrue(jesClient.waitFor(job, sleepDuration, Duration.ofMillis(456)));
-			assertTrue(stopwatch.sinceLast().toMillis() > sleepDuration.toMillis());
+			assertThat(jesClient.waitFor(job, sleepDuration, Duration.ofMillis(456))).isTrue();
+			assertThat(stopwatch.sinceLast().toMillis() > sleepDuration.toMillis()).isTrue();
 
 			// then
 			verify(jesClient).waitFor(any(), any(), any());
@@ -1331,11 +1328,11 @@ public class JesClientTest {
 		try (MockedJesClient jesClient = MockedJesClient.newInstance()) {
 			// when
 			final AtomicInteger sleepCalls = new AtomicInteger(0);
-			assertTrue(jesClient.waitFor(TEST_DATA_JOB,
+			assertThat(jesClient.waitFor(TEST_DATA_JOB,
 					Duration.ofMillis(123),
 					Duration.ofMillis(456),
-					duration -> sleepCalls.incrementAndGet()));
-			assertEquals(0, sleepCalls.get());
+					duration -> sleepCalls.incrementAndGet())).isTrue();
+			assertThat(0).isEqualTo(sleepCalls.get());
 
 			// then
 			verify(jesClient).waitFor(any(), any(), any(), any());
@@ -1353,11 +1350,11 @@ public class JesClientTest {
 			// when
 			final Job job = new Job("id", "name", JobStatus.ACTIVE, "owner");
 			final AtomicInteger sleepCalls = new AtomicInteger(0);
-			assertTrue(jesClient.waitFor(job,
+			assertThat(jesClient.waitFor(job,
 					Duration.ofMillis(123),
 					Duration.ofMillis(456),
-					duration -> sleepCalls.incrementAndGet()));
-			assertEquals(0, sleepCalls.get());
+					duration -> sleepCalls.incrementAndGet())).isTrue();
+			assertThat(0).isEqualTo(sleepCalls.get());
 
 			// then
 			verify(jesClient).waitFor(any(), any(), any(), any());
@@ -1377,11 +1374,11 @@ public class JesClientTest {
 			// when
 			final Job job = new Job("id", "name", JobStatus.ACTIVE, "owner");
 			final AtomicInteger sleepCalls = new AtomicInteger(0);
-			assertTrue(jesClient.waitFor(job,
+			assertThat(jesClient.waitFor(job,
 					Duration.ofMillis(123),
 					Duration.ofMillis(456),
-					duration -> sleepCalls.incrementAndGet()));
-			assertEquals(1, sleepCalls.get());
+					duration -> sleepCalls.incrementAndGet())).isTrue();
+			assertThat(1).isEqualTo(sleepCalls.get());
 
 			// then
 			verify(jesClient).waitFor(any(), any(), any(), any());
@@ -1405,7 +1402,7 @@ public class JesClientTest {
 			final Consumer<Duration> noop = duration -> {
 				// empty by design
 			};
-			assertFalse(jesClient.waitFor(job, Duration.ofMillis(123), Duration.ofMillis(456), noop));
+			assertThat(jesClient.waitFor(job, Duration.ofMillis(123), Duration.ofMillis(456), noop)).isFalse();
 
 			// then
 			verify(jesClient).waitFor(any(), any(), any(), any());
@@ -1432,12 +1429,12 @@ public class JesClientTest {
 				// nanos. To avoid waiting some nanos less than requested millis are increased
 				// by one.
 				final long millis = Nullables.orElseThrow(duration).toMillis() + 1;
-				Assertions.assertTrue(millis <= 123 + 1);
+				assertThat(millis <= 123 + 1).isTrue();
 
 				Thread.sleep(millis);
 			});
-			assertFalse(jesClient.waitFor(job, Duration.ofMillis(456789), Duration.ofMillis(123), sleep));
-			assertEquals(1, sleepCalls.get());
+			assertThat(jesClient.waitFor(job, Duration.ofMillis(456789), Duration.ofMillis(123), sleep)).isFalse();
+			assertThat(1).isEqualTo(sleepCalls.get());
 
 			// then
 			verify(jesClient).waitFor(any(), any(), any(), any());
@@ -1459,11 +1456,11 @@ public class JesClientTest {
 
 			// when
 			final AtomicInteger sleepCalls = new AtomicInteger(0);
-			assertTrue(jesClient.waitFor(job,
+			assertThat(jesClient.waitFor(job,
 					Duration.ofMillis(123),
 					Duration.ofMillis(456),
-					duration -> sleepCalls.incrementAndGet()));
-			assertEquals(2, sleepCalls.get());
+					duration -> sleepCalls.incrementAndGet())).isTrue();
+			assertThat(2).isEqualTo(sleepCalls.get());
 
 			// then
 			verify(jesClient).waitFor(any(), any(), any(), any());

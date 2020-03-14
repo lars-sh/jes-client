@@ -1,8 +1,8 @@
 package de.larssh.jes;
 
 import static de.larssh.utils.test.Assertions.assertEqualsAndHashCode;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.util.Optional;
 
@@ -44,12 +44,12 @@ public class JobOutputTest {
 	 */
 	@Test
 	public void testGetIndex() {
-		assertEquals(1, A.getIndex());
-		assertEquals(3, B.getIndex());
-		assertThrows(JobFieldInconsistentException.class,
-				() -> new JobOutput(JOB, -1, "a", 0, Optional.empty(), Optional.empty(), Optional.empty()));
-		assertThrows(JobFieldInconsistentException.class,
-				() -> new JobOutput(JOB, 0, "a", 0, Optional.empty(), Optional.empty(), Optional.empty()));
+		assertThat(1).isEqualTo(A.getIndex());
+		assertThat(3).isEqualTo(B.getIndex());
+		assertThatExceptionOfType(JobFieldInconsistentException.class)
+				.isThrownBy(() -> new JobOutput(JOB, -1, "a", 0, Optional.empty(), Optional.empty(), Optional.empty()));
+		assertThatExceptionOfType(JobFieldInconsistentException.class)
+				.isThrownBy(() -> new JobOutput(JOB, 0, "a", 0, Optional.empty(), Optional.empty(), Optional.empty()));
 	}
 
 	/**
@@ -57,11 +57,12 @@ public class JobOutputTest {
 	 */
 	@Test
 	public void testGetJob() {
-		assertEquals(JOB, A.getJob());
-		assertEquals(JOB, B.getJob());
+		assertThat(JOB).isEqualTo(A.getJob());
+		assertThat(JOB).isEqualTo(B.getJob());
 
 		final Job job = new Job("e", "f", JobStatus.ALL, "h");
-		assertEquals(job, new JobOutput(job, 1, "a", 0, Optional.empty(), Optional.empty(), Optional.empty()).getJob());
+		assertThat(job).isEqualTo(
+				new JobOutput(job, 1, "a", 0, Optional.empty(), Optional.empty(), Optional.empty()).getJob());
 	}
 
 	/**
@@ -69,10 +70,10 @@ public class JobOutputTest {
 	 */
 	@Test
 	public void testGetLength() {
-		assertEquals(0, A.getLength());
-		assertEquals(7, B.getLength());
-		assertThrows(JobFieldInconsistentException.class,
-				() -> new JobOutput(JOB, 1, "a", -1, Optional.empty(), Optional.empty(), Optional.empty()));
+		assertThat(0).isEqualTo(A.getLength());
+		assertThat(7).isEqualTo(B.getLength());
+		assertThatExceptionOfType(JobFieldInconsistentException.class)
+				.isThrownBy(() -> new JobOutput(JOB, 1, "a", -1, Optional.empty(), Optional.empty(), Optional.empty()));
 	}
 
 	/**
@@ -80,12 +81,12 @@ public class JobOutputTest {
 	 */
 	@Test
 	public void testGetName() {
-		assertEquals("C", A.getName());
-		assertEquals("D", B.getName());
-		assertThrows(JobFieldInconsistentException.class,
-				() -> new JobOutput(JOB, 1, "", 0, Optional.empty(), Optional.empty(), Optional.empty()));
-		assertThrows(JobFieldInconsistentException.class,
-				() -> new JobOutput(JOB, 1, " ", 0, Optional.empty(), Optional.empty(), Optional.empty()));
+		assertThat("C").isEqualTo(A.getName());
+		assertThat("D").isEqualTo(B.getName());
+		assertThatExceptionOfType(JobFieldInconsistentException.class)
+				.isThrownBy(() -> new JobOutput(JOB, 1, "", 0, Optional.empty(), Optional.empty(), Optional.empty()));
+		assertThatExceptionOfType(JobFieldInconsistentException.class)
+				.isThrownBy(() -> new JobOutput(JOB, 1, " ", 0, Optional.empty(), Optional.empty(), Optional.empty()));
 	}
 
 	/**
@@ -93,10 +94,10 @@ public class JobOutputTest {
 	 */
 	@Test
 	public void testGetOutputClass() {
-		assertEquals(Optional.empty(), A.getOutputClass());
-		assertEquals(Optional.of("L"), B.getOutputClass());
-		assertThrows(JobFieldInconsistentException.class,
-				() -> new JobOutput(JOB, 1, "a", 0, Optional.empty(), Optional.of(" "), Optional.empty()));
+		assertThat(Optional.empty()).isEqualTo(A.getOutputClass());
+		assertThat(Optional.of("L")).isEqualTo(B.getOutputClass());
+		assertThatExceptionOfType(JobFieldInconsistentException.class)
+				.isThrownBy(() -> new JobOutput(JOB, 1, "a", 0, Optional.empty(), Optional.of(" "), Optional.empty()));
 	}
 
 	/**
@@ -104,10 +105,10 @@ public class JobOutputTest {
 	 */
 	@Test
 	public void testGetProcedureStep() {
-		assertEquals(Optional.empty(), A.getProcedureStep());
-		assertEquals(Optional.of("J"), B.getProcedureStep());
-		assertThrows(JobFieldInconsistentException.class,
-				() -> new JobOutput(JOB, 1, "a", 0, Optional.empty(), Optional.empty(), Optional.of(" ")));
+		assertThat(Optional.empty()).isEqualTo(A.getProcedureStep());
+		assertThat(Optional.of("J")).isEqualTo(B.getProcedureStep());
+		assertThatExceptionOfType(JobFieldInconsistentException.class)
+				.isThrownBy(() -> new JobOutput(JOB, 1, "a", 0, Optional.empty(), Optional.empty(), Optional.of(" ")));
 	}
 
 	/**
@@ -115,9 +116,9 @@ public class JobOutputTest {
 	 */
 	@Test
 	public void testGetStep() {
-		assertEquals(Optional.empty(), A.getStep());
-		assertEquals(Optional.of("H"), B.getStep());
-		assertThrows(JobFieldInconsistentException.class,
-				() -> new JobOutput(JOB, 1, "a", 0, Optional.of(" "), Optional.empty(), Optional.empty()));
+		assertThat(Optional.empty()).isEqualTo(A.getStep());
+		assertThat(Optional.of("H")).isEqualTo(B.getStep());
+		assertThatExceptionOfType(JobFieldInconsistentException.class)
+				.isThrownBy(() -> new JobOutput(JOB, 1, "a", 0, Optional.of(" "), Optional.empty(), Optional.empty()));
 	}
 }
