@@ -32,6 +32,7 @@ public class DebuggingFtpFileEntryParser implements FTPFileEntryParser {
 	/** {@inheritDoc} */
 	@Nullable
 	@Override
+	@SuppressWarnings({ "checkstyle:SuppressWarnings", "resource" })
 	public String readNextEntry(@Nullable final BufferedReader reader) throws IOException {
 		return Nullables.orElseThrow(reader).readLine();
 	}

@@ -63,7 +63,8 @@ import lombok.experimental.NonFinal;
 		"PMD.ExcessiveClassLength",
 		"PMD.ExcessiveImports",
 		"PMD.ExcessiveMethodLength",
-		"PMD.NcssCount" })
+		"PMD.NcssCount",
+		"resource" })
 public class JesClientTest {
 	private static final Job TEST_DATA_JOB = new Job("id", "name", JobStatus.OUTPUT, "owner");
 
@@ -104,7 +105,6 @@ public class JesClientTest {
 	public void testClose() {
 		// given
 		try {
-			@SuppressWarnings("resource")
 			final MockedJesClient jesClient = MockedJesClient.newInstance();
 			when(jesClient.getFtpClient().isAvailable()).thenReturn(true);
 			when(jesClient.getFtpClient().isConnected()).thenReturn(true);
@@ -125,7 +125,6 @@ public class JesClientTest {
 
 		// given
 		try {
-			@SuppressWarnings("resource")
 			final MockedJesClient jesClient = MockedJesClient.newInstance();
 			when(jesClient.getFtpClient().isAvailable()).thenReturn(false);
 			when(jesClient.getFtpClient().isConnected()).thenReturn(true);
@@ -145,7 +144,6 @@ public class JesClientTest {
 
 		// given
 		try {
-			@SuppressWarnings("resource")
 			final MockedJesClient jesClient = MockedJesClient.newInstance();
 			when(jesClient.getFtpClient().isAvailable()).thenReturn(false);
 			when(jesClient.getFtpClient().isConnected()).thenReturn(false);
@@ -1487,7 +1485,6 @@ public class JesClientTest {
 		 *
 		 * @return constructed {@link MockedJesClient} instance
 		 */
-		@SuppressWarnings("resource")
 		public static MockedJesClient newInstance() {
 			return spy(new MockedJesClient());
 		}
