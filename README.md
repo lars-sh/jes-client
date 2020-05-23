@@ -1,6 +1,8 @@
 # JES Client
 Handling IBM z/OS JES spools using Java technologies based on the IBM z/OS FTP server.
 
+[Changelog](CHANGELOG.md)  |  [JavaDoc](https://lars-sh.github.io/jes-client/apidocs)  |  [Generated Reports](https://lars-sh.github.io/jes-client/project-reports.html)
+
 ## Getting started
 Here's a Maven dependency example:
 
