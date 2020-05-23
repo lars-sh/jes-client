@@ -14,7 +14,7 @@
 
 	<name>JES Client</name>
 	<description>Handling IBM z/OS JES spools using Java technologies based on the IBM z/OS FTP server.</description>
-	<url>https://github.com/lars-sh/jes-client</url>
+	<url>https://lars-sh.github.io/jes-client/</url>
 	<licenses>
 		<license>
 			<name>MIT License</name>
