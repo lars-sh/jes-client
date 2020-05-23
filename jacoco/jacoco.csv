@@ -1,0 +1,12 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+JES Client,de.larssh.jes,JobStatus,0,48,0,0,0,5,0,1,0,1
+JES Client,de.larssh.jes,JesLimitReachedException,0,25,0,0,0,6,0,3,0,3
+JES Client,de.larssh.jes,Job,0,239,0,26,0,37,0,21,0,8
+JES Client,de.larssh.jes,JesClient,0,775,0,46,0,100,0,62,0,39
+JES Client,de.larssh.jes,JobFieldInconsistentException,0,7,0,0,0,2,0,1,0,1
+JES Client,de.larssh.jes,JobOutput,0,112,0,12,0,23,0,8,0,2
+JES Client,de.larssh.jes,JesException,0,24,0,0,0,4,0,2,0,2
+JES Client,de.larssh.jes,JobFlag,0,46,0,0,0,7,0,2,0,2
+JES Client,de.larssh.jes.parser,JesFtpFile,0,9,0,0,0,4,0,1,0,1
+JES Client,de.larssh.jes.parser,JesFtpFileEntryParser,0,426,0,32,0,67,0,31,0,15
+JES Client,de.larssh.jes.parser,JesFtpFileEntryParserException,0,7,0,0,0,2,0,1,0,1
