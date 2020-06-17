@@ -1,4 +1,6 @@
 # JES Client
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Flars-sh%2Fjes-client.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Flars-sh%2Fjes-client?ref=badge_shield)
+
 Handling IBM z/OS JES spools using Java technologies based on the IBM z/OS FTP server.
 
 [Changelog](CHANGELOG.md)  |  [JavaDoc](https://lars-sh.github.io/jes-client/apidocs)  |  [Generated Reports](https://lars-sh.github.io/jes-client/project-reports.html)
@@ -40,3 +42,7 @@ The following shows the JesClient used inside a try-with-resource statement. The
 	
 	// Logout and disconnect using try-with-resource (close method)
 	}
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Flars-sh%2Fjes-client.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Flars-sh%2Fjes-client?ref=badge_large)
