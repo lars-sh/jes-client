@@ -6,7 +6,7 @@ Handling IBM z/OS JES spools using Java technologies based on the IBM z/OS FTP s
 ## Getting started
 Here's a Maven dependency example:
 
-```Maven POM
+```XML
 <dependency>
 	<groupId>de.lars-sh</groupId>
 	<artifactId>jes-client</artifactId>
