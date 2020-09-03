@@ -8,5 +8,5 @@ JES Client,de.larssh.jes,JobOutput,0,112,0,12,0,23,0,8,0,2
 JES Client,de.larssh.jes,JesException,0,24,0,0,0,4,0,2,0,2
 JES Client,de.larssh.jes,JobFlag,0,46,0,0,0,7,0,2,0,2
 JES Client,de.larssh.jes.parser,JesFtpFile,0,9,0,0,0,4,0,1,0,1
-JES Client,de.larssh.jes.parser,JesFtpFileEntryParser,0,426,0,32,0,67,0,31,0,15
+JES Client,de.larssh.jes.parser,JesFtpFileEntryParser,0,434,0,32,0,67,0,31,0,15
 JES Client,de.larssh.jes.parser,JesFtpFileEntryParserException,0,7,0,0,0,2,0,1,0,1
