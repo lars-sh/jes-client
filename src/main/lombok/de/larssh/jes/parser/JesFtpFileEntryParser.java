@@ -21,6 +21,7 @@ import de.larssh.jes.JobOutput;
 import de.larssh.jes.JobStatus;
 import de.larssh.utils.Nullables;
 import de.larssh.utils.Optionals;
+import de.larssh.utils.text.Lines;
 import de.larssh.utils.text.Patterns;
 import de.larssh.utils.text.Strings;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -158,9 +159,10 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 	 */
 	@SuppressWarnings("PMD.CyclomaticComplexity")
 	private Job createJobAndOutputs(final String listEntry) {
-		final List<String> lines = new ArrayList<>(Strings.getLines(listEntry));
+		final List<String> lines = new ArrayList<>(Lines.lines(listEntry));
 		if (lines.isEmpty()) {
-			lines.add("");
+			throw new JesFtpFileEntryParserException("Expected [%s] as job details line, got no line.",
+					PATTERN_JOB.pattern());
 		}
 
 		// First line (job)
