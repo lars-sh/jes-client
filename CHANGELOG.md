@@ -7,14 +7,8 @@ All notable changes to this project will be documented in this file.
 
 Download at [Maven Search](https://search.maven.org/artifact/de.lars-sh/jes-client/0.9.2/jar)
 
-### Added
-* TODO
-
-### Changed
-* TODO
-
 ### Fixed
-* TODO
+* Submitting JCLs and retrieving job outputs when using for non-ASCII compliant default charsets
 
 <a name="0.9.1"></a>
 
