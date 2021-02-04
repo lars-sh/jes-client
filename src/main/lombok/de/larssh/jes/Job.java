@@ -211,7 +211,8 @@ public class Job {
 	 *         {@link Optional#empty()} if no such job output exists
 	 */
 	public Optional<JobOutput> getOutput(final String name) {
-		return getOutputs().stream().filter(output -> output.getName().equalsIgnoreCase(name.trim())).findFirst();
+		final String trimmedName = name.trim();
+		return getOutputs().stream().filter(output -> output.getName().equalsIgnoreCase(trimmedName)).findFirst();
 	}
 
 	/**
