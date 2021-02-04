@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -108,6 +109,11 @@ public class JesClient implements Closeable {
 	 * Wildcard value to be used for name and owner filters, meaning "any" value.
 	 */
 	public static final String FILTER_WILDCARD = constant("*");
+
+	/**
+	 * Charset, that is used for submitting JCLs and retrieving job outputs.
+	 */
+	private static final Charset FTP_DATA_CHARSET = StandardCharsets.UTF_8;
 
 	/**
 	 * Maximum limit of spool entries (including)
@@ -677,7 +683,7 @@ public class JesClient implements Closeable {
 						jobOutput.getJob().getId(),
 						jobOutput.getStep());
 			}
-			return outputStream.toString(Charset.defaultCharset().name());
+			return new String(outputStream.toByteArray(), FTP_DATA_CHARSET);
 		}
 	}
 
@@ -765,7 +771,7 @@ public class JesClient implements Closeable {
 	 * @throws JesException Logical JES failure
 	 */
 	public Job submit(final String jclContent) throws IOException, JesException {
-		try (InputStream inputStream = new ReaderInputStream(new StringReader(jclContent), Charset.defaultCharset())) {
+		try (InputStream inputStream = new ReaderInputStream(new StringReader(jclContent), FTP_DATA_CHARSET)) {
 			if (!getFtpClient().storeUniqueFile(SUBMIT_REMOTE_FILE_NAME, inputStream)) {
 				throw new JesException(getFtpClient(), "Submitting JCL failed.");
 			}
