@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 <a name="0.9.2"></a>
 
-## [0.9.2-SNAPSHOT](https://github.com/lars-sh/jes-client/compare/1abca56ea5958200ca97ee787308ce8cc5fa29a1...master)
+## [0.9.2](https://github.com/lars-sh/jes-client/compare/1abca56ea5958200ca97ee787308ce8cc5fa29a1...master) (2021-03-01)
 
 Download at [Maven Search](https://search.maven.org/artifact/de.lars-sh/jes-client/0.9.2/jar)
 
