@@ -16,6 +16,21 @@ Here's a Maven dependency example:
 
 To learn more about the JES Client check out its JavaDoc.
 
+### Snapshot Builds
+Snapshot builds are provided through [GitHub Packages](https://github.com/lars-sh/jes-client/packages). To use one of them, configure the version of the dependency accordingly and add the below noted repository to your POM.
+
+Beside having the possibility, please keep in mind, that snapshot builds might be either instable or even broken from time to time.
+
+```XML
+<repositories>
+	<repository>
+		<id>github-lars-sh-jes-client</id>
+		<name>GitHub Packages of de.lars-sh:jes-client</name>
+		<url>https://maven.pkg.github.com/lars-sh/jes-client</url>
+	</repository>
+</repositories>
+```
+
 ### Using JES Client
 The following shows the JesClient used inside a try-with-resource statement. The constructor descriptions describe further details.
 
