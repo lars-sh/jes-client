@@ -5,8 +5,8 @@
 	<parent>
 		<groupId>de.lars-sh</groupId>
 		<artifactId>parent</artifactId>
-		<version>0.9.11</version>
-		<relativePath></relativePath>
+		<version>0.9.12</version>
+		<relativePath />
 	</parent>
 
 	<artifactId>jes-client</artifactId>
@@ -43,6 +43,10 @@
 		<system>Travis</system>
 		<url>https://travis-ci.com/${parent-pom.github.organization}/${parent-pom.github.project}</url>
 	</ciManagement>
+
+	<properties>
+		<parent-pom.create-github-release-yml>true</parent-pom.create-github-release-yml>
+	</properties>
 
 	<dependencies>
 		<dependency>
