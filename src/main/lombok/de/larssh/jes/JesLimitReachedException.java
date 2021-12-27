@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.net.ftp.FTPClient;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -38,6 +39,8 @@ public class JesLimitReachedException extends JesException {
 	 * @param jobs      list of jobs up to the limit
 	 * @param ftpClient FTP client with reply string
 	 */
+	@SuppressFBWarnings(value = "EI_EXPOSE_REP2",
+			justification = "Mutability of jobs.outputs is not expected to be a problem for this exception")
 	public JesLimitReachedException(final int limit, final List<Job> jobs, final FTPClient ftpClient) {
 		super(ftpClient, "Listing limit of %d reached.", limit);
 
