@@ -1,6 +1,5 @@
 package de.larssh.jes;
 
-import static de.larssh.utils.test.Assertions.assertEqualsAndHashCode;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
@@ -8,7 +7,6 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-import de.larssh.utils.test.AssertEqualsAndHashCodeArguments;
 import lombok.NoArgsConstructor;
 
 /**
@@ -23,21 +21,6 @@ public class JobOutputTest {
 
 	private static final JobOutput B
 			= new JobOutput(JOB, 3, "d ", 7, Optional.of("h "), Optional.of("j "), Optional.of("l "));
-
-	/**
-	 * {@link JobOutput#equals(Object)} and {@link JobOutput#hashCode()}
-	 */
-	@Test
-	public void testEqualsAndHashCode() {
-		assertEqualsAndHashCode(JobOutput.class,
-				new AssertEqualsAndHashCodeArguments().add(JOB, new Job("e", "f", JobStatus.ALL, "h"), false)
-						.add(1, 3, false)
-						.add("c", "d", true)
-						.add(0, 7, true)
-						.add(Optional.empty(), Optional.of("h"), true)
-						.add(Optional.empty(), Optional.of("j"), true)
-						.add(Optional.empty(), Optional.of("l"), true));
-	}
 
 	/**
 	 * {@link JobOutput#getIndex()}

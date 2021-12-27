@@ -157,12 +157,12 @@ public class Job {
 			final OptionalInt resultCode,
 			final Optional<String> abendCode,
 			final JobFlag... flags) {
-		id = Strings.toNeutralUpperCase(jobId.trim());
-		this.name = Strings.toNeutralUpperCase(name.trim());
+		id = Strings.toUpperCaseNeutral(jobId.trim());
+		this.name = Strings.toUpperCaseNeutral(name.trim());
 		this.status = status;
-		this.owner = Strings.toNeutralUpperCase(owner.trim());
-		this.jesClass = jesClass.map(String::trim).map(Strings::toNeutralUpperCase);
-		this.abendCode = abendCode.map(String::trim).map(Strings::toNeutralUpperCase);
+		this.owner = Strings.toUpperCaseNeutral(owner.trim());
+		this.jesClass = jesClass.map(String::trim).map(Strings::toUpperCaseNeutral);
+		this.abendCode = abendCode.map(String::trim).map(Strings::toUpperCaseNeutral);
 		this.resultCode = resultCode;
 		this.flags = unmodifiableSet(new HashSet<>(asList(flags)));
 

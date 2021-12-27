@@ -753,7 +753,7 @@ public class JesClient implements Closeable {
 	 * @param jesOwner JES spool owner
 	 */
 	public void setJesOwner(final String jesOwner) {
-		this.jesOwner = Strings.toNeutralUpperCase(jesOwner).trim();
+		this.jesOwner = Strings.toUpperCaseNeutral(jesOwner).trim();
 	}
 
 	/**

@@ -91,11 +91,11 @@ public class JobOutput {
 			final Optional<String> outputClass) {
 		this.job = job;
 		this.index = index;
-		this.name = Strings.toNeutralUpperCase(name.trim());
+		this.name = Strings.toUpperCaseNeutral(name.trim());
 		this.length = length;
-		this.step = step.map(String::trim).map(Strings::toNeutralUpperCase);
-		this.procedureStep = procedureStep.map(String::trim).map(Strings::toNeutralUpperCase);
-		this.outputClass = outputClass.map(String::trim).map(Strings::toNeutralUpperCase);
+		this.step = step.map(String::trim).map(Strings::toUpperCaseNeutral);
+		this.procedureStep = procedureStep.map(String::trim).map(Strings::toUpperCaseNeutral);
+		this.outputClass = outputClass.map(String::trim).map(Strings::toUpperCaseNeutral);
 
 		validate();
 	}

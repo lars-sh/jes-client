@@ -1,6 +1,5 @@
 package de.larssh.jes;
 
-import static de.larssh.utils.test.Assertions.assertEqualsAndHashCode;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
@@ -16,7 +15,6 @@ import java.util.OptionalInt;
 
 import org.junit.jupiter.api.Test;
 
-import de.larssh.utils.test.AssertEqualsAndHashCodeArguments;
 import lombok.NoArgsConstructor;
 
 /**
@@ -76,38 +74,6 @@ public class JobTest {
 		final Job jobInput = new Job("a", "b", JobStatus.INPUT, "d");
 		assertThatExceptionOfType(JobFieldInconsistentException.class).isThrownBy(
 				() -> jobInput.createOutput(1, "c", 0, Optional.empty(), Optional.empty(), Optional.empty()));
-	}
-
-	/**
-	 * {@link Job#equals(Object)} and {@link Job#hashCode()}
-	 */
-	@Test
-	public void testEqualsAndHashCode() {
-		assertEqualsAndHashCode(Job.class,
-				new AssertEqualsAndHashCodeArguments().add("A", "B", false)
-						.add("C", "D", true)
-						.add(JobStatus.ACTIVE, JobStatus.ALL, true)
-						.add("G", "H", true));
-
-		assertEqualsAndHashCode(Job.class,
-				new AssertEqualsAndHashCodeArguments().add("A", "B", false)
-						.add("C", "D", true)
-						.add(JobStatus.ALL, JobStatus.OUTPUT, true)
-						.add("G", "H", true)
-						.add(Optional.empty(), Optional.of("J"), true)
-						.add(OptionalInt.empty(), OptionalInt.of(12), true)
-						.add(Optional.empty(), Optional.empty(), true)
-						.add(new JobFlag[0], new JobFlag[] { JobFlag.DUP }, true));
-
-		assertEqualsAndHashCode(Job.class,
-				new AssertEqualsAndHashCodeArguments().add("A", "B", false)
-						.add("C", "D", true)
-						.add(JobStatus.ALL, JobStatus.OUTPUT, true)
-						.add("G", "H", true)
-						.add(Optional.empty(), Optional.empty(), true)
-						.add(OptionalInt.empty(), OptionalInt.of(12), true)
-						.add(Optional.empty(), Optional.of("N"), true)
-						.add(new JobFlag[0], new JobFlag[] { JobFlag.DUP }, true));
 	}
 
 	/**
