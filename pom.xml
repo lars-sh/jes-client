@@ -46,9 +46,6 @@
 
 	<properties>
 		<parent-pom.create-github-release-yml>true</parent-pom.create-github-release-yml>
-
-		<!-- Workaround as of version 3.2.0, see https://issues.apache.org/jira/browse/MDEP-753 -->
-		<maven-dependency-plugin.version>3.1.2</maven-dependency-plugin.version>
 	</properties>
 
 	<dependencies>
