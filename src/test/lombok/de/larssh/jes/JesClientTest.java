@@ -58,13 +58,7 @@ import lombok.experimental.NonFinal;
  * {@link JesClient}
  */
 @NoArgsConstructor
-@SuppressWarnings({
-		"checkstyle:SuppressWarnings",
-		"PMD.ExcessiveClassLength",
-		"PMD.ExcessiveImports",
-		"PMD.ExcessiveMethodLength",
-		"PMD.NcssCount",
-		"resource" })
+@SuppressWarnings({ "checkstyle:SuppressWarnings", "PMD.ExcessiveImports", "PMD.NcssCount", "resource" })
 public class JesClientTest {
 	private static final Job TEST_DATA_JOB = new Job("id", "name", JobStatus.OUTPUT, "owner");
 
