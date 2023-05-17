@@ -771,7 +771,10 @@ public class JesClient implements Closeable {
 	 * @throws JesException Logical JES failure
 	 */
 	public Job submit(final String jclContent) throws IOException, JesException {
-		try (InputStream inputStream = new ReaderInputStream(new StringReader(jclContent), FTP_DATA_CHARSET)) {
+		try (InputStream inputStream = ReaderInputStream.builder()
+				.setReader(new StringReader(jclContent))
+				.setCharset(FTP_DATA_CHARSET)
+				.get()) {
 			if (!getFtpClient().storeUniqueFile(SUBMIT_REMOTE_FILE_NAME, inputStream)) {
 				throw new JesException(getFtpClient(), "Submitting JCL failed.");
 			}
