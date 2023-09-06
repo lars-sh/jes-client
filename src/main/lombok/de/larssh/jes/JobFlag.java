@@ -38,6 +38,6 @@ public enum JobFlag {
 	 *                    values
 	 */
 	JobFlag(final String restPattern) {
-		this.restPattern = Pattern.compile(restPattern);
+		this.restPattern = Pattern.compile(restPattern, Pattern.CASE_INSENSITIVE);
 	}
 }

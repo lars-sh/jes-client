@@ -38,7 +38,8 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 	/**
 	 * Pattern to match the job details header response line
 	 */
-	private static final Pattern PATTERN_TITLE = Pattern.compile("^JOBNAME +JOBID +OWNER +STATUS +CLASS *$");
+	private static final Pattern PATTERN_TITLE
+			= Pattern.compile("^JOBNAME +JOBID +OWNER +STATUS +CLASS *$", Pattern.CASE_INSENSITIVE);
 
 	/**
 	 * Pattern to match job details lines inside response
@@ -55,7 +56,8 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 	 * </ul>
 	 */
 	private static final Pattern PATTERN_JOB = Pattern.compile(
-			"^(?<name>[^ ]+) +(?<id>[^ ]+) +(?<owner>[^ ]+) +(?<status>(INPUT|ACTIVE|OUTPUT)) +(?<class>[^ ]+)( +(?<rest>.*))?$");
+			"^(?<name>[^ ]+) +(?<id>[^ ]+) +(?<owner>[^ ]+) +(?<status>(INPUT|ACTIVE|OUTPUT)) +(?<class>[^ ]+)( +(?<rest>.*))?$",
+			Pattern.CASE_INSENSITIVE);
 
 	/**
 	 * Pattern to find the abend code inside a response line
@@ -66,7 +68,7 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 	 * <li>abend
 	 * </ul>
 	 */
-	private static final Pattern PATTERN_JOB_ABEND = Pattern.compile("ABEND=(?<abend>\\S+)");
+	private static final Pattern PATTERN_JOB_ABEND = Pattern.compile("ABEND=(?<abend>\\S+)", Pattern.CASE_INSENSITIVE);
 
 	/**
 	 * Pattern to find the result code inside a response line
@@ -77,7 +79,8 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 	 * <li>returnCode
 	 * </ul>
 	 */
-	private static final Pattern PATTERN_JOB_RETURN_CODE = Pattern.compile("RC=(?<returnCode>\\d+)");
+	private static final Pattern PATTERN_JOB_RETURN_CODE
+			= Pattern.compile("RC=(?<returnCode>\\d+)", Pattern.CASE_INSENSITIVE);
 
 	/**
 	 * Pattern to match the separator response line
@@ -87,8 +90,8 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 	/**
 	 * Pattern to match the job output header response line
 	 */
-	private static final Pattern PATTERN_SUB_TITLE
-			= Pattern.compile("^ {9}ID  STEPNAME PROCSTEP C DDNAME   (BYTE|REC)-COUNT( COMMENT)? *$");
+	private static final Pattern PATTERN_SUB_TITLE = Pattern
+			.compile("^ {9}ID  STEPNAME PROCSTEP C DDNAME   (BYTE|REC)-COUNT( COMMENT)? *$", Pattern.CASE_INSENSITIVE);
 
 	/**
 	 * Pattern to match job output lines inside response
@@ -110,7 +113,8 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 	/**
 	 * Pattern to match the response line containing the number of spool files
 	 */
-	private static final Pattern PATTERN_SPOOL_FILES = Pattern.compile("^\\d+ spool files *$");
+	private static final Pattern PATTERN_SPOOL_FILES
+			= Pattern.compile("^\\d+ spool files *$", Pattern.CASE_INSENSITIVE);
 
 	/**
 	 * Builds a {@link Job} object based on a job details response {@code line}.

@@ -137,7 +137,8 @@ public class JesClient implements Closeable {
 	/**
 	 * Pattern to find the job ID inside the FTP response after submitting a JCL.
 	 */
-	private static final Pattern PATTERN_FTP_SUBMIT_ID = Pattern.compile("^250-IT IS KNOWN TO JES AS (?<id>\\S+)");
+	private static final Pattern PATTERN_FTP_SUBMIT_ID
+			= Pattern.compile("^250-IT IS KNOWN TO JES AS (?<id>\\S+)", Pattern.CASE_INSENSITIVE);
 
 	/**
 	 * Pattern to find the job name inside a valid JCL.
@@ -148,18 +149,21 @@ public class JesClient implements Closeable {
 	 * Pattern to check the response string for the spool entries limit warning.
 	 */
 	private static final Pattern PATTERN_LIST_LIMIT
-			= Pattern.compile("^250-JESENTRYLIMIT OF \\d+ REACHED\\.  ADDITIONAL ENTRIES NOT DISPLAYED$");
+			= Pattern.compile("^250-JESENTRYLIMIT OF \\d+ REACHED\\. +ADDITIONAL ENTRIES NOT DISPLAYED$",
+					Pattern.CASE_INSENSITIVE);
 
 	/**
 	 * Pattern to check the response string for the empty list warning.
 	 */
-	private static final Pattern PATTERN_LIST_NAMES_NO_JOBS_FOUND = Pattern.compile("^550 NO JOBS FOUND FOR ");
+	private static final Pattern PATTERN_LIST_NAMES_NO_JOBS_FOUND
+			= Pattern.compile("^550 NO JOBS FOUND FOR ", Pattern.CASE_INSENSITIVE);
 
 	/**
 	 * Pattern to retrieve status values from response strings.
 	 */
-	private static final Pattern PATTERN_STATUS = Pattern
-			.compile("^211-(SERVER SITE VARIABLE |TIMER )?(?<key>\\S+)( VALUE)? IS (SET TO )?(?<value>\\S+?)\\.?$");
+	private static final Pattern PATTERN_STATUS = Pattern.compile(
+			"^211-(SERVER SITE VARIABLE |TIMER )?(?<key>\\S+)( VALUE)? IS (SET TO )?(?<value>\\S+?)\\.?$",
+			Pattern.CASE_INSENSITIVE);
 
 	/**
 	 * Remote file name that is used when submitting a JCL.
