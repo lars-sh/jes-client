@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 Download at [Maven Search](https://search.maven.org/artifact/de.lars-sh/jes-client/0.9.3/jar)
 
 ### Added
-TODO
+* Support for systems that use mixed character casing for output
 
 ### Changed
 TODO
