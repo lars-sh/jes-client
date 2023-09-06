@@ -357,10 +357,10 @@ public class JesClient implements Closeable {
 	public Optional<Job> getJobDetails(final Job job) throws IOException, JesException {
 		setJesFilters(job.getName(), JobStatus.ALL, job.getOwner(), LIST_LIMIT_MAX);
 
-		return Optionals
-				.ofSingle(stream(getFtpClient().listFiles(job.getId())).filter(file -> file instanceof JesFtpFile)
-						.map(file -> (JesFtpFile) file)
-						.map(JesFtpFile::getJob));
+		return Optionals.ofSingle(stream(getFtpClient().listFiles(job.getId())) //
+				.filter(JesFtpFile.class::isInstance)
+				.map(JesFtpFile.class::cast)
+				.map(JesFtpFile::getJob));
 	}
 
 	/**
@@ -632,8 +632,8 @@ public class JesClient implements Closeable {
 		final FTPFile[] files = getFtpClient().listFiles();
 
 		return throwIfLimitReached(limit,
-				stream(files).filter(file -> file instanceof JesFtpFile)
-						.map(file -> (JesFtpFile) file)
+				stream(files).filter(JesFtpFile.class::isInstance)
+						.map(JesFtpFile.class::cast)
 						.map(JesFtpFile::getJob)
 						.collect(toList()));
 	}
