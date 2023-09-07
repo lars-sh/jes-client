@@ -83,9 +83,10 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 			= Pattern.compile("RC=(?<returnCode>\\d+)", Pattern.CASE_INSENSITIVE);
 
 	/**
-	 * Pattern to match the separator response line
+	 * Pattern to match the separator response line OR an output warning
 	 */
-	private static final Pattern PATTERN_SEPARATOR = Pattern.compile("^-+ *$");
+	private static final Pattern PATTERN_GARBAGE
+			= Pattern.compile("^(-+|STEP, PROC, CPUT, and ELAPT unknown) *$", Pattern.CASE_INSENSITIVE);
 
 	/**
 	 * Pattern to match the job output header response line
@@ -172,8 +173,8 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 		// First line (job)
 		final Job job = createJob(lines.remove(0));
 
-		// Second line (separator, optional)
-		if (!lines.isEmpty() && Strings.matches(lines.get(0), PATTERN_SEPARATOR)) {
+		// Second line(s) (optional garbage, e.g. a separator line or an output warning)
+		while (!lines.isEmpty() && Strings.matches(lines.get(0), PATTERN_GARBAGE)) {
 			lines.remove(0);
 		}
 
