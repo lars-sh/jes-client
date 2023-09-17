@@ -1,6 +1,23 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="0.9.4"></a>
+
+## [0.9.4-SNAPSHOT](https://github.com/lars-sh/jes-client/compare/f4e04ec195c085addb4b56137e5af80ac189b137...master)
+
+Download at [Maven Search](https://search.maven.org/artifact/de.lars-sh/jes-client/0.9.4/jar)
+
+### Added
+TODO
+
+### Changed
+TODO
+
+### Fixed
+TODO
+
+<a name="0.9.3"></a>
+
 ## [0.9.3](https://github.com/lars-sh/jes-client/compare/a931f0781a30ed4f071aae8a56cfc5e48cf82b0b...f4e04ec195c085addb4b56137e5af80ac189b137) (2023-09-18)
 
 Download at [Maven Search](https://search.maven.org/artifact/de.lars-sh/jes-client/0.9.3/jar)
