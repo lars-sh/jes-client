@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>jes-client</artifactId>
-	<version>0.9.3</version>
+	<version>0.9.4-SNAPSHOT</version>
 
 	<name>JES Client</name>
 	<description>Handling IBM z/OS JES spools using Java technologies based on the IBM z/OS FTP server.</description>
