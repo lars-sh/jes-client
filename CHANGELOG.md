@@ -11,7 +11,7 @@ Download at [Maven Search](https://search.maven.org/artifact/de.lars-sh/jes-clie
 TODO
 
 ### Changed
-TODO
+* Make parsing job details even more lax to support more versions/configurations
 
 ### Fixed
 TODO

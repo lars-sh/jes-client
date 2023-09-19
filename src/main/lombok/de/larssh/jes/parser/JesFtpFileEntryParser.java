@@ -173,6 +173,14 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 		// First line (job)
 		final Job job = createJob(lines.remove(0));
 
+		// Last line (number of spool files, optional)
+		if (!lines.isEmpty()) {
+			final String spoolFiles = lines.get(lines.size() - 1);
+			if (Strings.matches(spoolFiles, PATTERN_SPOOL_FILES)) {
+				lines.remove(lines.size() - 1);
+			}
+		}
+
 		// Second line(s) (optional garbage, e.g. a separator line or an output warning)
 		while (!lines.isEmpty() && Strings.matches(lines.get(0), PATTERN_GARBAGE)) {
 			lines.remove(0);
@@ -187,14 +195,6 @@ public class JesFtpFileEntryParser implements FTPFileEntryParser {
 			throw new JesFtpFileEntryParserException("Expected [%s] as sub title line, got [%s].",
 					PATTERN_SUB_TITLE.pattern(),
 					subTitle);
-		}
-
-		// Last line (spool files, optional)
-		if (!lines.isEmpty()) {
-			final String spoolFiles = lines.get(lines.size() - 1);
-			if (Strings.matches(spoolFiles, PATTERN_SPOOL_FILES)) {
-				lines.remove(lines.size() - 1);
-			}
 		}
 
 		// Further lines (job outputs)
