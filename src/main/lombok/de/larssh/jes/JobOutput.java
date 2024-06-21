@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import de.larssh.utils.annotations.SuppressJacocoGenerated;
 import de.larssh.utils.text.Strings;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -82,6 +83,8 @@ public class JobOutput {
 	 * @param outputClass   the output class
 	 * @throws JobFieldInconsistentException on inconsistent field value
 	 */
+	@SuppressFBWarnings(value = "CT_CONSTRUCTOR_THROW",
+			justification = "Fields are initialized prior throwing exceptions")
 	protected JobOutput(final Job job,
 			final int index,
 			final String name,

@@ -8,6 +8,7 @@ import org.apache.commons.net.ftp.FTPFile;
 
 import de.larssh.jes.Job;
 import de.larssh.utils.annotations.SuppressJacocoGenerated;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -31,7 +32,7 @@ public class JesFtpFile extends FTPFile {
 	 * @param job        job details
 	 * @param rawListing raw FTP server listing
 	 */
-	@SuppressWarnings("PMD.CallSuperInConstructor")
+	@SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
 	public JesFtpFile(final Job job, final String rawListing) {
 		this.job = job;
 		setRawListing(rawListing);
@@ -44,6 +45,8 @@ public class JesFtpFile extends FTPFile {
 	 * @throws NotSerializableException This class cannot be deserialized.
 	 */
 	@SuppressJacocoGenerated(justification = "this is not serializable")
+	@SuppressFBWarnings(value = "MC_OVERRIDABLE_METHOD_CALL_IN_READ_OBJECT",
+			justification = "Class.getName() cannot be overridden")
 	private void readObject(@SuppressWarnings("unused") final ObjectInputStream stream)
 			throws NotSerializableException {
 		throw new NotSerializableException(JesFtpFile.class.getName());
