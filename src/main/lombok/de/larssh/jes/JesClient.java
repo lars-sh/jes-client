@@ -264,7 +264,8 @@ public class JesClient implements Closeable {
 	 */
 	@SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
 	@SuppressJacocoGenerated(justification = "this constructor cannot be mocked nicely")
-	@SuppressFBWarnings(value = "PCOA_PARTIALLY_CONSTRUCTED_OBJECT_ACCESS", justification = "see JavaDoc")
+	@SuppressFBWarnings(value = { "CT_CONSTRUCTOR_THROW", "PCOA_PARTIALLY_CONSTRUCTED_OBJECT_ACCESS" },
+			justification = "see JavaDoc")
 	public JesClient(final String hostname, final int port, final String username, final String password)
 			throws IOException, JesException {
 		this();
@@ -842,7 +843,7 @@ public class JesClient implements Closeable {
 	 * @throws IOException          Technical FTP failure
 	 * @throws JesException         Logical JES failure
 	 */
-	@SuppressWarnings("unused")
+	@SuppressWarnings({ "unused", "PMD.DoNotUseThreads" })
 	public boolean waitFor(final Job job, final Duration waiting, final Duration timeout)
 			throws InterruptedException, IOException, JesException {
 		return waitFor(job,

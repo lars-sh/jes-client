@@ -13,6 +13,7 @@ import java.util.Set;
 
 import de.larssh.utils.OptionalInts;
 import de.larssh.utils.text.Strings;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -149,6 +150,8 @@ public class Job {
 	 * @throws JobFieldInconsistentException on inconsistent field value
 	 */
 	@SuppressWarnings("checkstyle:ParameterNumber")
+	@SuppressFBWarnings(value = "CT_CONSTRUCTOR_THROW",
+			justification = "Fields are initialized prior throwing exceptions")
 	public Job(final String jobId,
 			final String name,
 			final JobStatus status,
