@@ -131,6 +131,8 @@ public class Job {
 	 * @param owner  the jobs owner or an owner filter value
 	 * @throws JobFieldInconsistentException on inconsistent field value
 	 */
+	@SuppressFBWarnings(value = "CT_CONSTRUCTOR_THROW",
+			justification = "Fields are initialized prior throwing exceptions")
 	public Job(final String jobId, final String name, final JobStatus status, final String owner) {
 		this(jobId, name, status, owner, Optional.empty(), OptionalInt.empty(), Optional.empty());
 	}
