@@ -5,7 +5,7 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
@@ -169,7 +169,7 @@ public class Job {
 		this.jesClass = jesClass.map(String::trim).map(Strings::toUpperCaseNeutral);
 		this.abendCode = abendCode.map(String::trim).map(Strings::toUpperCaseNeutral);
 		this.resultCode = resultCode;
-		this.flags = unmodifiableSet(new HashSet<>(asList(flags)));
+		this.flags = unmodifiableSet(EnumSet.copyOf(asList(flags)));
 
 		validate();
 	}
