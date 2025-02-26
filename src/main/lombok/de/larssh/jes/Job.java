@@ -30,7 +30,7 @@ import lombok.ToString;
  */
 @Getter
 @ToString
-@SuppressWarnings({ "PMD.DataClass", "PMD.ShortClassName" })
+@SuppressWarnings({ "PMD.DataClass", "PMD.GodClass", "PMD.ShortClassName" })
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Job {
 	/**
