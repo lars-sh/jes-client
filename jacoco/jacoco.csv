@@ -1,7 +1,7 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
 JES Client,de.larssh.jes,JobStatus,0,48,0,0,0,5,0,1,0,1
 JES Client,de.larssh.jes,JesLimitReachedException,0,25,0,0,0,6,0,3,0,3
-JES Client,de.larssh.jes,Job,0,241,0,26,0,38,0,21,0,8
+JES Client,de.larssh.jes,Job,0,244,0,28,0,38,0,22,0,8
 JES Client,de.larssh.jes,JesClient,0,789,0,46,0,102,0,58,0,35
 JES Client,de.larssh.jes,JobFieldInconsistentException,0,7,0,0,0,2,0,1,0,1
 JES Client,de.larssh.jes,JobOutput,0,112,0,12,0,23,0,8,0,2
