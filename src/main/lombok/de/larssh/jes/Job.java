@@ -1,11 +1,12 @@
 package de.larssh.jes;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
@@ -29,7 +30,7 @@ import lombok.ToString;
  */
 @Getter
 @ToString
-@SuppressWarnings({ "PMD.DataClass", "PMD.ShortClassName" })
+@SuppressWarnings({ "PMD.DataClass", "PMD.GodClass", "PMD.ShortClassName" })
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Job {
 	/**
@@ -169,7 +170,7 @@ public class Job {
 		this.jesClass = jesClass.map(String::trim).map(Strings::toUpperCaseNeutral);
 		this.abendCode = abendCode.map(String::trim).map(Strings::toUpperCaseNeutral);
 		this.resultCode = resultCode;
-		this.flags = unmodifiableSet(new HashSet<>(asList(flags)));
+		this.flags = flags.length == 0 ? emptySet() : unmodifiableSet(EnumSet.copyOf(asList(flags)));
 
 		validate();
 	}
