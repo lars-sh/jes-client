@@ -30,8 +30,8 @@ import lombok.ToString;
  */
 @Getter
 @ToString
-@SuppressWarnings({ "PMD.DataClass", "PMD.GodClass", "PMD.ShortClassName" })
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@SuppressWarnings({ "PMD.GodClass", "PMD.ShortClassName" })
 public class Job {
 	/**
 	 * The jobs ID, must not be empty
@@ -241,7 +241,7 @@ public class Job {
 	 *
 	 * @throws JobFieldInconsistentException on inconsistent field value
 	 */
-	@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
+	@SuppressWarnings("PMD.CyclomaticComplexity")
 	private void validate() {
 		if (id.isEmpty()) {
 			throw new JobFieldInconsistentException("Job ID must be filled, but is empty.");
